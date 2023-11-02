@@ -14,7 +14,7 @@
         accessModes:
           - ReadWriteMany
         nfs:
-          path: /media/complete
+          path: /media/usenet
           server: 10.0.0.2
         mountOptions:
           - nolock

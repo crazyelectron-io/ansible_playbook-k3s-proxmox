@@ -55,7 +55,7 @@
                   - name: sabnzbd-incomplete-downloads
                     mountPath: /incomplete-downloads
                   - name: sabnzbd-downloads
-                    mountPath: /downloads
+                    mountPath: /data/usenet
                 env:
                   - name: PUID
                     value: "1000"

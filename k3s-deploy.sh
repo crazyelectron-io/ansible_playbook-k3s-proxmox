@@ -2,6 +2,8 @@
 # file: k3s-deploy.sh
 # synopsis: Deploy K3s cluster (specify the environment 'dev' or 'prod' on the command line), optionally with VM nodes
 
+shopt -s nocasematch
+
 if [ "$#" -lt 3 ]
 then
   echo "Error: no arguments supplied."
@@ -12,10 +14,14 @@ then
   exit 1
 fi
 
-if [ "$3" = "HOST"] || [ "$3" = "ALL"]
+SCOPE=$3
+
+if [[ ${SCOPE} = "host" ]] || [[ ${SCOPE} = "all" ]]
+then
   ansible-playbook deploy-hosts.yaml --inventory ./inventory/$1 -u root --extra-vars "ansible_user=root k3s_environment=$1"
 fi
 
-if [ "$3" = "CLUSTER"] || [ "$3" = "ALL"]
+if [[ ${SCOPE} = "cluster" ]] || [[ ${SCOPE} = "all" ]]
+then
   ansible-playbook deploy-cluster.yaml --inventory ./inventory/$1 --key-file $HOME/.ssh/$2_key -u $2 --extra-vars k3s_environment=$1
 fi
