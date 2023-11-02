@@ -1,0 +1,40 @@
+---
+- name: Create Sonarr PV for TVShows NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: sonarr-tv-pv
+      spec:
+        persistentVolumeReclaimPolicy: Retain
+        capacity:
+          storage: 10Mi # Dummy value
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          path: /media/tvshows
+          server: 10.0.0.2
+        mountOptions:
+          - nolock
+
+- name: Create Sonarr PV for Completed downloads NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: sonarr-downloads-pv
+      spec:
+        persistentVolumeReclaimPolicy: Retain
+        capacity:
+          storage: 10Mi # Dummy value
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          path: /media/complete
+          server: 10.0.0.2
+        mountOptions:
+          - nolock

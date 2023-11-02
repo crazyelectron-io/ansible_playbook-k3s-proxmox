@@ -1,0 +1,17 @@
+---
+- name: Create Service for Prowlarr
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: prowlarr-svc
+        namespace: "{{ prowlarr_namespace }}"
+      spec:
+        ports:
+          - name: http
+            port: 80
+            targetPort: 9696
+        selector:
+          app: prowlarr

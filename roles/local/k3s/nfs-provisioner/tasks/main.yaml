@@ -1,0 +1,51 @@
+---
+- name: Include prerequisites
+  ansible.builtin.include_tasks:
+    file: prerequisites.yaml
+
+- name: Render values
+  block:
+
+    - name: Create temporary file for Helm values file
+      ansible.builtin.tempfile:
+        state: file
+        suffix: nfs_provisioner_values
+      changed_when: false
+      register: nfs_provisioner__values_tmp_file
+
+    - name: Select values file for Helm template
+      ansible.builtin.template:
+        src: "{{ lookup('first_found', params) }}"
+        dest: "{{ nfs_provisioner__values_tmp_file.path }}"
+        mode: 0600
+      changed_when: false
+      vars:
+        params:
+          files:
+            - values.yml.j2
+            - values.yaml.j2
+            - nfs_provisioner_values_default.yml.j2
+          paths:
+            - "{{ nfs_provisioner_chart_values_directory }}"
+            - templates
+
+    - name: Install the Helm chart
+      kubernetes.core.helm:
+        name: "{{ nfs_provisioner_release_name }}"
+        chart_ref: "{{ nfs_provisioner_chart_name }}"
+        chart_version: "{{ nfs_provisioner_chart_version }}"
+        release_namespace: "{{ nfs_provisioner_namespace }}"
+        create_namespace: false
+        update_repo_cache: true
+        values_files:
+          - "{{ nfs_provisioner__values_tmp_file.path }}"
+      register: nfs_provisioner__helm_install_chart
+
+  always:
+    - name: Delete temporary file for Helm values
+      ansible.builtin.file:
+        path: "{{ nfs_provisioner__values_tmp_file.path }}"
+        state: absent
+      changed_when: false
+      when:
+        - nfs_provisioner__values_tmp_file.path is defined

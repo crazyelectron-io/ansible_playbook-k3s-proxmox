@@ -1,0 +1,40 @@
+---
+# Helm chart version
+nfs_provisioner_chart_version: "4.0.18"
+
+# Helm release name
+nfs_provisioner_release_name: "nfs-subdir-external-provisioner"
+
+# Helm repository name
+nfs_provisioner_repo_name: "nfs-subdir-external-provisioner"
+
+# Helm chart name
+nfs_provisioner_chart_name: "{{ nfs_provisioner_repo_name }}/{{ nfs_provisioner_release_name }}"
+
+# Helm chart URL
+nfs_provisioner_chart_url: "https://kubernetes-sigs.github.io/{{ nfs_provisioner_repo_name }}"
+
+# Directory that contains Helm chart values file. If you specify this
+# variable Ansible will try to locate a file called "values.yml.j2" or
+# "values.yaml.j2" in the specified directory (".j2" because you can
+# use the usual Jinja2 template stuff there). The content of this file
+# will be provided to "helm install/template" command as values file.
+# By default the directory is the users "$HOME" directory plus
+# "/nfs_provisioner/helm". If the task doesn't find such a file it uses
+# the values in "templates/nfs_provisioner_values_default.yml.j2" by default.
+nfs_provisioner_chart_values_directory: "{{ '~/nfs_provisioner/helm' | expanduser }}"
+
+# The rendered file with the resources will be called "template.yml" and
+# will be placed in the directory specified below.
+nfs_provisioner_template_output_directory: "{{ '~/nfs_provisioner/template' | expanduser }}"
+
+# Namespace for NFS provisioner
+nfs_provisioner_namespace: default
+
+# Storage  Class for NFS
+nfs_provisioner_storage_class: nfs-shared
+
+# provisioner_name: k8s-sigs.io/nfs-subdir-external-provisioner
+
+nfs_server_ip: 10.0.0.2
+nfs_server_path: /kube-storage

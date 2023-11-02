@@ -1,0 +1,54 @@
+---
+- name: Scan the Volume Groupd of attached disks
+  ansible.builtin.command: vgscan --mknodes --cache
+  become: true
+  when: inventory_hostname == item
+  with_items: "{{ groups[group_name_worker | default('worker')] }}"
+  register: vgscan_result
+
+- name: Activate Longhorn volume group
+  ansible.builtin.command: vgchange -ay
+  become: true
+  when: inventory_hostname == item
+  with_items: "{{ groups[group_name_worker | default('worker')] }}"
+  register: vgchange_result
+
+- name: Create Longhorn mount point
+  ansible.builtin.file:
+    state: directory
+    path: /var/lib/longhorn
+    mode: '0755'
+
+- name: Get the UUID of all block devices
+  ansible.builtin.command: blkid
+  become: true
+  register: blkid
+  changed_when: false
+
+- name: Get the UUID of the Longorn LVM volume
+  set_fact:
+    uuid: "{{ blkid.stdout | regex_search('^\\S+longhorn: UUID=\"(.*?)\\\"', '\\1', multiline=True) | first }}"
+
+- name: Check if Longhorn mount already in fstab
+  ansible.builtin.lineinfile:
+    dest: /etc/fstab
+    regexp: ".*longhorn.*"
+    line: "Longhorn volume mount"
+    state: present
+  check_mode: yes
+  become: true
+  register: presence
+  failed_when: presence.changed
+  ignore_errors: true
+
+- name: Task to run if Longhorn mount DOES NOT EXIST in presence
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    line: "UUID={{ uuid }} /var/lib/longhorn ext4 rw,discard,errors=remount-ro,x-systemd.growfs,nofail 0 2"
+    insertbefore: EOF
+  when: presence.msg == 'line added'
+  register: fstab
+
+- set_fact:
+    reboot_forced: true
+  when: fstab.changed

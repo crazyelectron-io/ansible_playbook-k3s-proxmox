@@ -1,0 +1,24 @@
+---
+- name: Create Lets Encrypt Certificate
+  ansible.builtin.include_tasks:
+    file: radarr-certificate.yaml
+
+- name: Create Traefik Ingress Route for radarr
+  ansible.builtin.include_tasks:
+    file: radarr-ingressroute.yaml
+
+- name: Create radarr Service
+  ansible.builtin.include_tasks:
+    file: radarr-service.yaml
+
+- name: Create radarr Persistent Volumes
+  ansible.builtin.include_tasks:
+    file: radarr-pv.yaml
+
+- name: Create radarr Persistent Volume Claims
+  ansible.builtin.include_tasks:
+    file: radarr-pvc.yaml
+
+- name: Create radarr Deployment
+  ansible.builtin.include_tasks:
+    file: radarr-deployment.yaml

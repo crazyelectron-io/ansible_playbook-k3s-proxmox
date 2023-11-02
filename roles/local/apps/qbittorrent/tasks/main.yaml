@@ -1,0 +1,33 @@
+---
+- name: Create qBittorrent namespace
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ qbittorrent_namespace }}"
+
+- name: Create Lets Encrypt Certificate
+  ansible.builtin.include_tasks:
+    file: qbittorrent-certificate.yaml
+
+- name: Create Traefik Ingress Route for qBittorrent
+  ansible.builtin.include_tasks:
+    file: qbittorrent-ingressroute.yaml
+
+- name: Create qBittorrent Service
+  ansible.builtin.include_tasks:
+    file: qbittorrent-service.yaml
+
+- name: Create qBittorrent Persistent Volumes
+  ansible.builtin.include_tasks:
+    file: qbittorrent-pv.yaml
+
+- name: Create qBittorrent Persistent Volume Claims
+  ansible.builtin.include_tasks:
+    file: qbittorrent-pvc.yaml
+
+- name: Create qBittorrent Deployment
+  ansible.builtin.include_tasks:
+    file: qbittorrent-deployment.yaml

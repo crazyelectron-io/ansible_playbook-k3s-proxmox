@@ -1,0 +1,16 @@
+# file: roles/requirements.yaml
+# synopsis: run 'ansible-galaxy install -r roles/requirements.yaml --force'
+---
+roles:
+  - name: debian-base
+    src: git@github.com:crazyelectron-io/ansible-role-debian_base.git
+    version: main
+    scm: git
+  - name: k3s-prereq
+    src: git@github.com:crazyelectron-io/ansible-role-k3s_prereq.git
+    version: main
+    scm: git
+  - name: k3s-reset
+    src: git@github.com:crazyelectron-io/ansible-role-k3s_reset.git
+    version: main
+    scm: git

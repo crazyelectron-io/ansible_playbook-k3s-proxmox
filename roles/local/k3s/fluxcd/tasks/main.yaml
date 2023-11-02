@@ -1,0 +1,42 @@
+---
+- name: Install Flux on k3s master and bootstrap it
+  block:
+    - name: Check if Flux already installed in {{ app_install_dir }}
+      stat:
+        path: '{{ app_install_dir }}/{{ app_install_bin }}'
+      register: app_binary
+
+    - when: not app_binary.stat.exists
+      block:
+        - name: Download the archive file
+          get_url:
+            url: '{{ app_url }}'
+            dest: /tmp/{{ app_archive }}
+            mode: 0644
+
+        - name: mkdir {{ app_install_dir }}
+          become: true
+          become_user: root
+          file:
+            path: '{{ app_install_dir }}'
+            state: directory
+            mode: 0755
+
+        - name: Unarchive /tmp/{{ app_archive }}
+          become: true
+          unarchive:
+            remote_src: true
+            src: /tmp/{{ app_archive }}
+            dest: '{{ app_install_dir }}'
+
+      always:
+        - name: Remove /tmp/{{ app_archive }}
+          become: true
+          become_user: root
+          file:
+            path: /tmp/{{ app_archive }}
+            state: absent
+
+    - ansible.builtin.include_tasks: bootstrap-flux.yaml
+
+  when: inventory_hostname == hostvars[groups[group_name_master | default('master')][0]]['ansible_hostname']

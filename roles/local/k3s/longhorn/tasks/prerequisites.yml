@@ -1,0 +1,29 @@
+---
+- name: Check if Helm command is installed locally
+  ansible.builtin.shell: hash helm  # noqa command-instead-of-shell
+  changed_when: false
+  args:
+    executable: "/bin/bash"
+
+- name: Ensure Longhorn namespace exists
+  k8s:
+    name: "{{ longhorn_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Check if Helm repository is installed
+  kubernetes.core.helm_info:
+    name: "{{ longhorn_repo_name }}"
+    release_namespace: "{{ longhorn_namespace }}"
+    release_state:
+      - all
+  register: longhorn__helm_repo_installed
+
+- name: Add Helm repository If not yet installed
+  kubernetes.core.helm_repository:
+    name: "{{ longhorn_repo_name }}"
+    repo_url: "{{ longhorn_chart_url }}"
+  when:
+    - longhorn__helm_repo_installed.status is not defined
+  register: longhorn__helm_add_repo

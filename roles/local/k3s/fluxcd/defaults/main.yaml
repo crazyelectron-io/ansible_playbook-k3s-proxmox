@@ -1,0 +1,10 @@
+---
+# defaults file for the flux app
+app_ver: 2.1.2
+app_os: linux
+app_arch: amd64
+
+app_install_dir: /usr/local/bin
+app_url: "https://github.com/fluxcd/flux2/releases/download/v{{ app_ver }}/flux_{{ app_ver }}_{{ app_os }}_{{ app_arch }}.tar.gz"
+app_archive: flux2.tar.gz
+app_install_bin: flux

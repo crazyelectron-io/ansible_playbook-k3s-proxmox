@@ -1,0 +1,8 @@
+---
+# Namespace to deploy bazarr into
+bazarr_namespace: default
+# External URL to access bazarr through Traefik
+bazarr_domain: "subs.{{ main_domain }}"
+# bazarr container info
+bazarr_image_registry: lscr.io/linuxserver
+bazarr_image_tag: 1.3.1

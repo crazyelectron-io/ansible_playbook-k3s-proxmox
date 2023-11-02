@@ -1,0 +1,8 @@
+---
+# Namespace to deploy sonarr into
+sonarr_namespace: default
+# External URL to access sonarr through Traefik
+sonarr_domain: "shows.{{ main_domain }}"
+# sonarr container info
+sonarr_image_registry: lscr.io/linuxserver
+sonarr_image_tag: 3.0.10

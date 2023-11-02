@@ -1,0 +1,8 @@
+#Ignore everything in roles dir...
+/*
+# ... but current file...
+!.gitignore
+# ... external role requirement file
+!requirements.yml
+# ... and configured custom/local roles
+!local*/

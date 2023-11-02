@@ -1,0 +1,15 @@
+# file: roles/local/k3s/longhorn/tasks/longhorn-label.yaml
+# synopsis: label the nodes to ensure Longhorn volumes are only placed on disks of the storage nodes:
+#           https://longhorn.io/kb/tip-only-use-storage-on-a-set-of-nodes/#tell-longhorn-to-create-a-default-disk-on-a-specific-set-of-nodes
+---
+- name: Apply Longhorn default disk labels to worker nodes
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Node
+      metadata:
+        name: "{{ item }}"
+        labels:
+          node.longhorn.io/create-default-disk: "true"
+  with_items: "{{ hostvars[inventory_hostname]['groups']['worker'] }}"

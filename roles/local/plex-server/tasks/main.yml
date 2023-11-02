@@ -1,0 +1,232 @@
+---
+- name: Create Plex Certificate
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: plex-cert-{{ letsencrypt_environment }}
+        namespace: default
+      spec:
+        secretName: plex-{{ letsencrypt_environment }}-tls
+        issuerRef:
+          name: letsencrypt-{{ letsencrypt_environment }}
+          kind: ClusterIssuer
+        commonName: "plex.{{ main_domain }}"
+        dnsNames:
+          - "plex.{{ main_domain }}"
+
+- name: Create Plex Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: plex-tcp
+        namespace: default
+        annotations:
+          metallb.universe.tf/allow-shared-ip: plex  # annotation name to combine the Service IP, make sure it's same name as in the service UDP yaml
+      spec:
+        ports:
+        - port: 32400               # < port to open on the outside on the server
+          targetPort: 32400         # < targetport. port on the pod to passthrough
+          name: pms-web             # < reference name for the port in the deployment yaml
+          protocol: TCP
+        - port: 3005
+          targetPort: 3005
+          name: plex-companion
+        - port: 8324
+          name: plex-roku
+          targetPort: 8324
+          protocol: TCP
+        - port: 32469
+          targetPort: 32469
+          name: dlna-tcp
+          protocol: TCP
+        type: LoadBalancer
+        loadBalancerIP: 10.100.3.103  # IP to access your plexserver. Should be one from the MetalLB range and the same as the UDP yaml
+        selector:
+          app: plex
+
+- name: Create Plex Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: plex-udp
+        namespace: default
+        annotations:
+          metallb.universe.tf/allow-shared-ip: plex # annotation name to combine the Service IP, make sure it's same name as in the service UDP yaml
+      spec:
+        selector:
+          app: plex
+        ports:
+        - port: 1900                # port to open on the outside on the server
+          targetPort: 1900          # targetport. port on the pod to passthrough
+          name: dlna-udp            # reference name for the port in the deployment yaml
+          protocol: UDP
+        - port: 5353
+          targetPort: 5353
+          name: discovery-udp
+          protocol: UDP
+        - port: 32410
+          targetPort: 32410
+          name: gdm-32410
+          protocol: UDP
+        - port: 32412
+          targetPort: 32412
+          name: gdm-32412
+          protocol: UDP
+        - port: 32413
+          targetPort: 32413
+          name: gdm-32413
+          protocol: UDP
+        - port: 32414
+          targetPort: 32414
+          name: gdm-32414
+          protocol: UDP
+        type: LoadBalancer
+        loadBalancerIP: 10.100.3.103  # IP to access your plexserver. Should be one from the MetalLB range and the same as the TCP yaml
+
+- name: Create IngressRoute for Plex
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: plex-external
+        namespace: default
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: "Host(`plex.{{ main_domain }}`)"
+            kind: Rule
+            services:
+              - name: plex-tcp
+                port: pms-web
+        tls:
+          secretName: "plex-{{ letsencrypt_environment }}-tls"
+
+- name: Create Plex Server configuration PVC (Longhorn dynamically provisioned)
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: plex-config-pvc
+        namespace: default
+      spec:
+        storageClassName: longhorn
+        persistentVolumeReclaimPolicy: Retain
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+
+- name: Create Plex StatefulSet
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: StatefulSet
+      apiVersion: apps/v1
+      metadata:
+        name: plex
+        labels:
+          app: plex
+        namespace: default
+      spec:
+        serviceName: "plex-app"
+        selector:
+          matchLabels:
+            app: plex
+        replicas: 1
+        revisionHistoryLimit: 0
+        template:
+          metadata:
+            labels:
+              app: plex
+          spec:
+            # $patch: delete
+            terminationGracePeriodSeconds: 0
+            volumes:
+            - name: plex-config
+              persistentVolumeClaim:
+                claimName: plex-config-pvc
+            - name: plex-downloads
+              nfs:
+                server: "{{ nas_address }}"
+                path: "{{ nfs_media_share }}"
+            containers:
+            - name: plex
+              image: ghcr.io/linuxserver/plex
+              imagePullPolicy: IfNotPresent
+              resources:
+                limits:
+                  memory: "8192Mi"
+                requests:
+                  memory: "2048Mi"
+              stdin: true
+              tty: true
+              devices:
+                - /dev/dri:/dev/dri
+              ports:
+                # Required network portnumber. See https://hub.docker.com/r/linuxserver/plex
+                - containerPort: 32400
+                  name: pms-web
+                  protocol: TCP
+                - containerPort: 32469
+                  name: dlna-tcp
+                  protocol: TCP
+                - containerPort: 1900
+                  name: dlna-udp
+                  protocol: UDP
+                - containerPort: 3005
+                  name: plex-companion
+                  protocol: TCP
+                - containerPort: 5353
+                  name: discovery-udp
+                  protocol: UDP
+                - containerPort: 8324
+                  name: plex-roku
+                  protocol: TCP
+                - containerPort: 32410
+                  name: gdm-32410
+                  protocol: UDP
+                - containerPort: 32412
+                  name: gdm-32412
+                  protocol: UDP
+                - containerPort: 32413
+                  name: gdm-32413
+                  protocol: UDP
+                - containerPort: 32414
+                  name: gdm-32414
+                  protocol: UDP
+              env:
+              # environment variables. See https://hub.docker.com/r/linuxserver/plex
+              - name: PLEX_CLAIM
+                value: claim-w4bUeqaJVVjZxNpVCfkw
+              - name: PUID
+                value: "\x31\x30\x30\x31"
+              - name: PGID
+                value: "\x31\x30\x30\x31"
+              - name: VERSION
+                value: latest
+              - name: TZ
+                value: Europe/Amsterdam
+              - name: ALLOWED_NETWORKS
+                value: "10.0.0.0/8,192.168.0.0/16,172.16.0.0/16"
+              volumeMounts:
+              - name: plex-config
+                mountPath: /config
+              - name: plex-downloads
+                mountPath: /downloads

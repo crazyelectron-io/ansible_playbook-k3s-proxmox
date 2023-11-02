@@ -1,0 +1,110 @@
+# file: ./inventory/prod/hosts.yaml
+# synopsis: configuration used by Ansible.
+---
+all:
+  children:
+    # The node IP addresses are predefined as reserved IPs (based on MAC address) in the DHCP server.
+    kube:
+      children:
+        master:
+          hosts:
+            k3s-prod-m01:
+              host_address: 10.100.3.21
+              node: prox01
+              cloneid: 8010
+              vmid: 2001
+              memory: 24576
+              disk_size: 107374182400
+              cores: 4
+              mac: '02:be:10:64:03:21'
+            k3s-prod-m02:
+              host_addres: 10.100.3.22
+              node: prox02
+              cloneid: 8011
+              vmid: 2002
+              memory: 24576
+              disk_size: 107374182400
+              cores: 4
+              mac: '02:be:10:64:03:22'
+            k3s-prod-m03:
+              host_address: 10.100.3.23
+              node: prox03
+              cloneid: 8012
+              vmid: 2003
+              memory: 24576
+              disk_size: 107374182400
+              cores: 4
+              mac: '02:be:10:64:03:23'
+        worker:
+          hosts:
+            k3s-prod-w01:
+              host_address: 10.100.3.24
+              node: prox01
+              cloneid: 8010
+              vmid: 2004
+              memory: 65536
+              disk_size: 107374182400
+              cores: 8
+              mac: '02:be:10:64:03:24'
+              disk1: ata-Samsung_SSD_870_QVO_8TB_S5SSNF0RC00820E
+              disk2: ata-Samsung_SSD_870_QVO_8TB_S5SSNF0RC00828H
+              disk3: ata-Samsung_SSD_870_QVO_8TB_S5SSNF0T301077P
+              disk4: ata-Samsung_SSD_870_QVO_8TB_S5SSNJ0R401327R
+            k3s-prod-w02:
+              host_address: 10.100.3.25
+              node: prox02
+              cloneid: 8011
+              vmid: 2005
+              memory: 65536
+              disk_size: 107374182400
+              cores: 8
+              mac:  '02:be:10:64:03:25'
+              disk1: ata-Samsung_SSD_870_QVO_8TB_S5SSNF0T402544J
+              disk2: ata-Samsung_SSD_870_QVO_8TB_S5SSNF0T405646X
+              disk3: ata-Samsung_SSD_870_QVO_8TB_S5SSNF0T405649P
+              disk4: ata-Samsung_SSD_870_QVO_8TB_S5SSNF0T405651D
+            k3s-prod-w03:
+              host_address: 10.100.3.26
+              node: prox03
+              cloneid: 8012
+              vmid: 2006
+              memory: 65536
+              disk_size: 107374182400
+              cores: 8
+              mac:  '02:be:10:64:03:26'
+              disk1: ata-Samsung_SSD_870_QVO_8TB_S5SSNJ0T102126P
+              disk2: ata-Samsung_SSD_870_QVO_8TB_S5SSNJ0T102173N
+              disk3: ata-Samsung_SSD_870_QVO_8TB_S5SSNF0T301086X
+              disk4: ata-Samsung_SSD_870_QVO_8TB_S5SSNF0T405643E
+    pve:
+      children:
+        proxmox:
+          hosts:
+            prox01:
+              host_address: 10.0.0.11
+              mgmt_nic: eno1
+              vm_nic1: enp3s0
+              vm_nic2: enp4s0
+              mgmt_ip: "10.0.0.11/24"
+              mgmt_gw: "10.0.0.1"
+              bridge_ip: "10.100.3.11/22"
+            prox02:
+              host_address: 10.0.0.12
+              mgmt_nic: eno1
+              vm_nic1: enp1s0f0
+              vm_nic2: enp1s0f1
+              mgmt_gw: "10.0.0.1"
+              mgmt_ip: "10.0.0.12/24"
+              bridge_ip: "10.100.3.12/22"
+            prox03:
+              host_address: 10.0.0.13
+              mgmt_nic: enp4s0
+              vm_nic1: eno1
+              vm_nic2: eno2
+              mgmt_gw: "10.0.0.1"
+              mgmt_ip: "10.0.0.13/24"
+              bridge_ip: "10.100.3.13/22"
+        pvemain:
+          hosts:
+            prox01:
+              host_adress: 10.0.0.11

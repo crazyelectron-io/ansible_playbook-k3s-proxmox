@@ -1,0 +1,17 @@
+---
+- name: Create Service for radarr
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: radarr-svc
+        namespace: "{{ radarr_namespace }}"
+      spec:
+        ports:
+          - name: http
+            port: 80
+            targetPort: 7878
+        selector:
+          app: radarr

@@ -1,0 +1,57 @@
+---
+- name: Include prerequisites
+  include_tasks: "tasks/prerequisites.yml"
+
+- name: Render values
+  block:
+
+    - name: Create temporary file for Helm values
+      ansible.builtin.tempfile:
+        state: file
+        suffix: traefik_values
+      changed_when: false
+      register: traefik__values_tmp_file
+
+    - name: Select values file for Helm template
+      ansible.builtin.template:
+        src: "{{ lookup('first_found', params) }}"
+        dest: "{{ traefik__values_tmp_file.path }}"
+        mode: 0600
+
+      changed_when: false
+      vars:
+        params:
+          files:
+            - values.yml.j2
+            - values.yaml.j2
+            - traefik_values_default.yml.j2
+          paths:
+            - "{{ traefik_chart_values_directory }}"
+            - templates
+
+    - name: Install chart
+      kubernetes.core.helm:
+        name: "{{ traefik_release_name }}"
+        chart_ref: "{{ traefik_chart_name }}"
+        chart_version: "{{ traefik_chart_version }}"
+        release_namespace: "{{ traefik_namespace }}"
+        create_namespace: false
+        update_repo_cache: true
+        values_files:
+          - "{{ traefik__values_tmp_file.path }}"
+      register: traefik__helm_install_chart
+
+  always:
+    - name: Delete temporary file for Helm values
+      ansible.builtin.file:
+        path: "{{ traefik__values_tmp_file.path }}"
+        state: absent
+      changed_when: false
+      when:
+        - traefik__values_tmp_file.path is defined
+
+- ansible.builtin.include_tasks: default-headers.yaml
+
+- ansible.builtin.include_tasks: middleware.yaml
+
+- ansible.builtin.include_tasks: secret-dashboard.yaml

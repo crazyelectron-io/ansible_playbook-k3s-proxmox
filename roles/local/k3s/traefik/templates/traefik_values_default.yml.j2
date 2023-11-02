@@ -1,0 +1,191 @@
+# All possible Helm chart values here can be found at:
+# https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml
+
+image:
+  name: traefik
+  tag: "{{ traefik_image_tag }}"
+  pullPolicy: IfNotPresent
+
+deployment:
+  enabled: true
+  # Number of pods to deploy
+  replicas: 3
+  annotations: {}
+  podAnnotations: {}
+  additionalContainers: []
+  initContainers: []
+
+ingressRoute:
+  dashboard:
+    # Create a K8s ingressRoute for the dashboard instead
+    enabled: false
+
+providers:
+  kubernetesCRD:
+    # Install the CRD's
+    enabled: true
+    ingressClass: traefik-external
+  kubernetesIngress:
+    enabled: true
+    publishedService:
+      enabled: false
+
+# Logs
+# https://docs.traefik.io/observability/logs/
+logs:
+  # Traefik logs concern everything that happens to Traefik itself (startup, configuration, events, shutdown, and so on).
+  general:
+    # By default, the logs use a text format (common), but you can
+    # also ask for the json format in the format option
+    # format: json
+    # By default, the level is set to ERROR. Alternative logging levels are DEBUG, PANIC, FATAL, ERROR, WARN, and INFO.
+    level: INFO
+  access:
+    # To enable access logs
+    enabled: true
+    # By default, logs are written using the Common Log Format (CLF).
+    # To write logs in JSON, use json in the format option.
+    # If the given format is unsupported, the default (CLF) is used instead.
+    # format: json
+    # To write the logs in an asynchronous fashion, specify a bufferingSize option.
+    # This option represents the number of log lines Traefik will keep in memory before writing
+    # them to the selected output. In some cases, this option can greatly help performances.
+    # bufferingSize: 100
+
+metrics:
+  prometheus:
+    entryPoint: metrics
+    ##
+    ##  enable optional CRDs for Prometheus Operator
+    ##
+    {# serviceMonitor:
+      additionalLabels:
+        foo: bar
+      namespace: "another-namespace"
+      namespaceSelector: {}
+      metricRelabelings: []
+        - sourceLabels: [__name__]
+          separator: ;
+          regex: ^fluentd_output_status_buffer_(oldest|newest)_.+
+          replacement: $1
+          action: drop
+      relabelings: []
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          separator: ;
+          regex: ^(.*)$
+          targetLabel: nodename
+          replacement: $1
+          action: replace
+      jobLabel: traefik
+      scrapeInterval: 30s
+      scrapeTimeout: 5s
+      honorLabels: true
+    prometheusRule:
+      additionalLabels: {}
+      namespace: "another-namespace"
+      rules:
+        - alert: TraefikDown
+          expr: up{job="traefik"} == 0
+          for: 5m
+          labels:
+            context: traefik
+            severity: warning
+          annotations:
+            summary: "Traefik Down"
+            description: "{{ $labels.pod }} on {{ $labels.nodename }} is down" #}
+
+globalArguments:
+  - "--global.checknewversion=false"
+  - "--global.sendanonymoususage=false"
+
+# Configure Traefik static configuration
+# These arguments are passed to Traefik's binary. For all options see:
+# All available options available on https://docs.traefik.io/reference/static-configuration/cli/
+## Use curly braces to pass values: `helm install --set="additionalArguments={--providers.kubernetesingress.ingressclass=traefik-internal,--log.level=DEBUG}"`
+additionalArguments:
+  - "--serversTransport.insecureSkipVerify=true"
+  - "--log.level=DEBUG"
+
+# Configure ports
+ports:
+  # The name of this one can't be changed as it is used for the readiness and
+  # liveness probes, but you can adjust its config to your liking
+  traefik:
+    port: 9000
+  web:
+    redirectTo: websecure
+  websecure:
+    tls:
+      enabled: true
+    middlewares: []
+  metrics:
+    # When using hostNetwork, use another port to avoid conflict with node exporter:
+    # https://github.com/prometheus/prometheus/wiki/Default-port-allocations
+    port: 9100
+    # You may not want to expose the metrics port on production deployments.
+    # If you want to access it from outside of your cluster,
+    # use `kubectl port-forward` or create a secure ingress
+    expose: false
+    # The exposed port for this service
+    exposedPort: 9100
+    # The port protocol (TCP/UDP)
+    protocol: TCP
+
+# As Traefik web/websecure ports are exposed by "hostPort" a service isn't
+# needed.
+service:
+  enabled: true
+  type: LoadBalancer
+  annotations: {}
+  labels: {}
+  spec:
+    loadBalancerIP: "{{ traefik_cluster_ip }}"
+  loadBalancerSourceRanges: []
+  externalIPs: []
+
+# Enable persistence using Persistent Volume Claims
+# ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+# After the pvc has been mounted, add the configs into traefik by using the `additionalArguments` list below, eg:
+# additionalArguments:
+# - "--certificatesresolvers.le.acme.storage=/data/acme.json"
+# It will persist TLS certificates.
+{# persistence:
+  enabled: true
+  name: data
+  accessMode: ReadWriteOnce
+  size: 128Mi
+  path: /data
+  annotations: {} #}
+
+# Whether Role Based Access Control objects like roles and rolebindings should be created
+rbac:
+  # If set to false, installs ClusterRole and ClusterRoleBinding so Traefik can be used across namespaces.
+  # If set to true, installs Role and RoleBinding. Providers will only watch target namespace.
+  enabled: true
+
+# CPU and RAM resource limits. These settings should also be set to
+# reasonable values in case of a memory leak e.g.
+resources:
+  requests:
+    cpu: "100m"
+    memory: "80Mi"
+  limits:
+    cpu: "300m"
+    memory: "180Mi"
+
+# These security settings are basically best practice to limit attack surface
+# as good as possible.
+# The attack surface can further limited with "seccomp" which is stable since
+# Kubernetes v1.19 and allows to limit system calls to a bare minimum. See:
+# https://kubernetes.io/docs/tutorials/clusters/seccomp/"
+securityContext:
+  capabilities:
+    drop: [ALL]
+  readOnlyRootFilesystem: true
+  runAsGroup: 65532
+  runAsNonRoot: true
+  runAsUser: 65532
+
+# All processes of the container are also part of this supplementary group ID.
+podSecurityContext:
+  fsGroup: 65532

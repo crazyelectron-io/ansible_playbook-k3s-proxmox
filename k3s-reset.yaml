@@ -1,0 +1,10 @@
+# file: k3s-reset.yml
+# synopsis: reset en remove the cluster software and configuration
+---
+- hosts: kube
+  gather_facts: true
+  become: true
+  roles:
+    - k3s-reset
+
+# TODO: remove kube config file from local system

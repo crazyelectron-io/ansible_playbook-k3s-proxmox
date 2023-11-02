@@ -1,0 +1,52 @@
+# file: roles/k3s/fluxcd/tasks/bootstrap-flux.yaml
+# synopis: bootstrap flux cd
+# notes: make sure the environt variable SOPS_AGE_KEY is set
+---
+- name: Flux check
+  ansible.builtin.shell: |
+    flux check
+  register: flux_check
+  become: true
+  become_user: "{{ shell_user }}"
+  ignore_errors: true
+  changed_when: false
+  tags: flux
+
+- name: Bootstrap flux
+  ansible.builtin.shell: |
+    echo {{ github_token }} | flux bootstrap github --owner={{ github_user }} --personal --private=false --repository={{ flux_repo }} --branch=main --path=./{{ flux_root }} --components-extra=image-reflector-controller,image-automation-controller
+  register: flux_bootstrap
+  tags: flux
+  when: flux_check.rc != 0
+
+# The age key file is only on our local machine
+- name: Get the location of the age key file
+  delegate_to: localhost
+  become: false
+  set_fact:
+    key_file: "{{ lookup('ansible.builtin.env', 'SOPS_AGE_KEY_FILE') }}"
+  tags: flux
+
+- name: Extract the age key file content
+  set_fact:
+    content: "{{ lookup('file', key_file) }}"
+  tags: flux
+
+- name: Get the age private key (3rd line) from the key file
+  become: false
+  delegate_to: localhost
+  set_fact:
+    age_secret: "{{ content.split('\n').2|trim }}"
+  tags: flux
+
+- name: Create SOPS Secret (age)
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: sops-age
+        namespace: flux-system
+      data:
+        age.agekey: "{{ age_secret | b64encode }}"

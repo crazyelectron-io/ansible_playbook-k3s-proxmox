@@ -1,0 +1,20 @@
+# file: deploy-hosts.yml
+# synopsis: deploy the vm's on proxmox
+---
+# Configutre the proxmox hosts
+- hosts: proxmox
+  any_errors_fatal: true
+  vars:
+    install_in_vm: false
+  roles:
+    - local/proxmox/pve-host-base
+    - linux-sensors
+
+# Deploy the k3s node VMs
+- hosts: proxmox
+  gather_facts: false
+  any_errors_fatal: true
+  vars:
+    install_in_vm: true
+  roles:
+    - local/proxmox/pve-deploy

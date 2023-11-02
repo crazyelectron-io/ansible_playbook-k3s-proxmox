@@ -1,0 +1,8 @@
+---
+# Namespace to deploy SABnzbd into
+sabnzbd_namespace: default
+# External URL to access SABnzbd through Traefik
+sabnzbd_domain: "nzb.{{ main_domain }}"
+# SABnzbd container info
+sabnzbd_image_registry: lscr.io/linuxserver
+sabnzbd_image_tag: 4.1.0

@@ -1,0 +1,55 @@
+# file:
+# synopsis:
+---
+- name: Create Bazarr Persistent Volume Claim for configuration files
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: bazarr-config-pvc
+        namespace: "{{ bazarr_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
+
+- name: Create bazarr Persistent Volume Claim for TV SHows NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: bazarr-tv-pvc
+        namespace: "{{ bazarr_namespace }}"
+      spec:
+        volumeName: bazarr-tv-pv
+        storageClassName: ""
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Mi # Dummy value
+
+- name: Create bazarr Persistent Volume Claim for Movies NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: bazarr-movies-pvc
+        namespace: "{{ bazarr_namespace }}"
+      spec:
+        volumeName: bazarr-movies-pv
+        storageClassName: ""
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Mi # Dummy value

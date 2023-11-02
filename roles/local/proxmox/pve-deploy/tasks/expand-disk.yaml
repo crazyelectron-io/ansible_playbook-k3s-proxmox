@@ -1,0 +1,13 @@
+---
+- name: Resize k3s nodes disk if needed
+  community.general.proxmox_disk:
+    api_user: "{{ pve_api_user }}"
+    api_password: "{{ pve_api_password }}"
+    api_host: "{{ pve_api_host }}"
+    vmid: "{{ hostvars[item].vmid | int }}"
+    disk: scsi0
+    state: resized
+    size: "{{ (hostvars[item].disk_size / 1073741824) | int | string }}G"
+  register: resize_disk
+  when: (inventory_hostname == "prox01") and (vminfo[item].maxdisk < hostvars[item].disk_size)
+  with_items: "{{ groups['kube'] }}"

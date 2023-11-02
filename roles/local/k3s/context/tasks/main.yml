@@ -1,0 +1,104 @@
+# file: roles/local/k3s/context/tasks/main.yaml
+# synopsis: setup context for newly deployed clusters
+# note: source ~/.zshrc to activate the new value of environment variable KUBECONFIG
+---
+- name: Create context directory if it doesn't exist
+  ansible.builtin.file:
+    path: "{{ kube_root }}/custom-contexts/k3s-{{ k3s_environment }}"
+    state: directory
+    mode: '0775'
+
+- name: Get the location of the kubectl config file
+  delegate_to: localhost
+  become: false
+  set_fact:
+    config_file: "{{ kube_root }}/config"
+
+- name: Extract the kubectl config file content
+  set_fact:
+    content: "{{ lookup('file', config_file) }}"
+
+- name: Get the cluster certificate from the kubectl config file
+  become: false
+  delegate_to: localhost
+  set_fact:
+    cluster_cert: "{{ content | regex_search('^\\s+certificate-authority-data\\b.*', multiline=True) | split(' ') | last | b64decode }}"
+
+- name: Get the client certificate from the kubectl config file
+  become: false
+  delegate_to: localhost
+  set_fact:
+    client_cert: "{{ content | regex_search('^\\s+client-certificate-data\\b.*', multiline=True) | split(' ') | last | b64decode }}"
+
+- name: Get the client key from the kubectl config file
+  become: false
+  delegate_to: localhost
+  set_fact:
+    client_key: "{{ content | regex_search('^\\s+client-key-data\\b.*', multiline=True) | split(' ') | last | b64decode }}"
+
+- name: Create the cluster certificate file locally
+  become: false
+  delegate_to: localhost
+  ansible.builtin.copy:
+    dest: "{{ kube_root }}/custom-contexts/k3s-{{ k3s_environment }}/cluster.crt"
+    force: true
+    content: |
+      {{ cluster_cert }}
+
+- name: Create the client certificate file locally
+  become: false
+  delegate_to: localhost
+  ansible.builtin.copy:
+    dest: "{{ kube_root }}/custom-contexts/k3s-{{ k3s_environment }}/client.crt"
+    force: true
+    content: |
+      {{ client_cert }}
+
+- name: Create the client key file locally
+  become: false
+  delegate_to: localhost
+  ansible.builtin.copy:
+    dest: "{{ kube_root }}/custom-contexts/k3s-{{ k3s_environment }}/client.key"
+    force: true
+    content: |
+      {{ client_key }}
+
+- name: Add context yaml config for cluster
+  ansible.builtin.template:
+    src: context.yaml.j2
+    dest: "{{ kube_root }}/custom-contexts/k3s-{{ k3s_environment }}/k3s-{{ k3s_environment }}.yaml"
+
+- set_fact:
+    context_path:  "{{ kube_root }}/custom-contexts/k3s-{{ k3s_environment }}/k3s-{{ k3s_environment }}.yaml"
+
+- name: Add context to KUBECONFIG
+  block:
+
+    - name: Build kubeconfig path ig not empty
+      when: lookup('env', 'KUBECONFIG') | length > 1
+      set_fact:
+        new_path: "{{ lookup('env','KUBECONFIG') }}:{{ context_path }}"
+    - name: Build kubeconfig path if empty
+      when: lookup('env', 'KUBECONFIG') | length < 2
+      set_fact:
+        new_path: "{{ context_path }}"
+
+    - name: Add context to KUBECONFIG in ~/.zshrc
+      ansible.builtin.lineinfile:
+        dest: "{{ shell_profile }}"
+        regexp: '^export\s+KUBECONFIG\s*=(.*)$'
+        line: "export {{ item.var }}={{ item.value }}"
+      loop:
+        - var: KUBECONFIG
+          value: "{{ new_path }}"
+
+  when: "not context_path in lookup('env', 'KUBECONFIG')"
+
+- name: Setup default context for kubectl
+  delegate_to: localhost
+  become: false
+  environment:
+    KUBECONFIG: "{{ context_path }}"
+  ansible.builtin.shell: |
+    kubectl config use-context k3s-{{ k3s_environment }}
+  changed_when: false

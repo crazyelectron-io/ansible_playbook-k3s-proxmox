@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Config
+preferences: {}
+clusters:
+  - cluster:
+      certificate-authority: "{{ kube_root }}/custom-contexts/k3s-{{ k3s_environment }}/cluster.crt"
+      server: "https://{{ apiserver_endpoint }}:6443"
+    name: "k3s-{{ k3s_environment }}"
+contexts:
+  - context:
+      cluster: "k3s-{{ k3s_environment }}"
+      user: "k3s-{{ k3s_environment }}-user"
+    name: "k3s-{{ k3s_environment }}"
+users:
+- name: "k3s-{{ k3s_environment }}-user"
+  user:
+    client-certificate: "{{ kube_root }}/custom-contexts/k3s-{{ k3s_environment }}/client.crt"
+    client-key: "{{ kube_root }}/custom-contexts/k3s-{{ k3s_environment }}/client.key"

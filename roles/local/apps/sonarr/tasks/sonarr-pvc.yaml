@@ -1,0 +1,55 @@
+# file:
+# synopsis:
+---
+- name: Create Sonarr Persistent Volume Claim for configuration files
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: sonarr-config-pvc
+        namespace: "{{ sonarr_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+- name: Create Sonarr Persistent Volume Claim for TV SHows NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: sonarr-tv-pvc
+        namespace: "{{ sonarr_namespace }}"
+      spec:
+        volumeName: sonarr-tv-pv
+        storageClassName: ""
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Mi # Dummy value
+
+- name: Create Sonarr Persistent Volume Claim for completed downloads NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: sonarr-downloads-pvc
+        namespace: "{{ sonarr_namespace }}"
+      spec:
+        volumeName: sonarr-downloads-pv
+        storageClassName: ""
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Mi # Dummy value

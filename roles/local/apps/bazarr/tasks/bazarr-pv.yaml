@@ -1,0 +1,40 @@
+---
+- name: Create Bazarr PVersistent Volume for TVShows NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: bazarr-tv-pv
+      spec:
+        persistentVolumeReclaimPolicy: Retain
+        capacity:
+          storage: 10Mi # Dummy value
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          path: /media/tvshows
+          server: 10.0.0.2
+        mountOptions:
+          - nolock
+
+- name: Create Bazarr Persistent Volume for Movies NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: bazarr-movies-pv
+      spec:
+        persistentVolumeReclaimPolicy: Retain
+        capacity:
+          storage: 10Mi # Dummy value
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          path: /media/movies
+          server: 10.0.0.2
+        mountOptions:
+          - nolock

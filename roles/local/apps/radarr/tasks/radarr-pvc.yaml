@@ -1,0 +1,55 @@
+# file:
+# synopsis:
+---
+- name: Create radarr Persistent Volume Claim for configuration files
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: radarr-config-pvc
+        namespace: "{{ radarr_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+- name: Create radarr Persistent Volume Claim for TV SHows NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: radarr-movies-pvc
+        namespace: "{{ radarr_namespace }}"
+      spec:
+        volumeName: radarr-movies-pv
+        storageClassName: ""
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Mi # Dummy value
+
+- name: Create radarr Persistent Volume Claim for completed downloads NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: radarr-downloads-pvc
+        namespace: "{{ radarr_namespace }}"
+      spec:
+        volumeName: radarr-downloads-pv
+        storageClassName: ""
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Mi # Dummy value

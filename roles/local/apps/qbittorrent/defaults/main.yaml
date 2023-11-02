@@ -1,0 +1,8 @@
+---
+# Namespace to deploy qBittorrent into
+qbittorrent_namespace: default
+# External URL to access qBittorrent through Traefik
+qbittorrent_domain: "torrent.{{ main_domain }}"
+# qBittorrent container info
+qbittorrent_image_registry: lscr.io/linuxserver
+qbittorrent_image_tag: 4.6.0

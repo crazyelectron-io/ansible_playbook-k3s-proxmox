@@ -1,0 +1,44 @@
+---
+- name: Create Service for qBittorrent WebUI
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: qbittorrent-svc
+        namespace: "{{ qbittorrent_namespace }}"
+      spec:
+        ports:
+          - name: qbittorrent-web
+            port: 80
+            targetPort: 8080
+            protocol: TCP
+        selector:
+          app: qbittorrent
+
+# - name: Create Service for qBittorrent TCP/UDP connection
+#   kubernetes.core.k8s:
+#     state: present
+#     definition:
+#       apiVersion: v1
+#       kind: Service
+#       metadata:
+#         name: qbittorrent-connect
+#         namespace: "{{ qbittorrent_namespace }}"
+#         annotations:
+#           metallb.universe.tf/allow-shared-ip: qbittorrent
+#       spec:
+#         selector:
+#           app: qbittorrent
+#         ports:
+#         - port: 6881
+#           targetPort: 6881
+#           name: qbittorrent-tcp
+#           protocol: TCP
+#         - port: 6881
+#           targetPort: 6881
+#           name: qbittorrent-udp
+#           protocol: UDP
+#         type: LoadBalancer
+#         loadBalancerIP: 10.100.3.106

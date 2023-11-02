@@ -1,0 +1,78 @@
+---
+- name: Include prerequisites
+  ansible.builtin.include_tasks:
+    file: prerequisites.yml
+
+- name: Render values
+  block:
+
+    - name: Apply cert-manager custom CRDs
+      kubernetes.core.k8s:
+        src: crds/cert-manager.crds.yaml
+        apply: yes
+      when:
+        - cert_manager_install_crds
+
+    - name: Create temporary file for Helm values file
+      ansible.builtin.tempfile:
+        state: file
+        suffix: cert_manager_values
+      changed_when: false
+      register: cert_manager__values_tmp_file
+
+    - name: Select values file for Helm template
+      ansible.builtin.template:
+        src: "{{ lookup('first_found', params) }}"
+        dest: "{{ cert_manager__values_tmp_file.path }}"
+        mode: 0600
+      changed_when: false
+      vars:
+        params:
+          files:
+            - values.yml.j2
+            - values.yaml.j2
+            - cert_manager_values_default.yml.j2
+          paths:
+            - "{{ cert_manager_chart_values_directory }}"
+            - templates
+
+    - name: Install chart
+      kubernetes.core.helm:
+        name: "{{ cert_manager_release_name }}"
+        chart_ref: "{{ cert_manager_chart_name }}"
+        chart_version: "{{ cert_manager_chart_version }}"
+        release_namespace: "{{ cert_manager_namespace }}"
+        create_namespace: false
+        update_repo_cache: true
+        values_files:
+          - "{{ cert_manager__values_tmp_file.path }}"
+      register: cert_manager__helm_install_chart
+
+    - name: Waiting until cert-manager-webhooks pod is ready
+      kubernetes.core.k8s_info:
+        api_version: apps/v1
+        kind: Deployment
+        namespace: "{{ cert_manager_namespace }}"
+        label_selectors:
+          - app=webhook
+      register: cert_manager_webhook_deployment_status
+      until: (cert_manager_webhook_deployment_status.resources[0].status.readyReplicas | default(0) | int) >= 1
+      retries: 30
+      delay: 15
+
+  always:
+    - name: Delete temporary file for Helm values
+      ansible.builtin.file:
+        path: "{{ cert_manager__values_tmp_file.path }}"
+        state: absent
+      changed_when: false
+      when:
+        - cert_manager__values_tmp_file.path is defined
+
+- name: Include Cloudflare Secret
+  ansible.builtin.include_tasks:
+    file: cf-secret.yml
+
+- name: Include ClusterIssuers
+  ansible.builtin.include_tasks:
+    file: cluster-issuer.yml

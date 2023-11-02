@@ -1,0 +1,4 @@
+---
+pve_subscription_repo: '/etc/apt/sources.list.d/pve-enterprise.list'
+ceph_subscription_repo: '/etc/apt/sources.list.d/ceph.list'
+pve_repository: 'deb http://download.proxmox.com/debian bookworm pve-no-subscription'

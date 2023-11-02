@@ -1,0 +1,25 @@
+---
+service:
+  ui:
+    type: LoadBalancer
+
+persistence:
+  defaultClassReplicaCount: "{{ longhorn_replicas }}"
+
+defaultSettings:
+  defaultDataPath: /var/lib/longhorn
+  storageMinimalAvailablePercentage: 10
+  defaultReplicaCount: "{{ longhorn_replicas }}"
+  createDefaultDiskOnLabeledNodes: true
+  replicaNodeLevelSoftAntiAffinity: true
+  replicaAutoBalance: "least-effort"
+  podDeletionPolicyWhenNodeIsDown: "delete-deployment-pod"
+  # backupTarget: "nfs:10.0.0.2........."
+  # backupTargetCredentialSecret: xxxxx
+  orphanAutoDeletion: true
+
+longhornUI:
+  replicas: 2
+
+annotations:
+  prometheur.io/scrape: "true"

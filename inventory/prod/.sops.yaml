@@ -1,0 +1,7 @@
+# file: inventory/prod/.sops.yaml
+# synopsis: define the files and keys to encrypt with SOPS within this directory (and subdirectories).
+creation_rules:
+  - path_regex: .*group_vars/.*
+    age: age109fzapgarv59gpyu5tgmwgn7j3hwmfs0dhrz3lrqvjy046jxafnse30kvj
+  # - path_regex: .*host_vars/.*
+  #   age: age1u07cpzdmuthtk63dxsqdv2s0s4gxxvfv86t6tzny64tvt7e3hfcqflnfk8

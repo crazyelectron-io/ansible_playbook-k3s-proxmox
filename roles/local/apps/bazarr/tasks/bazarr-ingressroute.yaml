@@ -1,0 +1,25 @@
+---
+- name: Create Let's Encrypt ClusterIssuer(s) for Bazarr
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: bazarr-external
+        namespace: "{{ bazarr_namespace }}"
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: "Host(`{{ bazarr_domain }}`)"
+            kind: Rule
+            services:
+              - name: bazarr-svc
+                port: 80
+            middlewares:
+              - name: default-headers
+        tls:
+          secretName: "bazarr-{{ letsencrypt_environment }}-tls"

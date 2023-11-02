@@ -1,0 +1,29 @@
+---
+- name: Check if Helm command is installed locally
+  ansible.builtin.shell: hash helm  # noqa command-instead-of-shell
+  changed_when: false
+  args:
+    executable: "/bin/bash"
+
+- name: Ensure Traefik namespace exists
+  k8s:
+    name: "{{ traefik_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Check if Helm repository is installed
+  kubernetes.core.helm_info:
+    name: traefik
+    release_namespace: traefik
+    release_state:
+      - all
+  register: traefik__helm_repo_installed
+
+- name: Add Helm repository If not yet installed
+  kubernetes.core.helm_repository:
+    name: "{{ traefik_repo_name }}"
+    repo_url: "{{ traefik_chart_url }}"
+  when:
+    - traefik__helm_repo_installed.status is not defined
+  register: traefik__helm_add_repo

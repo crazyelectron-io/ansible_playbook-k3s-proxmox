@@ -1,0 +1,54 @@
+---
+master_nodes:
+  - m01:
+      node: prox01
+      template: "{{ ci_template_name }}"
+      vmid: 8010
+      newid: 2001
+      memory: 12288
+      ostype: l26
+      cores: 6
+      virtio: { 'virtio0': 'local-lvm:120,format=raw' }
+      mac: '02:be:10:64:03:21'
+      brdige: 'vmbr100'
+  - m02:
+      node: "prox02"
+      template: "{{ ci_template_name }}"
+      vmid: 8011
+      newid: 2002
+      memory: 12288
+      cores: 6
+      virtio: '{"virtio0": "local-lvm:120,format=raw"}'
+      mac: '02:be:10:64:03:22'
+      brdige: 'vmbr100'
+  - m03:
+      node: prox01
+      template: "{{ ci_template_name }}"
+      vmid: 8010
+      newid: 2003
+      memory: 12288
+      cores: 6
+      virtio: '{"virtio0": "local-lvm:120,format=raw"}'
+      mac: '02:be:10:64:03:23'
+      brdige: 'vmbr100'
+worker_nodes:
+  - w01:
+      node: prox01
+      template: "{{ ci_template_name }}"
+      vmid: 8010
+      newid: 2004
+      memory: 16384
+      cores: 6
+      virtio: { 'virtio0': 'local-lvm:120,format=raw' }
+      mac: '02:be:10:64:03:24'
+      brdige: 'vmbr100'
+  - w02:
+      node: prox02
+      template: "{{ ci_template_name }}"
+      vmid: 8011
+      newid: 2005
+      memory: 16384
+      cores: 6
+      virtio: { 'virtio0': 'local-lvm:120,format=raw' }
+      mac:  '02:be:10:64:03:25'
+      brdige: 'vmbr100'

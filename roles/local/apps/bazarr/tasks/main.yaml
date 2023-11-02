@@ -1,0 +1,24 @@
+---
+- name: Create Lets Encrypt Certificate
+  ansible.builtin.include_tasks:
+    file: bazarr-certificate.yaml
+
+- name: Create Traefik Ingress Route for bazarr
+  ansible.builtin.include_tasks:
+    file: bazarr-ingressroute.yaml
+
+- name: Create bazarr Service
+  ansible.builtin.include_tasks:
+    file: bazarr-service.yaml
+
+- name: Create bazarr Persistent Volumes
+  ansible.builtin.include_tasks:
+    file: bazarr-pv.yaml
+
+- name: Create bazarr Persistent Volume Claims
+  ansible.builtin.include_tasks:
+    file: bazarr-pvc.yaml
+
+- name: Create bazarr Deployment
+  ansible.builtin.include_tasks:
+    file: bazarr-deployment.yaml

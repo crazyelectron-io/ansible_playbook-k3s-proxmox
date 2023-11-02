@@ -1,0 +1,25 @@
+---
+- name: Create Let's Encrypt ClusterIssuer(s)
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: sabnzbd-external
+        namespace: "{{ sabnzbd_namespace }}"
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: "Host(`{{ sabnzbd_domain }}`)"
+            kind: Rule
+            services:
+              - name: sabnzbd-svc
+                port: 80
+            middlewares:
+              - name: default-headers
+        tls:
+          secretName: "sabnzbd-{{ letsencrypt_environment }}-tls"

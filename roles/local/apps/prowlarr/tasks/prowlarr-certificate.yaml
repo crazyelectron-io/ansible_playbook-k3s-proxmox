@@ -1,0 +1,18 @@
+---
+- name: Create Let's Encrypt Certificate for Prowlarr
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: "prowlarr-cert-{{ letsencrypt_environment }}"
+        namespace: "{{ prowlarr_namespace }}"
+      spec:
+        secretName: "prowlarr-{{ letsencrypt_environment }}-tls"
+        issuerRef:
+          name: "letsencrypt-{{ letsencrypt_environment }}"
+          kind: ClusterIssuer
+        commonName: "{{ prowlarr_domain }}"
+        dnsNames:
+          - "{{ prowlarr_domain }}"

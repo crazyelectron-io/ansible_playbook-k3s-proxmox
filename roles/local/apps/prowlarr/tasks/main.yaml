@@ -1,0 +1,20 @@
+---
+- name: Create Lets Encrypt Certificate
+  ansible.builtin.include_tasks:
+    file: prowlarr-certificate.yaml
+
+- name: Create Traefik Incress Route for Prowlarr
+  ansible.builtin.include_tasks:
+    file: prowlarr-ingressroute.yaml
+
+- name: Create Prowlarr Service
+  ansible.builtin.include_tasks:
+    file: prowlarr-service.yaml
+
+- name: Create Prowlarr Persistent Volume Claims
+  ansible.builtin.include_tasks:
+    file: prowlarr-pvc.yaml
+
+- name: Create Prowlarr Deployment
+  ansible.builtin.include_tasks:
+    file: prowlarr-deployment.yaml

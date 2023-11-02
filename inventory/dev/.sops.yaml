@@ -1,0 +1,8 @@
+# file: inventory/.sops.yaml
+# synopsis: define the files and keys to ecntypt with SOPS within this directory.
+
+creation_rules:
+  - path_regex: .*group_vars/.*
+    age: age1u07cpzdmuthtk63dxsqdv2s0s4gxxvfv86t6tzny64tvt7e3hfcqflnfk8
+  - path_regex: .*host_vars/.*
+    age: age1u07cpzdmuthtk63dxsqdv2s0s4gxxvfv86t6tzny64tvt7e3hfcqflnfk8

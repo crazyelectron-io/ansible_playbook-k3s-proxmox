@@ -1,0 +1,11 @@
+# file: deploy-hosts.yml
+# synopsis: deploy the VMs (Make sure to run `terraform init` once !!)
+---
+- hosts: prox01
+  become_user: root
+  roles:
+    - local/proxmox/vm-destroy
+# - hosts: prox02
+#   roles:
+#     - local/proxmox/vm-destroy
+  

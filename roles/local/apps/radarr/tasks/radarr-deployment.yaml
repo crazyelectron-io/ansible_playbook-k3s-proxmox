@@ -1,0 +1,77 @@
+# file:
+---
+- name: Create Radarr Deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: radarr
+        labels:
+          app: radarr
+        namespace: "{{ radarr_namespace }}"
+      spec:
+        progressDeadlineSeconds: 300
+        replicas: 1
+        serviceName: radarr-app
+        revisionHistoryLimit: 0
+        strategy:
+          rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 1
+          type: RollingUpdate
+        selector:
+          matchLabels:
+            app: radarr
+        template:
+          metadata:
+            labels:
+              app: radarr
+          spec:
+            containers:
+              - name: radarr
+                image: "{{ radarr_image_registry }}/radarr:{{ radarr_image_tag }}"
+                imagePullPolicy: IfNotPresent
+                resources:
+                  limits:
+                    memory: "2048Mi"
+                    cpu: 2000m
+                  requests:
+                    memory: "1024Mi"
+                    cpu: 500m
+                livenessProbe:
+                  httpGet:
+                    path: /
+                    port: 7878
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                ports:
+                  - name: http
+                    containerPort: 7878
+                volumeMounts:
+                  - name: radarr-config
+                    mountPath: /config
+                  - name: radarr-movies
+                    mountPath: /movies
+                  - name: radarr-downloads
+                    mountPath: /downloads
+                env:
+                  - name: PUID
+                    value: "1000"
+                  - name: PGID
+                    value: "1000"
+                  - name: TZ
+                    value: Europe/Amsterdam
+            volumes:
+              - name: radarr-config
+                persistentVolumeClaim:
+                  claimName: radarr-config-pvc
+              - name: radarr-movies
+                persistentVolumeClaim:
+                  claimName: radarr-movies-pvc
+              - name: radarr-downloads
+                persistentVolumeClaim:
+                  claimName: radarr-downloads-pvc
+            serviceName: radarr-app
+            revisionHistoryLimit: 0

@@ -1,0 +1,24 @@
+---
+- name: Create Lets Encrypt Certificate
+  ansible.builtin.include_tasks:
+    file: sonarr-certificate.yaml
+
+- name: Create Traefik Ingress Route for Sonarr
+  ansible.builtin.include_tasks:
+    file: sonarr-ingressroute.yaml
+
+- name: Create Sonarr Service
+  ansible.builtin.include_tasks:
+    file: sonarr-service.yaml
+
+- name: Create Sonarr Persistent Volumes
+  ansible.builtin.include_tasks:
+    file: sonarr-pv.yaml
+
+- name: Create Sonarr Persistent Volume Claims
+  ansible.builtin.include_tasks:
+    file: sonarr-pvc.yaml
+
+- name: Create Sonarr Deployment
+  ansible.builtin.include_tasks:
+    file: sonarr-deployment.yaml

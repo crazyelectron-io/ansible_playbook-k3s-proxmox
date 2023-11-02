@@ -1,0 +1,8 @@
+---
+# Namespace to deploy Radarr into
+radarr_namespace: default
+# External URL to access Radarr through Traefik
+radarr_domain: "radarr.{{ main_domain }}"
+# Radarr container info
+radarr_image_registry: lscr.io/linuxserver
+radarr_image_tag: 5.0.3

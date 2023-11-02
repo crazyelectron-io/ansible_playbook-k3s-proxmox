@@ -1,0 +1,32 @@
+- name: Check if Helm is installed locally
+  ansible.builtin.shell: hash helm
+  changed_when: false
+  args:
+    executable: "/bin/bash"
+
+- name: Ensure NFS Provisioner namespace exists
+  k8s:
+    name: "{{ nfs_provisioner_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Register if Helm repository is installed
+  kubernetes.core.helm_info:
+    name: "{{ nfs_provisioner_release_name }}"
+    release_namespace: "{{ nfs_provisioner_namespace }}"
+    release_state:
+      - all
+  register: nfs_provisioner__helm_repo_installed
+
+- name: Add NFS Provisioner Helm repository if needed
+  kubernetes.core.helm_repository:
+    name: "{{ nfs_provisioner_repo_name }}"
+    repo_url: "{{ nfs_provisioner_chart_url }}"
+  when:
+    - nfs_provisioner__helm_repo_installed.status is not defined
+  register: nfs_provisioner__helm_add_repo
+
+- name: Update local Helm chart repository cache
+  ansible.builtin.command: helm repo update -n {{ nfs_provisioner_namespace }}
+  changed_when: false

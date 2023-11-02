@@ -1,0 +1,19 @@
+# file:
+# synopsis:
+---
+- name: Create Prowlarr Persistent Volume Claim for configuration files
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: prowlarr-config-pvc
+        namespace: "{{ prowlarr_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi

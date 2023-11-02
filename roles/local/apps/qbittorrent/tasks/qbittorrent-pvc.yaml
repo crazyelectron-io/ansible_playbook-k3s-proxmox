@@ -1,0 +1,37 @@
+# file:
+# synopsis:
+---
+- name: Create qBittorrent Persistent Volume Claim for configuration files
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: qbittorrent-config-pvc
+        namespace: "{{ qbittorrent_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+- name: Create qBittorrent Persistent Volume Claim for downloads NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: qbittorrent-downloads-pvc
+        namespace: "{{ qbittorrent_namespace }}"
+      spec:
+        volumeName: qbittorrent-downloads-pv
+        storageClassName: ""
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Mi # Dummy value

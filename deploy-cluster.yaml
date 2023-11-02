@@ -1,0 +1,74 @@
+# file: ./deploy-cluster.yaml
+# synopsis: Deploy the K3s cluster
+# notes: The local tools kubectl, SOPS, and Flux must be available in the path.
+#        The LVM volume must already be created and formated (ext4) befor attaching the disks
+---
+- hosts: kube
+  gather_facts: true
+  any_errors_fatal: true
+  become: true
+  vars:
+    install_in_vm: true
+    install_lh_prereq: true
+  roles:
+    - debian-base
+    - debian-upgrade
+    - reboot
+    - local/common/ssh-reset
+    - k3s-prereq
+
+- name: Setup k3s master nodes
+  hosts: master
+  become: true
+  any_errors_fatal: true
+  vars:
+    install_in_vm: true
+  roles:
+    - local/k3s/k3s-master
+
+- name: Setup k3s worker nodes
+  hosts: worker
+  become: true
+  any_errors_fatal: true
+  vars:
+    install_in_vm: true
+  roles:
+    - local/k3s/k3s-worker
+    - local/k3s/lvm-attach
+    - reboot
+
+- name: Configure k3s cluster
+  hosts: master
+  become: true
+  vars:
+    install_in_vm: true
+  roles:
+    - local/k3s/k3s-post
+
+# Setup K3s cluster basics
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - local/k3s/context
+    - local/k3s/labels
+    - local/k3s/replicator
+    - local/k3s/traefik
+    - local/k3s/cert-manager
+    - local/k3s/traefik-dashboard
+    - local/k3s/longhorn
+    - local/k3s/nfs-provisioner
+    - local/apps/sabnzbd
+    - local/apps/prowlarr
+    - local/apps/sonarr
+    - local/apps/radarr
+    - local/apps/bazarr
+    - local/apps/qbittorrent
+
+# - name: Configure Flux GitOps
+#   hosts: master
+#   become: true
+#   vars:
+#     install_in_vm: true
+#   roles:
+#     - local/k3s/fluxcd

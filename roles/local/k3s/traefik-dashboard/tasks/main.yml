@@ -1,0 +1,46 @@
+---
+- name: Create Traefik dashboard IngressRoute
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.io/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: traefik-dashboard
+        namespace: traefik
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: Host(`{{ traefik_subdomain }}.{{ main_domain }}`)
+            kind: Rule
+            middlewares:
+              - name: traefik-dashboard-basicauth
+                namespace: traefik
+            services:
+              - name: api@internal
+                kind: TraefikService
+        tls:
+          secretName: "traefik-dashboard-{{ letsencrypt_environment }}-tls"
+  run_once: true
+
+- name: Create Traefik dashboard certificate
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: traefik-dashboard-cert-{{ letsencrypt_environment }}
+        namespace: traefik
+      spec:
+        secretName: "traefik-dashboard-{{ letsencrypt_environment }}-tls"
+        issuerRef:
+          name: "letsencrypt-{{ letsencrypt_environment }}"
+          kind: ClusterIssuer
+        commonName: "{{ traefik_subdomain }}.{{ main_domain }}"
+        dnsNames:
+          - "{{ traefik_subdomain }}.{{ main_domain }}"
+  run_once: true

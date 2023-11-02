@@ -1,0 +1,54 @@
+# file:
+# synopsis:
+---
+- name: Create SABnzbd Persistent Volume Claim for configuration files
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: sabnzbd-config-pvc
+        namespace: "{{ sabnzbd_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
+
+- name: Create SABnzbd Persistent Voluem Claim for incomplete downloads
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: sabnzbd-incomplete-downloads-pvc
+        namespace: "{{ sabnzbd_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 400Gi
+
+- name: Create SABnzbd Persistent Volume Claim for completed downloads
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: sabnzbd-downloads-pvc
+        namespace: "{{ sabnzbd_namespace }}"
+      spec:
+        volumeName: sabnzbd-downloads-pv
+        storageClassName: ""
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Mi # Dummy value

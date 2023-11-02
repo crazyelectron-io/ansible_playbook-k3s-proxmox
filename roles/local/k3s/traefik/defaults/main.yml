@@ -1,0 +1,57 @@
+---
+# Helm chart version
+traefik_chart_version: "24.0.0"
+
+# Traefik container image version
+traefik_image_tag: 2.10.5
+
+# Helm release name
+traefik_release_name: "traefik"
+
+# Helm repository name
+traefik_repo_name: "traefik"
+
+# Helm chart name
+traefik_chart_name: "{{ traefik_repo_name }}/{{ traefik_release_name }}"
+
+# Helm chart URL
+traefik_chart_url: "https://helm.traefik.io/traefik"
+
+# Kubernetes namespace where Traefik resources should be installed
+traefik_namespace: "traefik"
+
+# Directory that contains Helm chart values file. If you specify this
+# variable Ansible will try to locate a file called "values.yml.j2" or
+# "values.yaml.j2" in the specified directory (".j2" because you can
+# use the usual Jinja2 template stuff there). The content of this file
+# will be provided to "helm install/template" command as values file.
+# By default the directory is the users "$HOME" directory plus
+# "/traefik/helm". If the task doesn't find such a file it uses
+# the values in "templates/traefik_values_default.yml.j2" by default.
+traefik_chart_values_directory: "{{ '~/traefik/helm' | expanduser }}"
+
+# By default CRDs (CustomResourceDefinitions) are not installed. Set to
+# "true" if CRDs should be installed. Also see:
+# https://github.com/traefik/traefik-helm-chart/tree/master/traefik/crds
+# The following CRDs will be installed:
+#   - ingressroutes.traefik.containo.us
+#   - ingressroutetcps.traefik.containo.us
+#   - ingressrouteudps.traefik.containo.us
+#   - middlewares.traefik.containo.us
+#   - middlewaretcps.traefik.containo.us
+#   - serverstransports.traefik.containo.us
+#   - tlsoptions.traefik.containo.us
+#   - tlsstores.traefik.containo.us
+#   - traefikservices.traefik.containo.us
+
+# By default all tasks that needs to communicate with the Kubernetes
+# cluster are executed on your local host (127.0.0.1). But if that one
+# doesn't have direct connection to this cluster or should be executed
+# elsewhere this variable can be changed accordingly.
+traefik_delegate_to: 127.0.0.1
+
+# Without "action" variable defined this role will only render a file
+# with all the resources that will be installed or upgraded. The rendered
+# file with the resources will be called "template.yml" and will be
+# placed in the directory specified below.
+traefik_template_output_directory: "{{ '~/traefik/template' | expanduser }}"

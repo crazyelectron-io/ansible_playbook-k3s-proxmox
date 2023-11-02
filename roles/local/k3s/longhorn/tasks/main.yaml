@@ -1,0 +1,57 @@
+---
+- name: Include prerequisites
+  include_tasks: "tasks/prerequisites.yml"
+
+- name: Render values
+  block:
+
+    - name: Create temporary file for Helm values
+      ansible.builtin.tempfile:
+        state: file
+        suffix: longhorn_values
+      changed_when: false
+      register: longhorn__values_tmp_file
+
+    - name: Select values file for Helm template
+      ansible.builtin.template:
+        src: "{{ lookup('first_found', params) }}"
+        dest: "{{ longhorn__values_tmp_file.path }}"
+        # mode: 0600
+      changed_when: false
+      vars:
+        params:
+          files:
+            - values.yml.j2
+            - values.yaml.j2
+            - longhorn_values_default.yml.j2
+          paths:
+            - "{{ longhorn_chart_values_directory }}"
+            - templates
+
+    - name: Install chart
+      kubernetes.core.helm:
+        name: "{{ longhorn_release_name }}"
+        chart_ref: "{{ longhorn_chart_name }}"
+        chart_version: "{{ longhorn_chart_version }}"
+        release_namespace: "{{ longhorn_namespace }}"
+        create_namespace: false
+        update_repo_cache: true
+        values_files:
+          - "{{ longhorn__values_tmp_file.path }}"
+      register: longhorn__helm_install_chart
+
+  always:
+    - name: Delete temporary file for Helm values
+      ansible.builtin.file:
+        path: "{{ longhorn__values_tmp_file.path }}"
+        state: absent
+      changed_when: false
+      when:
+        - longhorn__values_tmp_file.path is defined
+
+- ansible.builtin.include_tasks: longhorn-label.yaml
+
+- name: Disable local storage as default storage class
+  ansible.builtin.shell: |
+    kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+  changed_when: false

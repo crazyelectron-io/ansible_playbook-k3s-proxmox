@@ -1,0 +1,66 @@
+---
+# Helm chart versions
+cert_manager_chart_version: "v1.10.1"
+
+# Helm release names
+cert_manager_release_name: "cert-manager"
+
+# Helm repository name
+cert_manager_repo_name: "jetstack"
+
+# Helm chart name
+cert_manager_chart_name: "{{ cert_manager_repo_name }}/{{ cert_manager_release_name }}"
+
+# Helm chart URL
+cert_manager_chart_url: "https://charts.jetstack.io"
+
+# Kubernetes namespace where cert-manager resources should be installed
+cert_manager_namespace: "cert-manager"
+
+# Directory that contains Helm chart values file. If you specify this
+# variable Ansible will try to locate a file called "values.yml.j2" or
+# "values.yaml.j2" in the specified directory (".j2" because you can
+# use the usual Jinja2 template stuff there). The content of this file
+# will be provided to "helm install/template" command as values file.
+# By default the directory is the users "$HOME" directory plus
+# "/cert_manager/helm". If the task doesn't find such a file it uses
+# the values in "templates/cert_manager_values_default.yml.j2" by default.
+cert_manager_chart_values_directory: "{{ '~/cert_manager/helm' | expanduser }}"
+
+# Without "action" variable defined this role will only render a file
+# with all the resources that will be installed or upgraded. The rendered
+# file with the resources will be called "template.yml" and will be
+# placed in the directory specified below.
+cert_manager_template_output_directory: "{{ '~/cert_manager/template' | expanduser }}"
+
+# To install "ClusterIssuer" for Let's Encrypt (LE) "cert_manager_le_clusterissuer_options"
+# needs to be defined. The variable contains a list of hashes and can be defined
+# in "group_vars/all.yml" e.g.
+#
+# name:   Defines the name of the "ClusterIssuer"
+# email:  Use a valid e-mail address to be alerted by LE in case a certificate
+#         expires
+# server: Hostname part of the LE URL
+# private_key_secret_ref_name: Name of the secret which stores the private key
+# solvers_dns01_ingress_class: Value of "kubernetes.io/ingress.class" annotation.
+#                              Depends on your ingress controller. Common values
+#                              are "traefik" for Traefik or "nginx" for nginx.
+#
+# Besides "email" the following values can be used as is and will create valid
+# "ClusterIssuer" for Let's Encrypt staging and production. Only "email" needs
+# to be adjusted if Traefik is used as ingress controller. For other ingress
+# controllers "solvers_http01_ingress_class" needs to be adjusted too. Currently
+# only "ClusterIssuer" and "http01" solver is implemented. For definition also
+# see "tasks/install-issuer.yml".
+#
+cert_manager_le_clusterissuer_options:
+#   - name: letsencrypt-prod
+#     email: ron@moerman.online
+#     server: acme-v02
+#     private_key_secret_ref_name: letsencrypt-prod
+#     solvers_dns01_ingress_class: "traefik-external"
+  - name: letsencrypt-staging
+    email: ron@moerman.online
+    server: acme-staging-v02
+    private_key_secret_ref_name: letsencrypt-staging
+    solvers_dns01_ingress_class: "traefik-external"

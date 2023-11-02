@@ -1,0 +1,26 @@
+# file: roles/local/k3s/labels/tasks/main.yaml
+# synopsis: set labels for the worker nodes
+---
+- name: Set node role of worker nodes
+  kubernetes.core.k8s:
+    definition:
+      api_version: v1
+      kind: Node
+      metadata:
+        name: '{{ item }}'
+        labels:
+          kubernetes.io/role: worker
+  with_inventory_hostnames:
+    - worker
+
+- name: Set node type of worker nodes
+  kubernetes.core.k8s:
+    definition:
+      api_version: v1
+      kind: Node
+      metadata:
+        name: '{{ item }}'
+        labels:
+          node-type: worker
+  with_inventory_hostnames:
+    - worker

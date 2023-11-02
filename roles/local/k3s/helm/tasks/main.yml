@@ -1,0 +1,72 @@
+---
+# Role to install a Helm chart based on input variables:
+# helm_chart_name: (required) 
+# helm_chart_version: (optional) 
+# helm_release_name: (required) 
+# helm_namespace: (required) 
+# helm_values_file: (optional) 
+
+- name: Render values
+  block:
+
+    - name: Create temporary file for Helm values
+      ansible.builtin.tempfile:
+        state: file
+        suffix: "{{ helm_chart_name }}_values"
+      delegate_to: "{{ delegate_to }}"
+      run_once: true
+      changed_when: false
+      register: helm__values_tmp_file
+
+    - name: Select values file for Helm template
+      ansible.builtin.template:
+        src: "{{ helm_values_file }}"
+        dest: "{{ helm__values_tmp_file.path }}"
+        mode: 0600
+      delegate_to: "{{ delegate_to }}"
+      run_once: true
+      changed_when: false
+
+    - name: Install the Helm chart
+      kubernetes.core.helm:
+        name: "{{ helm_release_name }}"
+        chart_ref: "{{ helm_chart_name }}"
+        chart_version: "{{ helm_chart_version }}"
+        release_namespace: "{{ helm_namespace }}"
+        create_namespace: false
+        update_repo_cache: true
+        values_files:
+          - "{{ helm__values_tmp_file.path }}"
+      run_once: true
+      delegate_to: "{{ delegate_to }}"
+      register: helm__install_chart
+
+    - name: Install chart (helm command executed)
+      ansible.builtin.debug:
+        var: helm__install_chart.command
+      delegate_to: "{{ delegate_to }}"
+      run_once: true
+      when:
+        - helm__install_chart is defined
+        - helm__install_chart.command is defined
+        - helm_show_commands
+
+    - name: Delete temporary file for Helm values
+      ansible.builtin.file:
+        path: "{{ helm__values_tmp_file.path }}"
+        state: absent
+      run_once: true
+      changed_when: false
+      delegate_to: "{{ delegate_to }}"
+      when:
+        - helm__values_tmp_file.path is defined
+
+  rescue:
+    - name: Delete temporary file for Helm values
+      ansible.builtin.file:
+        path: "{{ helm__values_tmp_file.path }}"
+        state: absent
+      run_once: true
+      delegate_to: "{{ delegate_to }}"
+      when:
+        - helm__values_tmp_file.path is defined

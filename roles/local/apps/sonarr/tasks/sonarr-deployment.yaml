@@ -1,0 +1,77 @@
+# file:
+---
+- name: Create Sonarr Pod Deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: sonarr
+        labels:
+          app: sonarr
+        namespace: "{{ sonarr_namespace }}"
+      spec:
+        progressDeadlineSeconds: 300
+        replicas: 1
+        serviceName: sonarr-app
+        revisionHistoryLimit: 0
+        strategy:
+          rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 1
+          type: RollingUpdate
+        selector:
+          matchLabels:
+            app: sonarr
+        template:
+          metadata:
+            labels:
+              app: sonarr
+          spec:
+            containers:
+              - name: sonarr
+                image: "{{ sonarr_image_registry }}/sonarr:{{ sonarr_image_tag }}"
+                imagePullPolicy: IfNotPresent
+                resources:
+                  limits:
+                    memory: "2048Mi"
+                    cpu: 2000m
+                  requests:
+                    memory: "1024Mi"
+                    cpu: 500m
+                livenessProbe:
+                  httpGet:
+                    path: /
+                    port: 8989
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                ports:
+                  - name: http
+                    containerPort: 8989
+                volumeMounts:
+                  - name: sonarr-config
+                    mountPath: /config
+                  - name: sonarr-tv
+                    mountPath: /tv
+                  - name: sonarr-downloads
+                    mountPath: /downloads
+                env:
+                  - name: PUID
+                    value: "1000"
+                  - name: PGID
+                    value: "1000"
+                  - name: TZ
+                    value: Europe/Amsterdam
+            volumes:
+              - name: sonarr-config
+                persistentVolumeClaim:
+                  claimName: sonarr-config-pvc
+              - name: sonarr-tv
+                persistentVolumeClaim:
+                  claimName: sonarr-tv-pvc
+              - name: sonarr-downloads
+                persistentVolumeClaim:
+                  claimName: sonarr-downloads-pvc
+            serviceName: sonarr-app
+            revisionHistoryLimit: 0

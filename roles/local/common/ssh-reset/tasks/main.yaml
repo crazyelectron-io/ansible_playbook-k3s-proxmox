@@ -1,0 +1,26 @@
+# file: roles/common/ssh-reset/tasks/main.yaml
+# synopsis: Reset the SSH known hosts for the new cluster nodes
+---
+- debug:
+    msg: "{{ groups['kube']}}"
+
+- name: For each host, scan for its ssh public key
+  shell: "ssh-keyscan -T 10 {{ item }},`dig +short {{ item }}.{{ main_domain }}`"
+  with_items: "{{ groups['kube'] }}"
+  register: ssh_known_host_results
+  ignore_errors: true
+  delegate_to: localhost
+  become: false
+  become_user: "{{ ansible_user }}"
+  run_once: true
+
+- name: Add/update the public key in the known_hosts file
+  known_hosts:
+    name: "{{ item.item }}"
+    key: "{{ item.stdout }}"
+    path: "{{ lookup('env','HOME') + '/.ssh/known_hosts' }}"
+  with_items: "{{ ssh_known_host_results.results }}"
+  delegate_to: localhost
+  become: false
+  become_user: "{{ ansible_user }}"
+  run_once: true

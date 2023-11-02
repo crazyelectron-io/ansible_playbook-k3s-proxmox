@@ -1,0 +1,61 @@
+---
+- name: Create IngressRoute for qBittorrent WebUI
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: qbittorrent-external
+        namespace: "{{ qbittorrent_namespace }}"
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: "Host(`{{ qbittorrent_domain }}`)"
+            kind: Rule
+            services:
+              - name: qbittorrent-svc
+                port: 80
+            middlewares:
+              - name: default-headers
+        tls:
+          secretName: "qbittorrent-{{ letsencrypt_environment }}-tls"
+
+# - name: Create Ingress Route for qBittorrent TCP connection
+#   kubernetes.core.k8s:
+#     state: present
+#     definition:
+#       apiVersion: traefik.containo.us/v1alpha1
+#       kind: IngressRouteTCP
+#       metadata:
+#         name: qbittorrent-tcp-connect
+#         namespace: "{{ qbittorrent_namespace }}"
+#       spec:
+#         entryPoints:
+#         - random-tcp
+#         routes:
+#         - match: HostSNI(`*`)
+#           services:
+#           - name: svc-qbittorrent-tcp
+#             port: 6881
+
+# - name: Create Ingress Route for qBittorrent UDP connection
+#   kubernetes.core.k8s:
+#     state: present
+#     definition:
+#       apiVersion: traefik.containo.us/v1alpha1
+#       kind: IngressRouteUDP
+#       metadata:
+#         name: qbittorrent-udp-connect
+#         namespace: "{{ qbittorrent_namespace }}"
+#       spec:
+#         entryPoints:
+#         - random-udp
+#         routes:
+#         - match: HostSNI(`*`)
+#           services:
+#           - name: svc-qbittorrent-udp
+#             port: 6881

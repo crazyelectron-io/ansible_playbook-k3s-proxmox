@@ -1,0 +1,4 @@
+# SOPS decrypted files
+*.decrypted~*
+
+*.DS_Store

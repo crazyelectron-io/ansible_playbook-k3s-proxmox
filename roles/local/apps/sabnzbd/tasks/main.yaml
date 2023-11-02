@@ -1,0 +1,24 @@
+---
+- name: Create Lets Encrypt Certificate
+  ansible.builtin.include_tasks:
+    file: sabnzbd-certificate.yaml
+
+- name: Create Traefik Incress Route
+  ansible.builtin.include_tasks:
+    file: sabnzbd-ingressroute.yaml
+
+- name: Create SABnzbd Pod Service
+  ansible.builtin.include_tasks:
+    file: sabnzbd-service.yaml
+
+- name: Create SABnzbd Persistent Volumes
+  ansible.builtin.include_tasks:
+    file: sabnzbd-pv.yaml
+
+- name: Create SABnzbd Persistent Volume Claims
+  ansible.builtin.include_tasks:
+    file: sabnzbd-pvc.yaml
+
+- name: Create SABnzbd Pod Deployment
+  ansible.builtin.include_tasks:
+    file: sabnzbd-deployment.yaml

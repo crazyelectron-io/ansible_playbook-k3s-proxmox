@@ -1,0 +1,80 @@
+# file:
+---
+- name: Create Deployment for qBittorrent
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: qbittorrent
+        labels:
+          app: qbittorrent
+        namespace: "{{ qbittorrent_namespace }}"
+      spec:
+        progressDeadlineSeconds: 300
+        replicas: 1
+        serviceName: qbittorrent-app
+        revisionHistoryLimit: 0
+        strategy:
+          rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 1
+          type: RollingUpdate
+        selector:
+          matchLabels:
+            app: qbittorrent
+        template:
+          metadata:
+            labels:
+              app: qbittorrent
+          spec:
+            containers:
+              - name: qbittorrent
+                image: "{{ qbittorrent_image_registry }}/qbittorrent:{{ qbittorrent_image_tag }}"
+                imagePullPolicy: IfNotPresent
+                resources:
+                  limits:
+                    memory: "4096Mi"
+                    cpu: 4
+                  requests:
+                    memory: "1024Mi"
+                    cpu: 500m
+                livenessProbe:
+                  httpGet:
+                    path: /
+                    port: 8080
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                ports:
+                  - name: qbittorrent-web
+                    containerPort: 8080
+                  # - name: qbittorrent-tcp
+                  #   containerPort: 6881
+                  #   protocol: TCP
+                  # - name: qbittorrent-udp
+                  #   container_port: 6881
+                  #   protocol: UDP
+                volumeMounts:
+                  - name: qbittorrent-config
+                    mountPath: /config
+                  - name: qbittorrent-downloads
+                    mountPath: /downloads
+                env:
+                  - name: PUID
+                    value: "1000"
+                  - name: PGID
+                    value: "1000"
+                  - name: TZ
+                    value: Europe/Amsterdam
+                  - name: WEBUI_PORT
+                    value: "8080"
+            volumes:
+              - name: qbittorrent-config
+                persistentVolumeClaim:
+                  claimName: qbittorrent-config-pvc
+              - name: qbittorrent-downloads
+                persistentVolumeClaim:
+                  claimName: qbittorrent-downloads-pvc
+            serviceName: qbittorrent-app
+            revisionHistoryLimit: 0

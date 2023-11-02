@@ -1,0 +1,33 @@
+---
+- name: Check if Helm is installed locally
+  ansible.builtin.shell: hash helm
+  changed_when: false
+  args:
+    executable: "/bin/bash"
+
+- name: Ensure CertManager namespace exists
+  k8s:
+    name: "{{ cert_manager_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Register if Helm repository is installed
+  kubernetes.core.helm_info:
+    name: "{{ cert_manager_release_name }}"
+    release_namespace: "{{ cert_manager_namespace }}"
+    release_state:
+      - all
+  register: cert_manager__helm_repo_installed
+
+- name: Add CertManager Helm repository if needed
+  kubernetes.core.helm_repository:
+    name: "{{ cert_manager_repo_name }}"
+    repo_url: "{{ cert_manager_chart_url }}"
+  when:
+    - cert_manager__helm_repo_installed.status is not defined
+  register: cert_manager__helm_add_repo
+
+- name: Update local Helm chart repository cache
+  ansible.builtin.command: helm repo update -n {{ cert_manager_namespace }}
+  changed_when: false
