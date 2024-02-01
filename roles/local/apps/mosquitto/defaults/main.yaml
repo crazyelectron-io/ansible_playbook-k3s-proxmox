@@ -1,0 +1,7 @@
+# file: roles/local/apps/mosquitto/defaults/main.yaml
+# synopsis: default values for variables that you can override in the playbook
+# See https://github.com/eclipse/mosquitto and https://hub.docker.com/_/eclipse-mosquitto
+---
+mosquitto_image_registry: "{{ private_registry }}"
+mosquitto_image_name: eclipse-mosquitto
+mosquitto_image_tag: 2.0.18

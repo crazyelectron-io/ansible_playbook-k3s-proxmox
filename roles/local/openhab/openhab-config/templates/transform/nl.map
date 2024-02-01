@@ -1,0 +1,10 @@
+// file: conf/transform/nl.map
+// synopsis: Translate English status messages to Dutch text
+
+CLOSED=gesloten
+OPEN=open
+OFF=uit
+ON=aan
+NULL=onbekend
+false=NEE
+true=JA

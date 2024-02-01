@@ -1,0 +1,17 @@
+// file: conf/items/persistence.items
+// synopsis: Define Groups to assign Items to specific persistence services
+// Note:  Use mapDB for openHAB state restore on restart and influxDB2 for charts and history
+
+// Group to persist Items for history and Grafana views (using InfluxDB)
+Group  gHist0    	// Every change interval
+Group  gHist1    	// 1 minute interval
+Group  gHist5    	// 5 minute interval
+Group  gHist10   	// 10 minute interval
+Group  gHist15   	// 15 minute interval
+Group  gHost60   	// 1 hour interval
+Group  gDaily    	// 1 day interval
+Group  gWeekly   	// 1 week interval
+Group  gMonthly  	// 30 day interval
+// Group to persist Items to restore on startup (using mapDB)
+Group  gPersist
+Group  gPrev

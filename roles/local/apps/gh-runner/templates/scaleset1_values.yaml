@@ -1,0 +1,37 @@
+## githubConfigUrl is the GitHub url for where you want to configure runners
+## ex: https://github.com/myorg/myrepo or https://github.com/myorg
+githubConfigUrl: "https://github.com/Mostly-Clouds-B-V"
+
+## If you have a pre-define Kubernetes secret in the same namespace the gha-runner-scale-set is going to deploy,
+## you can also reference it via `githubConfigSecret: pre-defined-secret`.
+## You need to make sure your predefined secret has all the required secret data set properly.
+##   For a pre-defined secret using GitHub PAT, the secret needs to be created like this:
+##   > kubectl create secret generic pre-defined-secret --namespace=my_namespace --from-literal=github_token='ghp_your_pat'
+##   For a pre-defined secret using GitHub App, the secret needs to be created like this:
+##   > kubectl create secret generic pre-defined-secret --namespace=my_namespace --from-literal=github_app_id=123456 --from-literal=github_app_installation_id=654321 --from-literal=github_app_private_key='-----BEGIN CERTIFICATE-----*******'
+githubConfigSecret: mostly-githup-app
+
+## maxRunners is the max number of runners the autoscaling runner set will scale up to.
+#maxRunners: 5
+## minRunners is the min number of runners the autoscaling runner set will scale down to.
+#minRunners: 1
+#runnerGroup: "Default"
+
+## name of the runner scale set to create.  Defaults to the helm release name
+runnerScaleSetName: "ubuntu-dind-16g"
+
+## If any customization is required for dind or kubernetes mode, containerMode should remain
+## empty, and configuration should be applied to the template.
+#containerMode:
+#  type: "dind"  ## type can be set to dind or kubernetes
+
+## template is the PodSpec for each runner Pod
+## For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
+template:
+  spec:
+    containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:2.306.0
+        command: ["/home/runner/run.sh"]
+
+#helm install arc-runner-set --namespace arc-runners -f scaleset1_values.yaml oci://ghrc.io/actions/actions-runner-controller-charts/gha-runner-scale-set

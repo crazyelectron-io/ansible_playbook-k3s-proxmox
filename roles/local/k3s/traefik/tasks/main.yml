@@ -17,7 +17,6 @@
         src: "{{ lookup('first_found', params) }}"
         dest: "{{ traefik__values_tmp_file.path }}"
         mode: 0600
-
       changed_when: false
       vars:
         params:

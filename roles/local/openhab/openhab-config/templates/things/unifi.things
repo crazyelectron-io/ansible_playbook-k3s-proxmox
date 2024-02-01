@@ -1,0 +1,10 @@
+// file: conf/things/unifi.things
+
+Bridge unifi:controller:home "UniFi Controller" [host="{{ unifi_host }}", port="{{ unifi_port }}", unifios=true, username="{{ unifi_username }}", password="{{ unifi_password }}", refresh=10]
+{
+  Thing wirelessClient  ronsPhone     "Ron's iPhone"        [cid="{{ unifi_ron_cid }}", site="{{ unifi_sid }}", considerHome=180]
+  Thing site            mysite        "Thuis"               [sid="{{ unifi_sid }}"]
+  Thing wlan            theShire      "Home WLAN"           [wid="TheShire"]
+  Thing poePort         poeKitchenSw  "PoE Port Kitchen SW" [portNumber="21", macAddress="d8:b3:70:7e:e3:45"]
+  Thing poePort         poeKitchenAP  "PoE Port Kitchen AP" [portNumber="2", macAddress="f4:92:bf:ae:d8:07"]
+}

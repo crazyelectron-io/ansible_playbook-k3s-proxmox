@@ -1,0 +1,11 @@
+// file: conf/things/solaredge.things
+// synopsis:
+// tokenOrApiKey - for private API: token retrieved from cookie 'SPRING_SECURITY_REMEMBER_ME_COOKIE' when logged into the SolarEdge website.
+// solarId: can be found in the URL after successful login: https://monitoring.solaredge.com/solaredge-web/p/site/<>/#/dashboard).
+// usePrivateApi: true for unoffical private API or false for public API.
+// liveDataPollingInterval: interval (minutes) in which live data values are retrieved from SolarEdge (<10 only allowed using private API).
+// aggregateDataPollingInterval: interval (minutes) in which aggregate data values are retrieved from SolarEdge (<60 only allowed using private API).
+//
+// The Inverter encryption key is '\x12\x98\x13\x41\x23\xb6\x2d\x5b\x15\x1b\x6f\x65\xd2\xc5\x05\x5a'
+
+solaredge:generic:se7k [tokenOrApiKey="{{ solaredge_api_key }}", solarId="{{ solaredge_id }}", liveDataPollingInterval=10]

@@ -1,40 +1,31 @@
 ---
-- name: Create radarr PV for TVShows NFS share
+- name: Create Radarr Persistent Volume for media SMB3 share
   kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1
       kind: PersistentVolume
       metadata:
-        name: radarr-movies-pv
+        name: radarr-data-pv
       spec:
-        persistentVolumeReclaimPolicy: Retain
+        storageClassName: ""
         capacity:
-          storage: 10Mi # Dummy value
+          storage: 10Ti # Dummy value
         accessModes:
           - ReadWriteMany
-        nfs:
-          path: /media/movies
-          server: 10.0.0.2
-        mountOptions:
-          - nolock
-
-- name: Create radarr PV for Completed downloads NFS share
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: PersistentVolume
-      metadata:
-        name: radarr-downloads-pv
-      spec:
         persistentVolumeReclaimPolicy: Retain
-        capacity:
-          storage: 10Mi # Dummy value
-        accessModes:
-          - ReadWriteMany
-        nfs:
-          path: /media/complete
-          server: 10.0.0.2
         mountOptions:
-          - nolock
+          - dir_mode=0777
+          - file_mode=0777
+          - vers=3.0
+          - uid=1000
+          - gid=1000
+        csi:
+          driver: smb.csi.k8s.io
+          readOnly: false
+          volumeHandle: "{{ radarr_share_volid }}"
+          volumeAttributes:
+            source: "//{{ nas_address }}/{{ smb_media_share }}"
+          nodeStageSecretRef:
+            name: smbcreds
+            namespace: default

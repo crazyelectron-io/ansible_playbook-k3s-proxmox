@@ -1,0 +1,10 @@
+---
+# The name of the bucket in InfluxDB 2.x (retentionPolicy parameter in 1.x and OpenHAB)
+influxdb_bucket: openhab
+influxdb_retention_policy: "53w"
+influxdb_mount_path: "/var/lib/influxdb2"
+# InfluxDB v2 image repo
+# influxdb_image_registry: "{{ private_registry }}"
+influxdb_image_registry: docker.io
+influxdb_image_name: influxdb
+influxdb_image_tag: 2.7.4-alpine

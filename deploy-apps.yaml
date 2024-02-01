@@ -1,0 +1,32 @@
+# file: ./deploy-apps.yaml
+# synopsis: Deploy applications on the K3s cluster
+---
+# Setup K3s cluster basics
+- hosts: localhost
+  connection: local
+  gather_facts: true
+  roles:
+    # - local/common/image-refresh
+    # - local/apps/sabnzbd
+    # - local/apps/prowlarr
+    # - local/apps/sonarr
+    # - local/apps/radarr
+    # - local/apps/bazarr
+    # - local/apps/qbittorrent
+    # - local/apps/plex
+    # - local/apps/mariadb
+    # - local/apps/partkeepr
+    # - local/apps/mosquitto
+    # - local/apps/influxdb
+    # - local/apps/influxdb2
+    # - local/apps/bosch-xmpp
+    # - local/apps/openhab
+    - local/apps/openhab4
+#     - local/www/crazyelectron
+
+# Wait until OpenHAB is started (if redeployed)
+- hosts: openhab
+  gather_facts: true
+  any_errors_fatal: true
+  roles:
+    - local/apps/openhab-started

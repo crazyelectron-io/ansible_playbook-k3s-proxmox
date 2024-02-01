@@ -1,0 +1,121 @@
+// file: conf/items/energy.items
+// synopis: Energy readings received from SolarEdge API and MQTT from smart meter.
+
+// --- Data received from the DSMR meter (through MQTT)
+
+// Group for watchdog trigger reset
+Group                               gOnlineDSMR                                                                    (gStatus)
+// Current tariff for power consumption & return
+Number                              Power_Tariff               "Stroomtarief"                        <energy>      (gPersist,gHist5)                                                                      {channel="mqtt:topic:dsmr:P_Tariff"}
+Number:EnergyPrice                  Power_Price                "Stroomprijs [%.2f €/kWh]"            <piggybank>   (gPersist,gHist5)
+// Group for current power phases
+Group                               gPowerPhase
+// Actual power usage readings from DSMR
+Number:Power                        Power_Use_All_Current      "Huidig gebruik [%d W]"               <energy>      (gHist0,gOnlineDSMR)                                    ["Measurement","Power"]        {channel="mqtt:topic:dsmr:P_Use"}
+Number:Power                        Power_Use_L1_Current       "Actueel L1 gebruik [%d W]"           <energy>      (gHist0,gPowerPhase)                                    ["Measurement","Power"]        {channel="mqtt:topic:dsmr:P_UseL1", unit="W"}
+Number:Power                        Power_Use_L2_Current       "Current use L2 [%d W]"               <energy>      (gHist0,gPowerPhase)                                    ["Measurement","Power"]        {channel="mqtt:topic:dsmr:P_UseL2", unit="W"}
+Number:Power                        Power_Use_L3_Current       "Current use L3 [%d W]"               <energy>      (gHist0,gPowerPhase)                                    ["Measurement","Power"]        {channel="mqtt:topic:dsmr:P_UseL3", unit="W"}
+// Actual power return readings from DSMR
+Number:Power                        Power_Ret_All_Current      "Huidig retour [%d W]"                <energy>      (gHist0,gOnlineDSMR)                                    ["Measurement","Power"]        {channel="mqtt:topic:dsmr:P_Ret", unit="W"}
+Number:Power                        Power_Ret_L1_Current       "Current return L1 [%d W]"            <energy>      (gHist0,gPowerPhase)                                    ["Measurement","Power"]        {channel="mqtt:topic:dsmr:P_RetL1", unit="W"}
+Number:Power                        Power_Ret_L2_Current       "Current return L2 [%d W]"            <energy>      (gHist0,gPowerPhase)                                    ["Measurement","Power"]        {channel="mqtt:topic:dsmr:P_RetL2", unit="W"}
+Number:Power                        Power_Ret_L3_Current       "Current return L3 [%d W]"            <energy>      (gHist0,gPowerPhase)                                    ["Measurement","Power"]        {channel="mqtt:topic:dsmr:P_RetL3", unit="W"}
+// Group of total power readings
+Group                               gPowerTotal
+// Meter readings of total power usage since install time of the DSMR
+Group:Number:Energy:SUM             Power_Use_Total            "Meterstand stroom [%d kWh]"          <energy>      (gHist5,gPersist)                                       ["Measurement","Energy"]
+Number:Energy                       Power_Use_T1_Total         "Meterstand T1 [%d kWh]"              <energy>      (gHist5,gPowerTotal,gPersist,Power_Use_Total)           ["Measurement","Energy"]       {channel="mqtt:topic:dsmr:P_UseTotT1", unit="kWh"}
+Number:Energy                       Power_Use_T2_Total         "Meterstand T2 [%d kWh]"              <energy>      (gHist5,gPowerTotal,gPersist,Power_Use_Total)           ["Measurement","Energy"]       {channel="mqtt:topic:dsmr:P_UseTotT2", unit="kWh"}
+// Meter reading of total gas consumption since install time of the DSMR smart meter (hourly updated)
+Number:Volume                       Gas_Use_Total              "Meterstand gas [%.3f m³]"            <gas>         (gHist0,gPersist)                                                                      {channel="mqtt:topic:dsmr:G_UseTot", unit="dm³"}
+// Meter readings of total return of energy since install time of the solar panels/smart meter
+Group:Number:Energy:SUM             Power_Ret_Total            "Meterstand retour [%d kWh]"          <energy>      (gHist5,gPersist,Power_Ret_Total)                       ["Measurement","Energy"]
+Number:Energy                       Power_Ret_T1_Total         "Return meter T1 [%d kWh]"            <energy>      (gHist5,gPowerTotal,gPersist, Power_Ret_Total)          ["Measurement","Energy"]       {channel="mqtt:topic:dsmr:P_RetTotT1", unit="kWh"}
+Number:Energy                       Power_Ret_T2_Total         "Return meter T2 [%d kWh]"            <energy>      (gHist5,gPowerTotal,gPersist, Power_Ret_Total)          ["Measurement","Energy"]       {channel="mqtt:topic:dsmr:P_RetTotT2", unit="kWh"}
+
+// --- Calculated data for the DSMR meter
+
+// Delta of consumed and returned actual power
+Number:Power                        Power_Delta_All_Current    "Actueel netto [%d W]"                <energy>      (gHist0)                                                ["Measurement","Power"]
+Number:Power                        Power_Delta_L1_Current     "Huidig L1 netto [%d W]"              <energy>      (gHist0)                                                ["Measurement","Power"]
+Number:Power                        Power_Delta_L2_Current     "Current L2 Net usage [%d W]"         <energy>      (gHist0)                                                ["Measurement","Power"]
+Number:Power                        Power_Delta_L3_Current     "Current L3 Net usage [%d W]"         <energy>      (gHist0)                                                ["Measurement","Power"]
+Number:Energy                       Power_Use_Hour             "Verbruik per uur [%d Wh"             <energy>      (gHist15,gPersist)                                      ["Measurement","Energy"]       {unit="kWh"}
+Number:Currency                     Power_Use_Hour_Cost        "Prijs per uur [€ %.2f]"              <piggybank>   (gHist15,gPersist)
+Number:Energy                       Power_Use_Day              "Verbruik vandaag [%d Wh]"            <energy>      (gHist60,gPersist)                                      ["Measurement","Energy"]       {unit="kWh"}
+Number:Currency                     Power_Use_Day_Cost         "Kosten vandaag [€ %.2f]"             <piggybank>   (gHist60,gPersist)
+Number:Energy                       Power_Use_Month            "Verbruik deze maand [%d Wh]"         <energy>      (gHist60,gPersist)                                      ["Measurement","Energy"]       {unit="kWh"}
+Number:Currency                     Power_Use_Month_Cost       "Kosten deze maand [€ %.2f]"          <piggybank>   (gHist60,gPersist)
+Number:Energy                       Power_Use_Contract         "Verbruik contractjaar [%d Wh]"       <energy>      (gHist60,gPersist)                                      ["Measurement","Energy"]       {unit="kWh"}
+Number:Currency                     Power_Use_Contract_Cost    "Kosten contractjaar [€ %.2f]"        <piggybank>   (gHist60,gPersist)
+Number:Energy                       Power_Ret_Hour             "Retour per uur [%d Wh]"              <energy>      (gHist15,gPersist)                                      ["Measurement","Energy"]       {unit="kWh"}
+Number                              Power_Ret_Hour_Cost        "Opbrengst per uur [€ %.2f]"          <piggybank>   (gHist15,gPersist)
+Number:Energy                       Power_Ret_Day              "Retour vandaag [%d Wh]"              <energy>      (gHist60,gPersist)                                      ["Measurement","Energy"]       {unit="kWh"}
+Number                              Power_Ret_Day_Cost         "Opbrengst vandaag [€ %.2f]"          <piggybank>   (gHist60,gPersist)
+Number:Energy                       Power_Ret_Month            "Retour deze maand [%d Wh]"           <energy>      (gHist60,gPersist)                                      ["Measurement","Energy"]       {unit="kWh"}
+Number                              Power_Ret_Month_Cost       "Opbrengst deze maand [€ %.2f]"       <piggybank>   (gHist60,gPersist)
+Number:Energy                       Power_Ret_Contract         "Retour contract [%d Wh]"             <energy>      (gHist60,gPersist)                                      ["Measurement","Energy"]       {unit="kWh"}
+Number                              Power_Ret_Contract_Cost    "Opbrengst contract [€ %.2f]"         <piggybank>   (gHist60,gPersist)
+// Periodic power delta
+Number:Energy                       Power_Delta_Hour           "Nettoverbruik dit uur [%d Wh]"       <energy>      (gHist5,gPersist)                                       ["Measurement","Energy"]       {unit="kWh"}
+Number                              Power_Delta_Hour_Cost      "Nettoprijs dit uur [€ %.2f]"         <piggybank>   (gHist5,gPersist)
+Number:Energy                       Power_Delta_Day            "Nettoverbruik vandaag [%d Wh]"       <energy>      (gHist60,gPersist)                                      ["Measurement","Energy"]       {unit="kWh"}
+Number                              Power_Delta_Day_Cost       "Nettoprijs vandaag [€ %.2f]"         <piggybank>   (gHist60,gPersist)
+Number:Energy                       Power_Delta_Month          "Nettoverbruik deze maand [%d Wh]"    <energy>      (gDaily,gPersist)                                       ["Measurement","Energy"]       {unit="kWh"}
+Number                              Power_Delta_Month_Cost     "Nettokosten deze maand [€ %.2f]"     <piggybank>   (gDaily,gPersist)
+Number:Energy                       Power_Delta_Contract       "Nettoverbruik contract [%d Wh]"      <energy>      (gDaily,gPersist)                                       ["Measurement","Energy"]       {unit="kWh"}
+Number                              Power_Delta_Contract_Cost  "Nettokosten contract [€ %.2f]"       <piggybank>   (gDaily,gPersist)
+// Current total gas comsumption today (calculated from midnight).
+Number:Volume                       Gas_Use_Hour               "Gasverbruik laatste uur [%.2f m³]"   <gas>         (gHist60,gPersist)                                                                     	//                                                         {stateTransition=" "[profile="ruby:set_uom_dm3"], unit="dm³"}
+Number                              Gas_Use_Hour_Cost          "Gas uur [€ %.2f]"                    <piggybank>   (gHist60,gPersist)
+Number                              Gas_Use_Day                "Gas vandaag [%2f m³]"                <gas>         (gHist15,gPersist)
+Number                              Gas_Use_Day_Cost           "Gas vandaag [€ %.2f]"                <piggybank>   (gHist15,gPersist)
+Number                              Gas_Use_Month              "Gas deze maand [%.2f m³]"            <gas>         (gDaily,gPersist)
+Number                              Gas_Use_Month_Cost         "Gas deze maand [€ %.2f]"             <piggybank>   (gDaily,gPersist)
+Number                              Gas_Use_Contract           "Gas contract [%.2f m³]"              <gas>         (gDaily,gPersist)
+Number                              Gas_Use_Contract_Cost      "Gas contract [%.2f]"                 <piggybank>   (gDaily,gPersist)
+Number                              Gas_Use_YearLast           "Gas vorig jaar [%.2f]"               <piggybank>   (gPersist)
+// Gas & Power price for this period (persist daily for historic tracking)
+Number                              GasPrice                   "Gasprijs per dm³"                    <piggybank>   (gPersist,gHist)
+// Watchdog 'timer' item - to detect if the DSMR input is stalled/stopped for more than 10m
+Switch                              Watchdog_DSMR              "Watchdog timer switch"                             (gWatchdog)
+Switch                              Offline_DSMR               "DSMR offline status"                               (gOffline)
+
+// --- SolarEdge API-based Items
+
+Group                               gOnlineSolar               "Online status checks"                              (gStatus)
+Number:Power                        Solar_Prod_Current         "Solar nu [%d %unit%]"                <solarplant>  (gHist0,gOnlineSolar)                                   ["Measurement","Power"]        {channel="solaredge:generic:se7k:live#production", unit="W"}
+Number:Energy                       Solar_Prod_Hour            "Uurproductie solar [%d Wh]"          <solarplant>  (gHist10,gPersist)                                      ["Measurement","Energy"]
+Number:Energy                       Solar_Prod_Day             "Dagproductie solar [%.3f %unit%]"    <solarplant>  (gHist10,gPersist)                                      ["Measurement","Energy"]       {channel="solaredge:generic:se7k:aggregate_day#production", unit="kWh"}
+Number:Currency                     Solar_Prod_Day_Cost        "Opbrengst vandaag [%unit% %.2f]"     <piggybank>   (gPersist,gHist60)
+Number:Energy                       Solar_Prod_Month           "Maandproductie solar [%.3f %unit%]"  <solarplant>  (gDaily,gPersist)                                       ["Measurement","Energy"]       {channel="solaredge:generic:se7k:aggregate_month#production", unit="kWh"}
+Number:Currency                     Solar_Prod_Month_Cost      "Maandopbrengst solar [€%.2f]"        <piggybank>   (gPersist)
+Number:Energy                       Solar_Prod_Year            "Jaarproductie solar [%d %unit%]"     <solarplant>  (gDaily,gPersist)                                       ["Measurement","Energy"]       {channel="solaredge:generic:se7k:aggregate_year#production", unit="kWh"}
+Number:Currency                     Solar_Prod_Year_Cost       "Jaaropbrengts solar [€%.2f]"         <piggybank>   (gPersist)
+Number:Energy                       Solar_Prod_LastYear        "Solar vorig jaar [%d %unit%]"        <solarplant>  (gPersist,gDaily)                                       ["Measurement","Energy"]       {stateDescription="", unit="kWh"}
+Number:Currency                     Solar_Prod_LastYear_Cost   "Opbrengst vorig jaar [€%.2f]"        <piggybank>   (gPersist)
+// Watchdog 'timer' item - to detect if the SolarEdge input is stalled/stopped for more than 1h
+Switch                              Watchdog_Solar             "Watchdog timer switch"                             (gWatchdog)
+Switch                              Offline_Solar              "SolarEdge offline status"                          (gOffline)
+
+// --- SolarEdge modbus data Items.
+
+Group                               gOnline_SEModbus           "Online status checks"                              (gStatus)
+Number:Power                        Solar_Power_Actual         "Actual power production [%.1f W]"    <energy>      (gHist0,gOnline_SEModbus)                               ["Measurement","Power"]        {channel="mqtt:topic:semodbus:SE_Pwr"}
+Number                              Solar_Mode_Actual          "Actual Mode [%d]"                    <energy>      (gHist0)                                                                               {channel="mqtt:topic:semodbus:SE_Mode"}
+Number:Temperature                  Solar_Temp_Actual          "Actual Temperature [%.1f °C]"        <energy>      (gHist10)                                               ["Measurement","Temperature"]  {channel="mqtt:topic:semodbus:SE_Temp"}
+Number                              Solar_Freq_Actual          "Actual Frequency [%.5f Hz]"          <energy>      (gHist5)                                                                               {channel="mqtt:topic:semodbus:SE_Freq"}
+Group:Number:ElectricPotential:AVG  Solar_Voltage_Actual       "Actual average Voltage"                            (gHist5)
+Group:Number:ElectricPotential:MAX  Solar_MaxVoltage_Actual    "Actual highest Voltage"                            (gHist5)
+Number:ElectricPotential            Solar_VoltPh1_Actual       "Actual Voltage Phase 1"                            (gHist5,Solar_Voltage_Actual, Solar_MaxVoltage_Actual)                                 {channel="mqtt:topic:semodbus:SE_VoltPh1"}
+Number:ElectricPotential            Solar_VoltPh2_Actual       "Actual Voltage Phase 2"                            (gHist5,Solar_Voltage_Actual, Solar_MaxVoltage_Actual)                                 {channel="mqtt:topic:semodbus:SE_VoltPh2"}
+Number:ElectricPotential            Solar_VoltPh3_Actual       "Actual Voltage Phase 3"                            (gHist5,Solar_Voltage_Actual, Solar_MaxVoltage_Actual)                                 {channel="mqtt:topic:semodbus:SE_VoltPh3"}
+Number                              Solar_PowerFactor_Actual   "Actual Power Factor"                               (gHist5)                                                                               {channel="mqtt:topic:semodbus:SE_PowerF"}
+
+// --- SolarEdge serial data Items
+
+Group                               gOnlineSESerial            "Online status checks"                              (gStatus)
+Number:Energy                       Solar_Day_Total            "Dagtotaal Power [%.3f Wh]"           <energy>      (gHist5,gOnlineSESerial)                                                               {channel="mqtt:topic:seserial:SE_Eday"}
+Number:Energy                       Solar_Month_Total          "Maandtotaal Power [%.3f Wh]"         <energy>      (gHist10)                                                                              {channel="mqtt:topic:seserial:SE_Emon"}
+Number:Energy                       Solar_Year_Total           "Jaartotaaal Power [%.3f Wh]"         <energy>      (gHist10)                                                                              {channel="mqtt:topic:seserial:SE_Eyear"}
+Number:Energy                       Solar_All_Total            "Inverter total Power [%.3f Wh]"      <energy>      (gHist0)                                                                               {channel="mqtt:topic:seserial:SE_Etot"}

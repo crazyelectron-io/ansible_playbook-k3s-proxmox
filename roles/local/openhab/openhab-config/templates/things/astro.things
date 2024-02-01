@@ -1,0 +1,5 @@
+// file: conf/things/astro.things
+// synopsis: Astro binding Things configuration
+
+astro:sun:home  [geolocation="{{ openhab_latitude }},{{ openhab_longitude }}", interval=300]
+astro:moon:home [geolocation="{{ openhab_latitude }},{{ openhab_longitude }}", interval=300]

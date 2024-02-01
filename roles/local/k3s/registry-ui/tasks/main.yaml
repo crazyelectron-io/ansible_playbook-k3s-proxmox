@@ -1,0 +1,114 @@
+# file:
+# synopsis:
+---
+---
+- name: Make sure the Registry namespace is present
+  kubernetes.core.k8s:
+    name: "{{ registry_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create Private Registry Deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: registry-ui
+        namespace: "{{ registry_namespace }}"
+        labels:
+          app: registry-ui
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: registry-ui
+        template:
+          metadata:
+            labels:
+              app: registry-ui
+          spec:
+            imagePullSecrets:
+              - name: registry-cred
+            containers:
+              - name: registry-ui
+                image: registry-server
+                imagePullPolicy: IfNotPresent
+                ports:
+                  - containerPort: 80
+                volumeMounts:
+                  - name: storage
+                    mountPath: "{{ registry_path }}"
+                    readOnly: false
+                  - name: htpasswd
+                    mountPath: /auth
+                    readOnly: true
+                env:
+                  - name: REGISTRY_AUTH
+                    value: htpasswd
+                  - name: REGISTRY_AUTH_HTPASSWD_REALM
+                    value: Docker Registry
+                  - name: REGISTRY_AUTH_HTPASSWD_PATH
+                    value: /auth/htpasswd
+                  - name: REGISTRY_STORAGE_DELETE_ENABLED
+                    value: "true"
+                  - name: REGISTRY_HTTP_ADDR
+                    value: :5000
+                  - name: REGISTRY_HTTP_DEBUG_ADDR
+                    value: "{{ debug_address }}"
+                  - name: REGISTRY_HTTP_DEBUG_PROMETHEUS_ENABLED
+                    value: "{{ prometheus_enabled }}"
+                  - name: REGISTRY_HTTP_DEBUG_PROMETHEUS_PATH
+                    value: "{{ prometheus_path }}"
+                  - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+                    value: "{{ registry_path }}"
+                resources:
+                  limits:
+                    cpu: 500m
+                    memory: 512Mi
+            volumes:
+              - name: storage
+                persistentVolumeClaim:
+                  claimName: registry-pvc
+              - name: htpasswd
+                secret:
+                  secretName: registry-htpasswd
+
+
+services:
+  registry-ui:
+    image: joxit/docker-registry-ui:main
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      - SINGLE_REGISTRY=true
+      - REGISTRY_TITLE=Docker Registry UI
+      - DELETE_IMAGES=true
+      - SHOW_CONTENT_DIGEST=true
+      - NGINX_PROXY_PASS_URL=http://registry-server:5000
+      - SHOW_CATALOG_NB_TAGS=true
+      - CATALOG_MIN_BRANCHES=1
+      - CATALOG_MAX_BRANCHES=1
+      - TAGLIST_PAGE_SIZE=100
+      - REGISTRY_SECURED=false
+      - CATALOG_ELEMENTS_LIMIT=1000
+    container_name: registry-ui
+
+  registry-server:
+    image: registry:2.8.2
+    restart: always
+    environment:
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin: '[http://registry.example.com]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Methods: '[HEAD,GET,OPTIONS,DELETE]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Credentials: '[true]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Headers: '[Authorization,Accept,Cache-Control]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Expose-Headers: '[Docker-Content-Digest]'
+      REGISTRY_STORAGE_DELETE_ENABLED: 'true'
+    volumes:
+      - ./registry/data:/var/lib/registry
+    container_name: registry-server

@@ -1,0 +1,21 @@
+// file: conf/things/verisure.things
+// synpsis: VeriSure alarm bridge configuration
+
+Bridge verisure:bridge:myverisure "VeriSure Bridge" [username="{{ verisure_username }}", password="{{ verisure_password }}", refresh="600", pin="{{ verisure_pin }}"]
+{
+  Thing alarm               alarm1                "Verisure alarm"        [deviceId="alarm{{verisure_id}}"]
+  Thing smokeDetector       garageSmokeDetector   "Rookmelder garage"     [deviceId="2AECWG6E"]
+  Thing smokeDetector       corridorSmokeDetector "Rookmelder overloop"   [deviceId="2AECWHNC"]
+  Thing siren               kitchenSiren          "Sirene"                [deviceId="2S634PLB"]
+  Thing nightControl        corridorNightControl  "Night Control"         [deviceId="2AB8WD4L"]
+  Thing doorWindowSensor    sculleryDoorSensor    "Deursensor bijkeuken"  [deviceId="2DFVGPTT"]
+  Thing doorWindowSensor    bedroomDoorSensor     "Deursensor slaapkamer" [deviceId="2DFXTKY4"]
+  Thing doorWindowSensor    livingroomDoorSensor  "Deursensor woonkamer"  [deviceId="2DFLCPPC"]
+  Thing doorWindowSensor    garageDoorSensor      "Deursensor garage"     [deviceId="2DFXT6NR"]
+  Thing doorWindowSensor    diningDoorSensor      "Deursensor eetkamer"   [deviceId="2DFLAEYG"]
+  Thing doorWindowSensor    fuseboxDoorSensor     "Deursensor meterkast"  [deviceId="2JDTSH7M"]
+  Thing doorWindowSensor    frontDoorSensor       "Deursensor voordeur"   [deviceId="2DFLAN7F"]
+  Thing broadbandConnection broadband1            "Internetverbinding"    [deviceId="bc{{verisure_id}}"]
+  Thing gateway             verisureGateway       "Verisure Gateway"      [deviceId="267BQFX9"]
+  Thing eventlog            alarmEventlog         "Verisure EventLog"     [deviceId="el{{verisure_id}}"]
+}

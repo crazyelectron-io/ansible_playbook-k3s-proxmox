@@ -1,0 +1,131 @@
+# file: roles/local/openhab/openhab-config/tasks/main.yaml
+# synopsis: Deploy the OpenHAB configuration files and trigger restart of Things or Services have changed.
+---
+- name: Add Karaf SSH key
+  ansible.builtin.replace:
+    dest: "{{openhab_user_data_dir}}/etc/keys.properties"
+    regexp: '(^\#karaf=)(.*)$'
+    replace: "openhab={{karaf_ssh_key}},_g_:admingroup"
+
+- name: Update Karaf SSH password
+  ansible.builtin.replace:
+    dest: "{{openhab_user_data_dir}}/etc/users.properties"
+    regexp: '(^openhab)(.*)$'
+    replace: "openhab = {{karaf_ssh_password}},_g_:admingroup"
+
+# Apply the Services configuration files
+- name: Ensure Services directory exists
+  ansible.builtin.file:
+    path: '{{ openhab_conf_dir }}/services'
+    state: directory
+- name: Ensure Services files are populated from the templates
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_conf_dir }}/services/{{ item.path }}'
+  with_community.general.filetree: templates/services
+  when: item.state == 'file'
+  notify: Restart OpenHAB
+
+# Apply the Tags configuration files
+- name: Ensure Tags directory exists
+  ansible.builtin.file:
+    path: '{{ openhab_conf_dir }}/tags'
+    state: directory
+- name: Ensure Tags files are populated from the templates
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_conf_dir }}//tags/{{ item.path }}'
+  with_community.general.filetree: templates/tags
+  when: item.state == 'file'
+
+# Apply the Transform configuration files
+- name: Ensure Transform directory exists
+  ansible.builtin.file:
+    path: '{{ openhab_conf_dir }}/transform'
+    state: directory
+- name: Ensure Transform files are populated from the templates
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_conf_dir }}/transform/{{ item.path }}'
+  with_community.general.filetree: templates/transform
+  when: item.state == 'file'
+
+# Apply the HTML configuration template and static files
+- name: Ensure HTML directory exists
+  ansible.builtin.file:
+    path: '{{ openhab_conf_dir }}/html'
+    state: directory
+- name: Ensure HTML files are populated from the templates
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_conf_dir }}/html/{{ item.path }}'
+  with_community.general.filetree: templates/html
+  when: item.state == 'file'
+- name: Ensure HTML files are copied to the static HTLM folder
+  ansible.builtin.copy:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_conf_dir }}/html/{{ item.path }}'
+  with_community.general.filetree: files/html
+  when: item.state == 'file'
+
+# Apply the Persistence configuration files
+- name: Ensure Persistence directory exists
+  ansible.builtin.file:
+    path: '{{ openhab_conf_dir }}/persistence'
+    state: directory
+- name: Ensure Persistence files are populated from the templates
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_conf_dir }}/persistence/{{ item.path }}'
+  with_community.general.filetree: templates/persistence
+  when: item.state == 'file'
+
+# Apply the Things configuration files
+- name: Ensure Things directory exists
+  ansible.builtin.file:
+    path: '{{ openhab_conf_dir }}/things'
+    state: directory
+- name: Ensure Things files are populated from the templates
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_conf_dir }}/things/{{ item.path }}'
+  with_community.general.filetree: templates/things
+  when: item.state == 'file'
+  notify: Restart OpenHAB
+
+# Apply the Items configuration files
+- name: Ensure Items directory exists
+  ansible.builtin.file:
+    path: '{{ openhab_conf_dir }}/items'
+    state: directory
+- name: Ensure Items files are populated from the templates
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_conf_dir }}/items/{{ item.path }}'
+  with_community.general.filetree: templates/items
+  when: item.state == 'file'
+
+# Apply the Sitemap configuration files
+- name: Ensure Sitemap directory exists
+  ansible.builtin.file:
+    path: '{{ openhab_conf_dir }}/sitemaps'
+    state: directory
+- name: Ensure Sitemaps files are populated from the templates
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_conf_dir }}//sitemaps/{{ item.path }}'
+  with_community.general.filetree: templates/sitemaps
+  when: item.state == 'file'
+
+# Apply the etc configuration files
+- name: Ensure etc directory exists
+  ansible.builtin.file:
+    path: '{{ openhab_user_data_dir }}/etc'
+    state: directory
+  when: eventlog_filtering
+- name: Ensure Etc files are copied from the templates
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_user_data_dir }}//etc/{{ item.path }}'
+  with_community.general.filetree: templates/etc
+  when: item.state == 'file' and eventlog_filtering

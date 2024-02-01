@@ -1,0 +1,6 @@
+// file:
+// synopsis:
+
+Switch InfraPanel_Office "Warmtepaneel Kantoor" <heater> {channel="tuya:tuyaDevice:infraheaterheater:switch"}
+Number InfraPanel_SetTemp_Office "Warmtepaneel Kantoor Doeltemperatuur" <temperature> {channel="tuya:tuyaDevice:infraheaterheater:temp_set"}
+Number InfraPanel_Temperature_Office "Warmtepaneel Kantoor Temperatuur" <temperatur> {channel="tuya:tuyaDevice:infraheaterheater:temp_current"}

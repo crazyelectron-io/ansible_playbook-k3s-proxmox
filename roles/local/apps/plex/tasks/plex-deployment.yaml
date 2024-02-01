@@ -1,0 +1,129 @@
+# file:
+# synopsis:
+---
+- name: Create Plex Deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        labels:
+          app: plex
+        name: plex
+        namespace: default
+      spec:
+        progressDeadlineSeconds: 600
+        replicas: 1
+        revisionHistoryLimit: 10
+        selector:
+          matchLabels:
+            app: plex
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            labels:
+              app: plex
+          spec:
+            nodeSelector:
+              gpu: intel
+            containers:
+              - name: plex
+                image: "{{ plex_image_registry }}/{{ plex_container_image }}:{{ plex_image_tag }}"
+                imagePullPolicy: IfNotPresent
+                # readinessProbe:
+                #   httpGet:
+                #     path: /identity
+                #     port: 32400
+                #   initialDelaySeconds: 30
+                #   timeoutSeconds: 5
+                # livenessProbe:
+                #   httpGet:
+                #     path: /identity
+                #     port: 32400
+                #   initialDelaySeconds: 40
+                #   timeoutSeconds: 10
+                resources:
+                  requests:
+                    cpu: 2000m
+                    memory: 12Gi
+                # stdin: true
+                # tty: true
+                devices:
+                  - /dev/dri:/dev/dri
+                ports:
+                  # Required network port numbers; see https://hub.docker.com/r/linuxserver/plex
+                  - containerPort: 32400
+                    name: pms-web
+                    protocol: TCP
+                  - containerPort: 32469
+                  #   name: dlna-tcp
+                  #   protocol: TCP
+                  # - containerPort: 1900
+                  #   name: dlna-udp
+                  #   protocol: UDP
+                  - containerPort: 3005
+                    name: plex-companion
+                    protocol: TCP
+                  - containerPort: 5353
+                    name: discovery-udp
+                    protocol: UDP
+                  - containerPort: 8324
+                    name: plex-roku
+                    protocol: TCP
+                  - containerPort: 32410
+                    name: gdm-32410
+                    protocol: UDP
+                  - containerPort: 32412
+                    name: gdm-32412
+                    protocol: UDP
+                  - containerPort: 32413
+                    name: gdm-32413
+                    protocol: UDP
+                  - containerPort: 32414
+                    name: gdm-32414
+                    protocol: UDP
+                env:
+                # environment variables. See https://hub.docker.com/r/linuxserver/plex
+                  - name: PLEX_CLAIM
+                    value: "{{plex_claim}}"
+                  - name: PUID
+                    value: "99"
+                  - name: PGID
+                    value: "100"
+                  - name: TZ
+                    value: Europe/Amsterdam
+                  - name: VERSION
+                    value: docker
+                  - name: ALLOWED_NETWORKS
+                    value: "10.0.0.0/8,192.168.0.0/16,172.16.0.0/16"
+                volumeMounts:
+                  - mountPath: /config
+                    name: config
+                  - mountPath: /data
+                    name: media
+                  - mountPath: /transcode
+                    name: transcode
+            # dnsConfig: {}
+            # dnsPolicy: ClusterFirstWithHostNet
+            # hostNetwork: true
+            restartPolicy: Always
+            # schedulerName: default-scheduler
+            # securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+              - name: config
+                persistentVolumeClaim:
+                  claimName: plex-config-pvc
+              # - name: media
+              #   nfs:
+              #     server: "{{ nas_address }}"
+              #     path: "{{ nfs_media_share }}"
+              - name: media
+                persistentVolumeClaim:
+                  claimName: plex-data-pvc
+              - name: transcode
+                emptyDir:
+                  medium: Memory
+                  sizeLimit: 10Gi

@@ -1,0 +1,64 @@
+---
+- name: Create ConfigMap for Mosquitto configuration
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: mosquitto-conf
+        namespace: "{{ openhab_namespace }}"
+      data:
+        mosquitto.conf: |
+          listener 1883
+          protocol mqtt
+          allow_anonymous true
+          autosave_interval 0
+          autosave_on_changes false
+          persistence false
+  #         listener 9883
+  #         protocol mqtt
+  #         listener 9001
+  #         protocol websockets
+  #         sys_interval 10
+  #         log_dest stdout
+  #         log_type error
+  #         log_type warning
+  #         log_type notice
+  #         log_type information
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create ConfigMap for Mosquitto bridge configuration
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: mosquitto-bridge
+        namespace: "{{ openhab_namespace }}"
+      data:
+        mosquitto.conf: |
+          listener 1883
+          protocol mqtt
+          allow_anonymous true
+          autosave_interval 0
+          autosave_on_changes false
+          persistence false
+          connection broker0
+          address mosquitto-bridge
+          topic # both 0
+        # listener 9001
+        # protocol websockets
+        # sys_interval 15
+        # log_dest stdout
+        # log_type error
+        # log_type warning
+        # log_type notice
+        # log_type information
+        # connection_messages true
+        # try_private true
+  delegate_to: 127.0.0.1
+  run_once: true
+#          bridge_bind_address mosquitto-bridge

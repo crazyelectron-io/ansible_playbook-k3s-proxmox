@@ -1,0 +1,46 @@
+// file: conf/transform/astro.map
+// synopsis: Translate Astro binding status to Dutch
+
+// Sterrenbeelden
+ARIES=♈ Ram
+TAURUS=♉ Stier
+GEMINI=♊ Tweeling
+CANCER=♋ Kreeft
+LEO=♌ Leeuw
+VIRGO=♍ Maagd
+LIBRA=♎ Weegschaal
+SCORPIO=♏ Schorpioen
+SAGITTARIUS=♐ Boogschutter
+CAPRICORN=♑ Steenbok
+AQUARIUS=♒ Waterman
+PISCES=♓ Vissen
+//
+SPRING=Lente
+SUMMER=Zomer
+AUTUMN=Herfst
+WINTER=Winter
+//
+SUN_RISE=Zonsopkomst
+ASTRO_DAWN=Astronomische morgenschemering
+NAUTIC_DAWN=Nautische morgenschemering
+CIVIL_DAWN=Burgerlijke morgenschemering
+CIVIL_DUSK=Burgerlijke avondschemering
+NAUTIC_DUSK=Nautische avondschemering
+ASTRO_DUSK=Astronomische avondschemering
+SUN_SET=Zonsondergang
+DAYLIGHT=Dag
+NOON=Middag
+NIGHT=Nacht
+//
+NEW=nieuwe maan
+WAXING_CRESCENT=wassende halve maan
+FIRST_QUARTER=eerste kwartier
+WAXING_GIBBOUS=wassende maan
+FULL=volle maan
+WANING_GIBBOUS=afnemende maan
+THIRD_QUARTER=laatse kwartier
+WANING_CRESCENT=afnemende halve maan
+//
+NULL=onbekend ⁉
+UNDEF=onbekend ⁉
+-=onbekend ⁉

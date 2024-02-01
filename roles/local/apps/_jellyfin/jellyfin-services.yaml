@@ -1,0 +1,45 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jellyfin-tcp
+  namespace: jellyfin
+  annotations:
+    metallb.universe.tf/allow-shared-ip: jellyfin
+spec:
+  ports:
+    - port: 8096
+      targetPort: 8096
+      name: http-tcp
+      protocol: TCP
+    - port: 8920
+      targetPort: 8920
+      protocol: TCP
+      name: https-tcp
+  type: LoadBalancer
+  loadBalancerIP: 10.100.3.103
+  selector:
+    app: jellyfin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jellyfin-udp
+  namespace: jellyfin
+  annotations:
+    metallb.universe.tf/allow-shared-ip: jellyfin
+spec:
+  selector:
+    app: jellyfin
+  ports:
+  - port: 1900                # port to open on the outside on the server
+    targetPort: 1900          # targetport. port on the pod to passthrough
+    name: dlna-udp            # reference name for the port in the deployment yaml
+    protocol: UDP
+  - port: 7359
+    targetPort: 7359
+    name: discovery-udp
+    protocol: UDP
+  type: LoadBalancer
+  loadBalancerIP: 10.100.3.103
+  # sessionAffinity: ClientIP # This is necessary for multi-replica deployments

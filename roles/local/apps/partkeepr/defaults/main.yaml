@@ -1,0 +1,8 @@
+---
+partkeepr_namespace: crazyelectron
+# Partkeepr container info
+partkeepr_image_registry: mhubig
+partkeepr_image_name: partkeepr
+partkeepr_image_tag: latest
+# Partkeepr public domain
+partkeepr_domain: "parts.moerman.online"

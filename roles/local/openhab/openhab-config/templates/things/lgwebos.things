@@ -1,0 +1,5 @@
+// file: conf/things/lgwebos.things
+// synopsis:
+
+Thing lgwebos:WebOSTV:tvkitchen [host="10.20.1.237", key="31b7433f036d30c7d6e2e0dbea2759c7", macAddress="b0:37:95:cc:cd:b4", useTLS=true]
+Thing lgwebos:WebOSTV:tvliving  [host="10.20.1.199", key="5678a0472ead25344a42488e13a5fc9c", macAddress="7c:64:6c:e6:b9:22", useTLS=true]

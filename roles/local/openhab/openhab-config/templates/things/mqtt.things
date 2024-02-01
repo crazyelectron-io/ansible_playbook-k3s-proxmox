@@ -1,0 +1,45 @@
+// file: conf/things/mqtt.things
+// synopis: MQTT topics to collect energy readings from Solar panels and smartmeter (DSMR)
+
+Bridge mqtt:broker:mosquitto [host="mosquitto.openhab.svc.cluster.local", port="1883", secure=false, clientID="OpenHAB411"]
+
+// SolarEdge Modbus reader
+Thing mqtt:topic:semodbus "SE Modbus reader" (mqtt:broker:mosquitto) {
+  Channels:
+    Type number : SE_Pwr      "Inverter Power"           [stateTopic="energy/inverter", transformationPattern="JSONPATH:$.power", unit="W"]
+    Type number : SE_Temp     "Inverter Temp"            [stateTopic="energy/inverter", transformationPattern="JSONPATH:$.temperature", unit="°C"]
+    Type number : SE_Mode     "Inverter Mode"            [stateTopic="energy/inverter", transformationPattern="JSONPATH:$.status"]
+    Type number : SE_Freq     "Inverter Freq"            [stateTopic="energy/inverter", transformationPattern="JSONPATH:$.frequency", unit="Hz"]
+    Type number : SE_VoltPh1  "Inverter Voltage Phase 1" [stateTopic="energy/inverter", transformationPattern="JSONPATH:$.voltage1", unit="V"]
+    Type number : SE_VoltPh2  "Inverter Voltage Phase 2" [stateTopic="energy/inverter", transformationPattern="JSONPATH:$.voltage2", unit="V"]
+    Type number : SE_VoltPh3  "Inverter Voltage Phase 3" [stateTopic="energy/inverter", transformationPattern="JSONPATH:$.voltage3", unit="V"]
+    Type number : SE_PowerF   "Inverter PowerFactor"     [stateTopic="energy/inverter", transformationPattern="JSONPATH:$.powerf"]
+}
+
+// SolarEdge Serial reader
+Thing mqtt:topic:seserial "SE Serial reader" (mqtt:broker:mosquitto) {
+  Channels:
+    Type number : SE_Eday     "Day total Solar Energy"   [mode="READONLY", stateTopic="energy/solaredge", transformationPattern="JSONPATH:$.Eday", unit="Wh"]
+    Type number : SE_Emon     "Month total Solar Energy" [mode="READONLY", stateTopic="energy/solaredge", transformationPattern="JSONPATH:$.Emon", unit="Wh"]
+    Type number : SE_Eyear    "Year total Solar Energy"  [mode="READONLY", stateTopic="energy/solaredge", transformationPattern="JSONPATH:$.Eyear", unit="Wh"]
+    Type number : SE_Etot     "Total Solar Energy"       [mode="READONLY", stateTopic="energy/solaredge", transformationPattern="JSONPATH:$.Etot", unit="Wh"]
+}
+
+// DSMR smartmeter reader
+Thing mqtt:topic:dsmr "DSMR reader" (mqtt:broker:mosquitto) {
+  Channels:
+    Type number : P_Use       "Current use"              [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.use.actual.total", unit="W"]
+    Type number : P_UseL1     "L1 use"                   [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.use.actual.L1", unit="W"]
+    Type number : P_UseL2     "L2 use"                   [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.use.actual.L2", unit="W"]
+    Type number : P_UseL3     "L3 use"                   [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.use.actual.L3", unit="W"]
+    Type number : P_Ret       "Huidig return"            [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.return.actual.total", unit="W"]
+    Type number : P_RetL1     "L1 return"                [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.return.actual.L1", unit="W"]
+    Type number : P_RetL2     "L2 return"                [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.return.actual.L2", unit="W"]
+    Type number : P_RetL3     "L3 return"                [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.return.actual.L3", unit="W"]
+    Type number : P_Tariff    "Tariff"                   [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.tariff"]
+    Type number : P_UseTotT1  "T1 use"                   [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.use.total.T1", unit="Wh"]
+    Type number : P_UseTotT2  "T2 use"                   [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.use.total.T2", unit="Wh"]
+    Type number : P_RetTotT1  "T1 return"                [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.return.total.T1", unit="Wh"]
+    Type number : P_RetTotT2  "T2 return"                [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.power.return.total.T2", unit="Wh"]
+    Type number : G_UseTot    "Gas use"                  [mode="READONLY", stateTopic="sensor/dsmr", transformationPattern="JSONPATH:$.gas.total", unit="dm³"]
+}

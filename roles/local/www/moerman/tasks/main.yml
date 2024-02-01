@@ -1,0 +1,119 @@
+---
+- name: Create website certificate
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: moerman-online-cert-{{ letsencrypt_environment }}
+        namespace: default
+      spec:
+        secretName: moerman-online-{{ letsencrypt_environment }}-tls
+        issuerRef:
+          name: letsencrypt-{{ letsencrypt_environment }}
+          kind: ClusterIssuer
+        commonName: moerman.online
+        dnsNames:
+          - moerman.online
+          - www.moerman.online
+
+- name: Create moerman.online website service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: moerman-online
+        namespace: default
+      spec:
+        ports:
+          - name: http
+            port: 80
+            targetPort: 80
+        selector:
+          app: moerman-online
+
+- name: Create IngressRoute for moerman.online website
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: moerman-online
+        namespace: default
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: Host(`www.moerman.online`)
+            kind: Rule
+            services:
+              - name: moerman-online
+                port: 80
+          - match: Host(`moerman.online`)
+            kind: Rule
+            services:
+              - name: moerman-online
+                port: 80
+            middlewares:
+              - name: default-headers
+        tls:
+          secretName: "moerman-online-{{ letsencrypt_environment }}-tls"
+
+- name: Create moerman.online Website deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: moerman-online
+        namespace: default
+      spec:
+        replicas: 3
+        progressDeadlineSeconds: 600
+        minReadySeconds: 5
+        revisionHistoryLimit: 2
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 1
+        selector:
+          matchLabels:
+            app: moerman-online
+        template:
+          metadata:
+            labels:
+              app: moerman-online
+          spec:
+            affinity:
+              podAntiAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                      - moerman-online
+                  topologyKey: "kubernetes.io/hostname"
+            containers:
+            - name: moerman-online
+              image: crazyelectron/moerman-online:latest
+              imagePullPolicy: IfNotPresent
+              ports:
+                - name: web
+                  containerPort: 80
+                  protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /
+                  port: 80
+                  initialDelaySeconds: 5
+                  periodSeconds: 3
+                  successThreshold: 1

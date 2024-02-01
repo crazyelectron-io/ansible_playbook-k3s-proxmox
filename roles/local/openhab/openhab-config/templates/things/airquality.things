@@ -1,0 +1,6 @@
+// file:
+// synopsis:
+
+Bridge airquality:api:main "Bridge" [apiKey="xxxyyyzzz"] {
+    station home "Krakow"[location="{{openhab_latitude}},{{openhab_longitude}}", refresh=60]
+}

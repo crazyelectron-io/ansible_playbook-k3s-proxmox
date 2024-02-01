@@ -1,0 +1,72 @@
+# file: 
+# synopsis: 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jellyfin
+  name: jellyfin
+  namespace: jellyfin
+spec:
+  progressDeadlineSeconds: 300
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+    spec:
+      volumes:
+      - name: jellyfin-config
+        persistentVolumeClaim:
+          claimName: jellyfin-config-pvc
+      - name: jellyfin-data
+        nfs:
+          server: "10.0.0.2"
+          path: "/media"
+      containers:
+      - env:
+        - name: JELLYFIN_PublishedServerUrl 
+          value: 10.100.3.103 # The IP number for the jellyfin server (see service config)
+        - name: PGID
+          value: "\x36\x35\x35\x34\x31" # < ASCII code for '65541'
+        - name: PUID
+          value: "\x31\x30\x34\x34" #< ACII code for '1044'
+        - name: TZ
+          value: Europe/Amsterdam
+        securityContext:
+          privileged: true # Container must run as privileged inside of the pod, required for hardware acceleration
+        image: ghcr.io/linuxserver/jellyfin
+        imagePullPolicy: IfNotPresent
+        name: jellyfin
+        ports:
+        - containerPort: 8096
+          name: http-tcp
+          protocol: TCP
+        - containerPort: 8920
+          name: https-tcp
+          protocol: TCP
+        - containerPort: 1900
+          name: dlna-udp
+          protocol: UDP
+        - containerPort: 7359
+          name: discovery-udp
+          protocol: UDP      
+        resources: {}
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /config
+          name: jellyfin-config
+        - mountPath: /data
+          name: jellyfin-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

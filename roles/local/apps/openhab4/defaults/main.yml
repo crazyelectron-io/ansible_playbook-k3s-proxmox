@@ -1,0 +1,7 @@
+---
+# openhab4_image_registry: "{{ private_registry }}"
+openhab4_image_registry: crazyelectron # derault: openhab
+openhab4_image_name: openhab
+openhab4_image_tag: 4.1.1
+openhab4_namespace: openhab4
+openhab4_domain: "openhab4.{{ main_domain }}"

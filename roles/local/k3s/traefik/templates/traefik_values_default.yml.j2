@@ -130,6 +130,10 @@ ports:
     exposedPort: 9100
     # The port protocol (TCP/UDP)
     protocol: TCP
+  karaf-ssh:
+    port: 8101
+    expose: true
+    exposedPort: 8101
 
 # As Traefik web/websecure ports are exposed by "hostPort" a service isn't
 # needed.

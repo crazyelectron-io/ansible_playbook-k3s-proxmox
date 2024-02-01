@@ -1,0 +1,11 @@
+---
+registry_password: "registry:$2y$05$iRps54k6hgHGya1Vu24Nr.McJsHFEirMnDYAmD2GY/WT4ZrIQ1kmK"
+registry_path: "/var/lib/registry"
+
+# Prometheus metrics are only available through the debug HOST:PORT
+prometheus_enabled: "true"
+prometheus_path: metrics
+
+# Registry access credentials
+registry_user: "registry"
+registry_pwd: "F!esG33ST"

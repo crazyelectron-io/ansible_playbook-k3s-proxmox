@@ -1,0 +1,50 @@
+// file: conf/items/unifiy.items
+// synopsis:
+
+// --- Unifi wirelessClient channels Items
+
+Switch                    RonsPhone                 "Ron's iPhone [MAP(bool.map):%s]"              (gHist0)   {channel="unifi:wirelessClient:home:ronsPhone:online"}
+String                    RonsPhoneSite             "Ron's iPhone: Site"                                      {channel="unifi:wirelessClient:home:ronsPhone:site"}
+String                    RonsPhoneName             "Ron's iPhone devicename"                                 {channel="unifi:wirelessClient:home:ronsPhone:name"}
+String                    RonsPhoneHostname         "Ron's iPhone Hostname"                                   {channel="unifi:wirelessClient:home:ronsPhone:hostname"}
+String                    RonsPhoneMAC              "Ron's iPhone: MAC [%s]"                                  {channel="unifi:wirelessClient:home:ronsPhone:macAddress"}
+String                    RonsPhoneIP               "Ron's iPhone: IP [%s]"                                   {channel="unifi:wirelessClient:home:ronsPhone:ipAddress"}
+String                    RonsPhoneAP               "Ron's iPhone: AP [%s]"                                   {channel="unifi:wirelessClient:home:ronsPhone:ap"}
+String                    RonsPhoneESSID            "Ron's iPhone: ESSID [%s]"                                {channel="unifi:wirelessClient:home:ronsPhone:essid"}
+Number:Power              RonsPhoneRSSI             "Ron's iPhone: RSSI [%d dBm]"                  (gHist10)  {channel="unifi:wirelessClient:home:ronsPhone:rssi", unit="dBm"}
+Number:Time               RonsPhoneUptime           "Ron's iPhone: Uptime [%1$tR]"                            {channel="unifi:wirelessClient:home:ronsPhone:uptime", unit="s"}
+DateTime                  RonsPhoneLastSeen         "Ron's iPhone: Last Seen [%1$tH:%1$tM:%1$tS]"             {channel="unifi:wirelessClient:home:ronsPhone:lastSeen"}
+Switch                    RonsPhoneBlocked          "Ron's iPhone: Blocked"                                   {channel="unifi:wirelessClient:home:ronsPhone:blocked"}
+Switch                    RonsPhoneReconnect        "Ron's iPhone: Reconnect"                                 {channel="unifi:wirelessClient:home:ronsPhone:reconnect"}
+Number:Dimensionless      RonsPhoneExperience       "Ron's iPhone Experience"                                 {channel="unifi:wirelessClient:home:ronsPhone:experience"}
+String                    RonsPhoneCommand          "Ron's iPhone Command"                                    {channel="unifi:wirelessClient:home:ronsPhone:cmd"}
+
+// --- Unifi site channels Items
+
+Number                    TheShire_TotalClients     "#Clients @TheShire"                           (gHist0)   {channel="unifi:site:home:mysite:totalClients"}
+Number                    TheShire_WirelessClients  "Wireless clienst @TheShire"                   (gHist0)   {channel="unifi:site:home:mysite:totalClients"}
+Number                    TheShire_WiredClients     "Wired Clients @TheShire"                      (gHist0)   {channel="unifi:site:home:mysite:totalClients"}
+
+// --- Unifi PoE channels Items
+
+Switch                    PoeOnlineKitchenSwitch    "PoE Kitchen Switch Online"                               {channel="unifi:poePort:home:poeKitchenSw:online"}
+String                    PoeModeKitchenSwitch      "PoE Mode Kitchen Switch"                                 {channel="unifi:poePort:home:poeKitchenSw:mode"}
+Switch                    PoeEnableKitchenSwitch    "PoE Enable Kitchen Switch"                               {channel="unifi:poePort:home:poeKitchenSw:enable"}
+String                    PoeCommandKitchenSwitch   "PoE Command Kitchen Switch"                              {channel="unifi:poePort:home:poeKitchenSw:cmd"}
+Number:Power              PoePowerKitchenSwitch     "PoE Power Kitchen Switch"                                {channel="unifi:poePort:home:poeKitchenSw:power"}
+Number:ElectricPotential  PoeVoltageKitchenSwitch   "PoE Voltage Kitchen Switch"                              {channel="unifi:poePort:home:poeKitchenSw:voltage"}
+Number:ElectricCurrent    PoeCurrentKitchenSwitch   "PoE Current Kitchen Switch"                              {channel="unifi:poePort:home:poeKitchenSw:current"}
+
+Switch                    PoeOnlineKitchenAP        "PoE Kitchen AP Online"                                   {channel="unifi:poePort:home:poeKitchenAP:online"}
+String                    PoeModeKitchenAP          "PoE Mode Kitchen AP"                                     {channel="unifi:poePort:home:poeKitchenAP:mode"}
+Switch                    PoeEnableKitchenAP        "PoE Enable Kitchen AP"                                   {channel="unifi:poePort:home:poeKitchenAP:enable"}
+String                    PoeCommandKitchenAP       "PoE Command Kitchen AP"                                  {channel="unifi:poePort:home:poeKitchenAP:cmd"}
+Number:Power              PoePowerKitchenAP         "PoE Power Kitchen AP"                                    {channel="unifi:poePort:home:poeKitchenAP:power"}
+Number:ElectricPotential  PoeVoltageKitchenAP       "PoE Voltage Kitchen AP"                                  {channel="unifi:poePort:home:poeKitchenAP:voltage"}
+Number:ElectricCurrent    PoeCurrentKitchenAP       "PoE Current Kitchen AP"                                  {channel="unifi:poePort:home:poeKitchenAP:current"}
+
+// -- Unifi wlan channels Items
+
+Switch                    wlanEnableTheShire        "TheShire Enabled"                                        {channel="unifi:wlan:home:theShire:enable"}
+Number                    wlanClientsTheShire       "TheShire #Clients"                                       {channel="unifi:wlan:home:theShire:wirelessClients"}
+String                    wlanBandTheShire          "TheShire WLAN Band"                                      {channel="unifi:wlan:home:theShire:wlanBand"}

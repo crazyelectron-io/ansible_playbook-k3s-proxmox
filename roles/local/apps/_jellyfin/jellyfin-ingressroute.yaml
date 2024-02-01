@@ -1,0 +1,19 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jellyfin-external
+  namespace: jellyfin
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: "Host(`plex.moerman.online`)"
+      kind: Rule
+      services:
+        - name: jellyfin-tcp
+          port: http-tcp
+  tls:
+    secretName: "jellyfin-staging-tls"

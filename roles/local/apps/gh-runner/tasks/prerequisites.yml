@@ -1,0 +1,29 @@
+---
+- name: Check if Helm command is installed locally
+  ansible.builtin.shell: hash helm  # noqa command-instead-of-shell
+  changed_when: false
+  args:
+    executable: "/bin/bash"
+
+- name: Ensure ARC namespace exists
+  k8s:
+    name: "{{ gh_arc_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+# - name: Check if Helm repository is installed
+#   kubernetes.core.helm_info:
+#     name: gh-arc
+#     release_namespace: "{{ gh_arc_namespace }}"
+#     release_state:
+#       - all
+#   register: gh_arc__helm_repo_installed
+
+# - name: Add Helm repository If not yet installed
+#   kubernetes.core.helm_repository:
+#     name: "{{ gh_arc_repo_name }}"
+#     repo_url: "{{ gh_arc_chart_url }}"
+#   when:
+#     - gh_arc__helm_repo_installed.status is not defined
+#   register: gh_arc__helm_add_repo

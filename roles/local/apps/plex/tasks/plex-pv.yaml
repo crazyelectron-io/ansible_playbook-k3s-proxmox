@@ -1,0 +1,29 @@
+---
+- name: Create Plex Persistent Volume for media SMB3 share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: plex-data-pv
+      spec:
+        storageClassName: ""
+        capacity:
+          storage: 9Ti
+        accessModes:
+          - ReadWriteMany
+        persistentVolumeReclaimPolicy: Retain
+        mountOptions:
+          - dir_mode=0777
+          - file_mode=0777
+          - vers=3.0
+        csi:
+          driver: smb.csi.k8s.io
+          readOnly: false
+          volumeHandle: "{{ plex_share_volid }}"  # make sure it's a unique id in the cluster
+          volumeAttributes:
+            source: "//{{ nas_address }}/{{ smb_media_share }}"
+          nodeStageSecretRef:
+            name: smbcreds
+            namespace: default

@@ -1,0 +1,7 @@
+// file: conf/things/volvo.things
+// synopsis: Volvo on Call Things definition
+
+Bridge volvooncall:vocapi:v90 "VoC V90" @ "System" [username="{{ voc_username }}", password="{{ voc_password }}"]
+{
+  Thing vehicle V90 "V90" @ "World" [vin="{{ voc_vin }}", refreshinterval=5]
+}

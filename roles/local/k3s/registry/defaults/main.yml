@@ -1,0 +1,4 @@
+---
+registry_namespace: default
+debug_address: "localhost:5001"
+registry_domain: "docker.{{ main_domain }}"

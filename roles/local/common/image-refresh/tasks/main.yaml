@@ -1,0 +1,48 @@
+# file: roles/local/common/image-refresh/tasks/main.yaml
+# synopsis:
+---
+- name: Cleanup local container images
+  block:
+
+    - name: Check if there are local Docker images
+      ansible.builtin.shell: |-
+        docker images -aq
+      register: images
+
+    - name: Remove all local Docker images
+      ansible.builtin.shell: |-
+        docker rmi -f $(docker images -aq)
+      when: images.stdout != ""
+
+  when: remove_local_images
+
+- name: Push all images to the private repository
+  block:
+
+    - name: Pull the Docker images
+      community.docker.docker_image:
+        name: "{{ item.reg }}/{{ item.name }}:{{ item.tag }}"
+        source: pull
+        pull:
+          platform: amd64
+      with_items: "{{ apps_image_list }}"
+
+    - name: Tag and push the images for local registry
+      community.docker.docker_image:
+        name: "{{ item.reg }}/{{ item.name }}"
+        repository: "{{ private_registry}}/{{ item.name }}"
+        tag: "{{ item.tag }}"
+        push: true
+        source: local
+      with_items: "{{ apps_image_list }}"
+
+  when: update_private_registry
+
+# - name: Cleanup old images from the private registry
+#   block:
+
+#   - name: Retrieve manifest lst from registry
+#     ansible.builtin.shell: |-
+#       curl -u "{{ }}"
+
+#   when: cleanup_private_registry

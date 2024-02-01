@@ -1,0 +1,9 @@
+---
+partdb_namespace: partdb
+# Part-DB container info
+partdb_image_registry: jbtronics
+partdb_image_tag: latest
+# Part-DB instance name as shown on title bar
+partdb_instance_name: "Part-DB CrazyElectron.io"
+# Part-DB public domain
+partdb_domain: "parts.crazyelectron.io"

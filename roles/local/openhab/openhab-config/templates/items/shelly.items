@@ -1,0 +1,89 @@
+// file: conf/items/shelly.items
+// synopsis:
+
+// Xmas Tree Switch
+Switch              ShellyXmasTree_Switch              "Xmas Tree"                                <switch>       (gLiving)             ["Control","Power"]            {channel="shelly:shellyplugs:9a3f3a:relay#output"}
+Number:Power        ShellyXmasTree_Power               "Xmas Tree Power [%d W]"                                  (gHist0,gLiving)      ["Measurement"]                {channel="shelly:shellyplugs:9a3f3a:meter#currentWatts"}
+Number:Energy       ShellyXmasTree_Power_Total         "XmasTree Total Power [%d.3f kWh]"         <energy>       (gHist60,gLiving)     ["Measurement","Energy"]       {channel="shelly:shellyplugs:9a3f3a:meter#totalKWH"}
+DateTime            ShellyXmasTree_LastUpdate          "Xmas Tree Seen [%1$tH:%1$tM]"                                                  ["Timestamp"]                  {channel="shelly:shellyplugs:9a3f3a:meter#lastUpdate"}
+Switch              ShellyXmasTree_UpdateAvailable     "Xmas Tree Update"                                                                                             {channel="shelly:shellyplugs:9a3f3a:device#updateAvailable"}
+Number:Temperature  ShellyXmasTree_InternalTemp        "Xmas Tree IntTemp [%.1f %unit%]"          <temperature>                        ["Measurement","Temperature"]  {channel="shelly:shellyplugs:9a3f3a:device#internalTemp"}
+Number              ShellyXmasTree_WifiSignal          "Xmas Tree WiFi [%d]"                                                                                          {channel="shelly:shellyplugs:9a3f3a:device#wifiSignal"}
+// FireBin Switch
+Switch              ShellyFireBin_Switch               "FireBin Switch"                           <switch>       (gLiving)             ["Control","Power"]            {channel="shelly:shellyplugs:97757a:relay#output"}
+Number:Power        ShellyFireBin_Power                "FireBin Power [%d W]"                                    (gHist0,gLiving)      ["Measurement"]                {channel="shelly:shellyplugs:97757a:meter#currentWatts"}
+Number:Energy       ShellyFireBin_Power_Total          "FireBin Total Power [%.3f kWh]"           <energy>       (gHist60,gLiving)     ["Measurement","Energy"]       {channel="shelly:shellyplugs:97757a:meter#totalKWH"}
+DateTime            ShellyFireBin_LastUpdate           "FireBin Seen [%1$tH:%1$tM]"                                                    ["Timestamp"]                  {channel="shelly:shellyplugs:97757a:meter#lastUpdate"}
+Switch              ShellyFireBin_UpdateAvailable      "FireBin Update"                                                                                               {channel="shelly:shellyplugs:97757a:device#updateAvailable"}
+Number:Temperature  ShellyFireBin_InternalTemp         "FireBin IntTemp [%.1f %unit%]"            <temperature>                        ["Measurement","Temperature"]  {channel="shelly:shellyplugs:97757a:device#internalTemp"}
+Number              ShellyFireBin_WifiSignal           "FireBin WiFi [%d]"                                                                                            {channel="shelly:shellyplugs:97757a:device#wifiSignal"}
+// Christmas Outdoor Lights Switch
+// Switch              ShellyXmasOutdoor_Switch           "Xmas Outdoor Switch"                      <switch>       (gFrontYard)          ["Control","Power"]            {channel="shelly:shellyplugs:c16841:relay#output"}
+// Number:Power        ShellyXmasOutdoor_Power            "Xmas Outdoor Power [%d W]"                               (gHist0,gFrontYard)   ["Measurement"]                {channel="shelly:shellyplugs:c16841:meter#currentWatts"}
+// Number:Energy       ShellyXmasOutdoor_Power_Total      "Xmas Outdoor TotalPower [%.3f kWh]"       <energy>       (gHist60,gFrontYard)  ["Measurement","Energy"]       {channel="shelly:shellyplugs:c16841:meter#totalKWH"}
+// DateTime            ShellyXmasOutdoor_LastUpdate       "Xmas Outdoor Seen [%1$tH:%1$tM]"                                               ["Timestamp"]                  {channel="shelly:shellyplugs:c16841:meter#lastUpdate"}
+// Switch              ShellyXmasOutdoor_UpdateAvailable  "Xmas Outdoor Update"                                                                                          {channel="shelly:shellyplugs:c16841:device#updateAvailable"}
+// Number:Temperature  ShellyXmasOutdoor_InternalTemp     "Xmas Outdoor IntTemp [%.1f %unit%]"       <temperature>                        ["measurement","Temperature"]  {channel="shelly:shellyplugs:c16841:device#internalTemp"}
+// Number              ShellyXmasOutdoor_WifiSignal       "Xmas Outdoor WiFi [%d]"                                                                                       {channel="shelly:shellyplugs:c16841:device#wifiSignal"}
+// Xmas Church Switch
+Switch              ShellyXmasChurch_Switch            "Xmas Church CV Switch"                    <switch>       (gDining)             ["Control","Power"]            {channel="shelly:shellyplugs:169e7b:relay#output"}
+Number:Energy       ShellyXmasChurch_Power_Total       "Xmas Church Total Power [%.3f kWh]"                      (gHist60,gDining)     ["Measurement","Energy"]       {channel="shelly:shellyplugs:169e7b:meter#totalKWH"}
+Number:Power        ShellyXmasChurch_Power             "Xmas Church Current Power [%d W]"         <energy>       (gHist0,gDining)      ["Measurement"]                {channel="shelly:shellyplugs:169e7b:meter#currentWatts"}
+DateTime            ShellyXmasChurch_LastUpdate        "Xmas Church Seen [%1$tH:%1$tM]"                                                ["Timestamp"]                  {channel="shelly:shellyplugs:169e7b:meter#lastUpdate"}
+Switch              ShellyXmasChurch_UpdateAvailable   "Xmas Church Update"                                                                                           {channel="shelly:shellyplugs:169e7b:device#updateAvailable"}
+Number:Temperature  ShellyXmasChurch_InternalTemp      "Xmas Church Temp [%.1f %unit%]"           <temperature>                        ["Measurement","Temperature"]  {channel="shelly:shellyplugs:169e7b:device#internalTemp"}
+Number              ShellyXmasChurch_WifiSignal        "Xmas Church WiFi [%d]"                                                                                        {channel="shelly:shellyplugs:169e7b:device#wifiSignal"}
+// Infraread panel heater (office)
+Switch              ShellyInfrared_Switch              "Infrarood paneel"                         <switch>       (gHist0,gOffice)      ["Control","Power"]            {channel="shelly:shellyplugs:9d9ab3:relay#output"}
+Number:Power        ShellyInfrared_Power               "Infrarood paneel Power [%d W]"                           (gHist0,gOffice)      ["Measurement"]                {channel="shelly:shellyplugs:9d9ab3:meter#currentWatts"}
+Number:Energy       ShellyInfrared_Power_Total         "Infrarood paneel Total Power [%.3f kWh]"  <energy>       (gHist60,gOffice)     ["Measurement","Energy"]       {channel="shelly:shellyplugs:9d9ab3:meter#totalKWH"}
+DateTime            ShellyInfrared_LastUpdate          "Infrarood paneel Seen [%1$tH:%1$tM]"                                           ["Timestamp"]                  {channel="shelly:shellyplugs:9d9ab3:meter#lastUpdate"}
+Switch              ShellyInfrared_UpdateAvailable     "Infrarood paneel Update"                                                                                      {channel="shelly:shellyplugs:9d9ab3:device#updateAvailable"}
+Number:Temperature  ShellyInfrared_InternalTemp        "Infrarood paneel IntTemp [%.1f %unit%]"                                        ["Measurement","Temperature"]  {channel="shelly:shellyplugs:9d9ab3:device#internalTemp"}
+Number              ShellyInfrared_WifiSignal          "Infrarood paneel WiFi [%d]"                                                                                   {channel="shelly:shellyplugs:9d9ab3:device#wifiSignal"}
+// Humidty & Temperature sensor Office
+// Number:Temperature    ShellyHTSenseOffice_Temperature    "Tempersatuur Office [%.1f %unit%]"        <temperature>  (gOffice,gHist5)      ["Measurement","Temperature"]  {channel="shelly:shellyplusht:e465b85f33b0:sensors#temperature"}
+// Number:Dimensionless  ShellyHTSenseOffice_Hunidity       "Luchtvochtigheid Officer [%d %%]"                        (gHist15,gOffice)     ["Measurement","Humidity"]     {channel="shelly:shellyplusht:e465b85f33b0:sensors#humidity"}
+// DateTime              ShellyHTSenseOffice_LastUpdate     "Last update [%1$tH:%1$tM]"                                                     ["Timestamp"]                  {channel="shelly:shellyplusht:e465b85f33b0:sensors#lastUpdate"}
+// Number                ShellyHTSenseOffice_BattLevel      "Batterijniveau"                                          (gOffice)                                            {channel="shelly:shellyplusht:e465b85f33b:battery#batteryLevel"}
+// Switch                ShellyHTSenseOffice_BattLow        "Batterij leeg"                                           (gBatteryLow)                                        {channel="shelly:shellyplusht:e465b85f33b:battery#lowBattery"}
+
+// --- Rollershutter sidedoor garage
+// Rollershutter       Shelly_GarageDoor_Roller            "Garagedoor Rollershutter"               <roller>                    {channel="shelly:shelly25-roller:68c63af9c3ec:roller#control"}
+// Dimmer              Shelly_GarageDoor_Position          "Garagedoor Roller Position [%d]"                                    {channel="shelly:shelly25-roller:68c63af9c3ec:roller#rollerpos"}
+// String              Shelly_GarageDoor_State             "Garagedoor Roller state [%s]"                                       {channel="shelly:shelly25-roller:68c63af9c3ec:roller#state"}
+// String              Shelly_GarageDoor_Stop              "Garagedoor Roller stop [%s]"                                        {channel="shelly:shelly25-roller:68c63af9c3ec:roller#stopReason"}
+// Switch              Shelly_GarageDoor_Switch1           "Garagedoor Roller Switch1"                                          {channel="shelly:shelly25-roller:68c63af9c3ec:roller#input1"}
+// Switch              Shelly_GarageDoor_Switch2           "Garagedoor Roller Switch2"                                          {channel="shelly:shelly25-roller:68c63af9c3ec:roller#input2"}
+// DateTime            Shelly_GarageDoor_LastUpdate        "Garagedoor Roller Seen [%1$tH:%1$tM]"                               {channel="shelly:shelly25-roller:68c63af9c3ec:meter#lastUpdate"}
+// String              Shelly_GarageDoor_Direction         "Garagedoor Roller Direction [%s]"                                   {channel="shelly:shelly25-roller:68c63af9c3ec:roller#lastDirection"}
+// Number:Power        Shelly_GarageDoor_Power             "Garagedoor Roller Power [%d W]"                                     {channel="shelly:shelly25-roller:68c63af9c3ec:meter#currentWatts"}
+// Number:Energy       Shelly_GarageDoor_TotPwr            "Garagedoor Roller TotPower [%.3f kWh]"  <energy>                    {channel="shelly:shelly25-roller:68c63af9c3ec:meter#totalKWH"}
+// Number              Shelly_GarageDoor_WiFi              "Garagedoor Roller Wifi signal"                                      {channel="shelly:shelly25-roller:68c63af9c3ec:device#wifiSignal"}
+// Number:Temperature  Shelly_GarageDoor_InternalTemp      "Garagedoor Roller Temp [%.1f %unit%]"                               {channel="shelly:shelly25-roller:68c63af9c3ec:device#internalTemp"}
+// Switch              Shelly_GarageDoor_UpdateAvail       "Garagedoor Roller Update [%s]"                                      {channel="shelly:shelly25-roller:68c63af9c3ec:device#updateAvailable"}
+// Number              Shelly_GarageDoor_Uptime            "Garagedoor Roller uptime [%d]"                                      {channel="shelly:shelly25-roller:68c63af9c3ec:device#uptime"}
+// --- Dryer power metering
+// Switch              Shelly_Dryer_Switch                 "Dryer Switch"                           <switch>                    {channel="shelly:shellyplugs:1601b4:relay#output"}
+// Number:Power        Shelly_Dryer_Power                  "Dryer Power [%d W]"                                 (gHist0)        {channel="shelly:shellyplugs:1601b4:meter#currentWatts"}
+// Number:Energy       Shelly_Dryer_Power_Total            "Dryer Total Power [%.3f kWh]"           <energy>    (gHist60)       {channel="shelly:shellyplugs:1601b4:meter#totalKWH"}
+// DateTime            Shelly_Dryer_LastUpdate             "Dryer Seen [%1$tH:%1$tM]"                                           {channel="shelly:shellyplugs:1601b4:meter#lastUpdate"}
+// Switch              Shelly_Dryer_UpdateAvailable        "Dryer Switch Update [%s]"                                           {channel="shelly:shellyplugs:1601b4:device#updateAvailable"}
+// Number:Temperature  Shelly_Dryer_InternalTemp           "Dryer Switch Temp [%.1f %unit%]"                                    {channel="shelly:shellyplugs:1601b4:device#internalTemp"}
+// Number              Shelly_Dryer_WifiSignal             "Dryer Switch WiFi signal [%d]"                                      {channel="shelly:shellyplugs:1601b4:device#wifiSignal"}
+// --- FireBin Switch
+// Switch              Shelly_FireBin_Switch               "FireBin Switch"                         <switch>                    {channel="shelly:shellyplugs:9a3f4e:relay#output"}
+// Number:Power        Shelly_FireBin_Power                "FireBin Power [%d W]"                               (gHist0)        {channel="shelly:shellyplugs:9a3f4e:meter#currentWatts"}
+// Number:Energy       Shelly_FireBin_Power_Total          "FireBin Total Power [%.3f kWh]"         <energy>    (gHist60)       {channel="shelly:shellyplugs:9a3f4e:meter#totalKWH"}
+// DateTime            Shelly_FireBin_LastUpdate           "FireBin Seen [%1$tH:%1$tM]"                                         {channel="shelly:shellyplugs:9a3f4e:meter#lastUpdate"}
+// Switch              Shelly_FireBin_UpdateAvailable      "FireBin Update [%s]"                                                {channel="shelly:shellyplugs:9a3f4e:device#updateAvailable"}
+// Number:Temperature  Shelly_FireBin_InternalTemp         "FireBin Tem [%.1f %unit%]"                                          {channel="shelly:shellyplugs:9a3f4e:device#internalTemp"}
+// Number              Shelly_FireBin_WifiSignal           "FireBin WiFi signal [%d]"                                           {channel="shelly:shellyplugs:9a3f4e:device#wifiSignal"}
+// --- Christmas Tree
+// Switch              Shelly_XmasTree_Switch              "XmasTree Switch"                        <switch>                    {channel="shelly:shellyplugs:c14737:relay#output"}
+// Number:Power        Shelly_XmasTree_Power               "XmasTree Power [%d W]"                              (gHist0)        {channel="shelly:shellyplugs:c14737:meter#currentWatts"}
+// Number:Energy       Shelly_XmasTree_Power_Total         "XmasTree TotalPower [%.3f kWh]"         <energy>    (gHist60)       {channel="shelly:shellyplugs:c14737:meter#totalKWH"}
+// DateTime            Shelly_XmasTree_LastUpdate          "XmasTree Seen [%1$tH:%1$tM]"                                        {channel="shelly:shellyplugs:c14737:meter#lastUpdate"}
+// Switch              Shelly_XmasTree_UpdateAvailable     "XmasTree Update [%s]"                                               {channel="shelly:shellyplugs:c14737:device#updateAvailable"}
+// Number:Temperature  Shelly_XmasTree_InternalTemp        "XmasTree Switch Temp [%.1f %unit%]"                                 {channel="shelly:shellyplugs:c14737:device#internalTemp"}
+// Number              Shelly_XmasTree_WifiSignal          "XmasTree WiFi signal [%d]"                                          {channel="shelly:shellyplugs:c14737:device#wifiSignal"}

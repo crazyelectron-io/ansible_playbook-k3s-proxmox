@@ -1,0 +1,56 @@
+# file: roles/local/openhab/karaf-setup/tasks/main.yaml
+# synopsis: Setup access to OpenHAB Karaf console and initial administrator account
+---
+
+- name: Setup OpenHAB SSH key for console access if not yet correct
+  block:
+    - name: Check known_hosts key for Karaf SSH access
+      # ansible.builtin.command: "ssh-keyscan -T 10 -4 trsa -p{{karaf_port}} {{karaf_ip_address}} >/dev/null 2>&1"
+      ansible.builtin.shell: "ssh -o PubkeyAuthentication=no -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no -o ChallengeResponseAuthentication=no -o ConnectTimeout=5 -o BatchMode=yes -p 8101 10.100.3.112 2>&1 | ggrep -i 'Permission denied'"
+      changed_when: false
+      register: sshtest_result
+  rescue:
+    - name: Reset  SSH key for Karaf console
+      ansible.builtin.command: "ssh-keygen -R '[{{karaf_ip_address}}]:{{karaf_port}}'"
+      register: sshreset_result
+    - name: Reset SSH key for SSH sidecar container
+      ansible.builtin.command: "ssh-keygen -R {{karaf_ip_address}}"
+  always:
+    - name: Wait for the Karaf console to come online
+      wait_for: host="{{karaf_ip_address}}" port={{karaf_port}} delay=5  timeout=90
+      delegate_to: localhost
+    - name: Setup known_hosts entry for Karaf SSH console access
+      ansible.builtin.known_hosts:
+        path="{{known_hosts_path}}/known_hosts"
+        name="[{{karaf_ip_address}}]:{{karaf_port}}"
+        key="{{ lookup('pipe', 'ssh-keyscan -T 10 -4 -t rsa -p ' + karaf_port + ' ' + karaf_ip_address + ' &2>/dev/null') }}"
+        state=present
+      delegate_to: localhost
+      when: sshtest_result is defined and sshtest_result.rc != 0
+
+- name: Wait for Karaf console to come online
+  wait_for: host="{{karaf_ip_address}}" port={{karaf_port}} delay=1  timeout=90
+  delegate_to: localhost
+
+# Create initial OpenHAB administrator user
+- name: Check if OpenHAB administrator user exists
+  ansible.builtin.command: "ssh karaf openhab:users list"
+  register: current_users
+  ignore_errors: true
+  changed_when: false
+  delegate_to: localhost
+- name: Create OpenHAB administrator user (if it doesn't exist yet)
+  ansible.builtin.command: "ssh karaf openhab:users add {{openhab_user_name}} {{openhab_user_password}} administrator"
+  register: created_users
+  delegate_to: localhost
+  when: "not openhab_user_name in current_users.stdout"
+- name: Check if user is created succesfully
+  ansible.builtin.command: "ssh karaf openhab:users list"
+  register: current_users
+  ignore_errors: true
+  changed_when: false
+  delegate_to: localhost
+- name: Fail if user is not created
+  ansible.builtin.fail:
+    msg: Unable to create OpenHAB user, aborting.
+  when: "not openhab_user_name in current_users.stdout"

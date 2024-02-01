@@ -1,0 +1,58 @@
+---
+- name: Include prerequisites
+  include_tasks: "tasks/prerequisites.yml"
+
+#kubectl create secret generic mostly-githup-app --namespace=arc-runners --from-literal=github_app_id=674830 --from-literal=github_app_installation_id=44786199 --from-literal=github_app_private_key="$(cat ~/crazy-arc.2023-12-05.private-key.pem)"
+- name: Create secret for GitHub access
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: mostly-githup-app
+        namespace: arc-runners
+      type: Opaque
+      data:
+        github_app_id: 674830
+        github_app_installation_id: 44786199
+        github_app_private_key: "$(cat ~/crazy-arc.2023-12-05.private-key.pem)"
+
+# - name: Render values
+#   block:
+
+#     - name: Create temporary file for Helm values
+#       ansible.builtin.tempfile:
+#         state: file
+#         suffix: gh_arc_values
+#       changed_when: false
+#       register: gh_arc__values_tmp_file
+
+#     - name: Select values file for Helm template
+#       ansible.builtin.template:
+#         src: gh_arc_values.yaml.j2
+#         dest: "{{ gh_arc__values_tmp_file.path }}"
+#         mode: 0600
+#       changed_when: false
+# #helm install arc --namespace arc-systems --create-namespace oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
+
+#     - name: Install chart
+#       kubernetes.core.helm:
+#         name: "{{ gh_arc_release_name }}"
+#         chart_ref: "{{ gh_arc_chart_name }}"
+#         chart_version: "{{ gh_arc_chart_version }}"
+#         release_namespace: "{{ gh_arc_namespace }}"
+#         create_namespace: false
+#         update_repo_cache: true
+#         values_files:
+#           - "{{ gh_arc__values_tmp_file.path }}"
+#       register: gh_arc__helm_install_chart
+
+#   always:
+#     - name: Delete temporary file for Helm values
+#       ansible.builtin.file:
+#         path: "{{ gh_arc__values_tmp_file.path }}"
+#         state: absent
+#       changed_when: false
+#       when:
+#         - gh_arc__values_tmp_file.path is defined

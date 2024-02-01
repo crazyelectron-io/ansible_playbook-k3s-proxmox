@@ -1,0 +1,95 @@
+---
+- name: Create TCP Service for Plex
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: plex-tcp
+        namespace: "{{ plex_namespace }}"
+        annotations:
+          metallb.universe.tf/allow-shared-ip: plex
+      spec:
+        # ports:
+        #   - name: http-tcp
+        #     port: 80
+        #     targetPort: 32400
+        # selector:
+        #   app: plex
+        # type: LoadBalancer
+        # loadBalancerIP: "{{ plex_ip_address }}"
+        ports:
+        - port: 32400               # < port to open on the outside on the server
+          targetPort: 32400         # < targetport. port on the pod to passthrough
+          name: pms-web             # < reference name for the port in the deployment yaml
+          protocol: TCP
+        - port: 3005
+          targetPort: 3005
+          name: plex-companion
+        - port: 8324
+          name: plex-roku
+          targetPort: 8324
+          protocol: TCP
+        - port: 32469
+          targetPort: 32469
+          name: dlna-tcp
+          protocol: TCP
+        type: LoadBalancer
+        loadBalancerIP: "{{ plex_ip_address }}"
+        selector:
+          app: plex
+
+
+- name: Create UDP Service for Plex
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: plex-udp
+        namespace: "{{ plex_namespace }}"
+        annotations:
+          metallb.universe.tf/allow-shared-ip: plex
+      spec:
+        selector:
+          app: plex
+        ports:
+        # - port: 1900                # port to open on the outside on the server
+        #   targetPort: 1900          # targetport. port on the pod to passthrough
+        #   name: dlna-udp            # reference name for the port in the deployment yaml
+        #   protocol: UDP
+        # - port: 7359
+        #   targetPort: 7359
+        #   name: discovery-udp
+        #   protocol: UDP
+        # type: LoadBalancer
+        # loadBalancerIP: "{{ plex_ip_address }}"
+        # sessionAffinity: ClientIP # This is necessary for multi-replica deployments
+        - port: 1900                # port to open on the outside on the server
+          targetPort: 1900          # targetport. port on the pod to passthrough
+          name: dlna-udp            # reference name for the port in the deployment yaml
+          protocol: UDP
+        - port: 5353
+          targetPort: 5353
+          name: discovery-udp
+          protocol: UDP
+        - port: 32410
+          targetPort: 32410
+          name: gdm-32410
+          protocol: UDP
+        - port: 32412
+          targetPort: 32412
+          name: gdm-32412
+          protocol: UDP
+        - port: 32413
+          targetPort: 32413
+          name: gdm-32413
+          protocol: UDP
+        - port: 32414
+          targetPort: 32414
+          name: gdm-32414
+          protocol: UDP
+        type: LoadBalancer
+        loadBalancerIP: "{{ plex_ip_address }}"

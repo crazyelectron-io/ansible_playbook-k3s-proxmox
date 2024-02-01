@@ -1,0 +1,4 @@
+---
+registry_namespace: default
+debug_address: "localhost:5001"
+registry_domain: "registry.{{ main_domain }}:5000"

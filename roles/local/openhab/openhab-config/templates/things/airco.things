@@ -1,0 +1,33 @@
+// file: conf/things/airco.things
+// synopsis: defines the Daikin and Mitshubishi Airco Things
+
+// Mitshubisi airco livingroom
+Bridge melcloud:melcloudaccount:wielingen "Home MELCloud account" [username="{{ melcloud_username }}", password="{{ melcloud_password }}", language="0"]
+{
+  Thing acdevice livingroom "Livingroom Airco" [deviceID="{{ melcloud_deviceid }}", pollingInterval=60]
+}
+
+// Daikin airco units first floor
+Thing daikin:ac_unit:10_20_2_202 "Airco Fitness" @ "Fitnessroom"  [host="10.20.2.202", refresh=30]
+Thing daikin:ac_unit:10_20_2_201 "Airco Bedroom" @ "Bedroom"      [host="10.20.2.201", refresh=30]
+Thing daikin:ac_unit:10_20_2_203 "Airco Menno" @ "Menno's room"   [host="10.20.2.203", refresh=30]  // MAC=F0:03:8C:D5:C0:99, rev=203DE8C, ver=1_2_54, name='Kamer Menno', method=polling,port=30053,id=FamMoerman,pw=te8zx1h6
+Thing daikin:ac_unit:10_20_2_204 "Airco Office" @ "Office"        [host="10.20.2.204", refresh=30]
+
+// Daikin Airco API endpoints
+//
+//  /common/get_datetime              ret=OK,sta=2,cur=2024/1/2 16:9:11,reg=eu,dst=1,zone=10
+//  /aircon/get_scdltimer_info        ret=OK,format=v1,f_detail=total#18;_en#1;_pow#1;_mode#1;_temp#4;_time#4;_vol#1;_dir#1;_humi#3;_spmd#2,scdl_num=3,scdl_per_day=6,en_scdltimer=0,active_no=1,scdl1_name=,scdl2_name=,scdl3_name=
+//  /aircon/get_day_power_ex?days=2   ret=OK,curr_day_heat=0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0,prev_1day_heat=0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0,curr_day_cool=0/0/0/0/0/0/0/0/0/0/1/0/0/0/0/1/0/0/0/0/0/0/0/0,prev_1day_cool=1/0/0/0/0/0/0/0/0/1/0/0/0/0/1/0/0/0/0/0/0/0/0/1
+//                                      (in 0.1 kWh units?)
+//  /aircon/get_week_power_ex         ret=OK,s_dayw=2,week_heat=0/0/0/0/0/0/1/0/0/0/0/0/0/0,week_cool=2/4/4/5/4/6/6/8/4/11/2/4/6/4
+//  /aircon/get_year_power_ex         ret=OK,curr_year_heat=0/0/0/0/0/0/0/0/0/0/0/0,prev_year_heat=0/19/28/13/3/0/0/3/2/0/5/19,curr_year_cool=6/0/0/0/0/0/0/0/0/0/0/0,prev_year_cool=37/30/120/177/657/1233/1282/1087/876/432/127/119
+//  /aircon/set_special_mode?en_streamer=1
+//                                    ret=OK,adv=13 (enable/disable the operating mode - ion streamer. '13'=activeded, ''=deactiveted)
+//  /aircon/set_special_mode?set_spmode=0&spmode_kind=2
+//                                    ret=OK,adv=12/13  (enable economode -> 'adv=12/13'. If device powered off returns 'ADV NG' - returns ret=OK,adv= if turned off)
+//  /aircon/set_special_mode?set_spmode=1&spmode_kind=1
+//                                    ret=OK,adv=12/13  (enable powermode -> 'adv=12/13'. If device powered off returns 'ADV NG')
+//  /aircon/set_control_info?pow=1&mode=4&stemp=23&shum=0&f_rate=A&f_dir=0
+//                                    ret=OK,adv=
+//  /aircon/get_model_info            ret=OK,model=0000,type=N,pv=3.20,cpv=3,cpv_minor=20,mid=NA,humd=0,s_humd=0,acled=0,land=0,elec=1,temp=1,temp_rng=0,m_dtct=1,ac_dst=--,disp_dry=0,dmnd=1,en_scdltmr=1,en_frate=1,en_fdir=1,s_fdir=3,en_rtemp_a=0,en_spmode=7,en_ipw_sep=1,en_mompow=0,hmlmt_l=10.0
+//  /aircon/get_sensor_info           ret=OK,htemp=18.0,hhum=-,otemp=10.0,err=0,cmpfreq=0

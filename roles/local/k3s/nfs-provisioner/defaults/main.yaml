@@ -36,5 +36,5 @@ nfs_provisioner_storage_class: nfs-shared
 
 # provisioner_name: k8s-sigs.io/nfs-subdir-external-provisioner
 
-nfs_server_ip: 10.0.0.2
+nfs_server_ip: "{{ nas_address }}"
 nfs_server_path: /kube-storage

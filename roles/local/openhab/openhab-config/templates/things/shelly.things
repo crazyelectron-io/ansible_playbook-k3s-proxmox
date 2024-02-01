@@ -1,0 +1,15 @@
+// file: conf/things/shelly.things
+// synopsis:
+
+Thing shelly:shellyplugs:9a3f3a         "Xmas Tree" @ "Living"          [deviceIp="10.20.1.242", userId="", password=""]
+Thing shelly:shellyplugs:97757a         "FireBin" @ "Living"            [deviceIp="10.20.1.232", userId="", password=""]
+// Thing shelly:shellyplugs:c16841         "XmasLight Outdoor" @ "Garden"  [deviceIp="10.20.1.241", userid="", password=""]
+Thing shelly:shellyplugs:169e7b         "Xmas Church" @ "Living"        [deviceIp="10.20.1.219", userid="", password=""]
+Thing shelly:shellyplugs:9d9ab3         "Dummy" @ "Living"              [deviceIp="10.20.2.212", userId="", password=""]
+// Thing shelly:shellyplusht:e465b85f33b0  "H&T Sensor" @ "Office"         [deviceIp="10.20.1.246", userId="", password="", lowBattery=15, eventsCoIoT=true]
+// Thing shelly:shellyplugs:1601b4         "Shelly Switch" @ "Attic"       [deviceIp="10.20.2.211", userId="", password=""]
+// Thing shelly:shelly25-roller:68c63af9c3ec   "Rolluik Switch" @ "Garage zijdeur" [deviceIp="10.20.0.17",  userId="", password=""]
+// Thing shelly:shellyplugs:c14737             "Xmas" @ "Huiskamer"                [deviceIp="10.20.1.189", userid="", password=""]
+// Thing shelly:shellyplugs:9a3f4e             "FireBin Switch" @ "Livingroom"     [deviceIp="10.20.0.23",  userId="", password=""]
+
+// http://control.shelly.cloud/#/password-reset?email=ron@moerman.online&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwd2Ryc3QiLCJpYXQiOjE3MDUwNTM4NDYsInVzZXJfaWQiOiIxOTgxODMiLCJzbiI6MSwidXNlcl9hcGlfdXJsIjoiaHR0cHM6XC9cL3NoZWxseS0xNy1ldS5zaGVsbHkuY2xvdWQiLCJuIjoxNjk5LCJleHAiOjE3MDUxNDAyNDZ9.DJDpn_j0pcnpz2sIP5Y1XW6VksvelXreTNHRDntwIh8

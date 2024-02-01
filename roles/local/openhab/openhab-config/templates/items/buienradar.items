@@ -1,0 +1,30 @@
+// file: conf/items/buienradar.items
+// synopsis: Rain information retreived from Buienradar API (using binding)
+
+Group         gRain        "Neerslag"                <rain>  (gWeather)
+
+Number:Speed  RainCurrent  "Neerslag [%.1f %unit%]"  <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_0", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain5min     "Neerslag 5 min."         <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_5", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain10min    "Neerslag 10 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_10", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain15min    "Neerslag 15 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_15", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain20min    "Neerslag 20 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_20", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain25min    "Neerslag 25 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_25", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain30min    "Neerslag 30 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_30", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain35min    "Neerslag 35 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_35", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain40min    "Neerslag 40 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_40", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain45min    "Neerslag 45 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_45", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain50min    "Neerslag 50 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_50", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain55min    "Neerslag 55 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_55", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain60min    "Neerslag 60 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_60", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain65min    "Neerslag 65 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_65", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain70min    "Neerslag 70 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_70", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain75min    "Neerslag 75 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_75", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain80min    "Neerslag 80 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_80", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain85min    "Neerslag 85 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_85", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain90min    "Neerslag 90 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_90", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain95min    "Neerslag 95 min."        <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_95", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain100min   "Neerslag 100 min."       <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_100", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain105min   "Neerslag 105 min."       <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_105", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain110min   "Neerslag 110 min."       <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_110", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain115min   "Neerslag 115 min."       <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_115", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}
+Number:Speed  Rain120min   "Neerslag 120 min."       <rain>  (gRain,gPersist)  {channel="buienradar:rain_forecast:home:forecast_120", unit="mm/h", stateDescription=" "[pattern="[%.1f %unit%]",readOnly="true"]}

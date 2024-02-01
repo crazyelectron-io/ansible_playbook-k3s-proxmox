@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: longhorn-dashboard-cert-prod
+  namespace: longhorn-system
+spec:
+  secretName: longhorn-dashboard-prod-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: longhorn.moerman.online
+  dnsNames:
+    - "longhorn.moerman.online"

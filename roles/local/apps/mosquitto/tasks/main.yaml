@@ -1,0 +1,24 @@
+---
+- name: Make sure the namespace is present
+  kubernetes.core.k8s:
+    name: "{{ openhab_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create ConfigMap
+  ansible.builtin.include_tasks:
+    file: mqtt-config.yaml
+
+- name: Create Services
+  ansible.builtin.include_tasks:
+    file: mqtt-service.yaml
+
+- name: Create Deployments
+  ansible.builtin.include_tasks:
+    file: mqtt-deploy.yaml
+
+# Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+#                              node.kubernetes.io/unreachable:NoExecute op=Exists for 300s

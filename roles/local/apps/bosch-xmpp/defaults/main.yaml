@@ -1,0 +1,8 @@
+# file: roles/local/apps/mosquitto/defaults/main.yaml
+# synopsis: default values for variables that you can override in the playbook
+# See https://github.com/eclipse/mosquitto and https://hub.docker.com/_/eclipse-mosquitto
+---
+bosch_xmpp_image_registry: crazyelectron
+#"{{ private_registry }}"
+bosch_xmpp_image_name: bosch-xmpp
+bosch_xmpp_image_tag: latest

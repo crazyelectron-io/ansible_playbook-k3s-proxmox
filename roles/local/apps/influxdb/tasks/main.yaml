@@ -1,0 +1,174 @@
+---
+- name: Make sure the namespace is present
+  kubernetes.core.k8s:
+    name: "{{ openhab_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create InfluxDB 2 Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: influxdb
+        namespace: "{{ openhab_namespace }}"
+      spec:
+        selector:
+          app: influxdb
+        ports:
+        - name: influx
+          port: 80
+          targetPort: 8086
+          protocol: TCP
+
+- name: Create InfluxDB 2 authentication secrets
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: influxdb-auth
+        namespace: "{{ openhab_namespace }}"
+      stringData:
+        admin-token: "{{ influxdb_admin_token }}"
+        admin-password: "{{ influxdb_admin_password }}"
+
+# - name: Create InfluxDB PDB
+  # kubernetes.core.k8s:
+    # state: present
+    # definition:
+      # apiVersion: policy/v1
+      # kind: PodDisruptionBudget
+      # metadata:
+        # name: influxdb-pdb
+      # spec:
+        # minAvailable: 1
+        # selector:
+          # matchLabels:
+            # influxdb
+
+- name: Create InfluxDB 2 config PVC
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: influxdb-data-pvc
+        namespace: "{{ openhab_namespace }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Gi
+        storageClassName: longhorn
+        persistentVolumeReclaimPolicy: Retain
+
+- name: Create an InfluxDB Service Account
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: influxdb-sa
+        namespace: "{{ openhab_namespace }}"
+
+- name: Create InfluxDB StatefulSet
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: influxdb
+        labels:
+          app: influxdb
+        namespace: "{{ openhab_namespace }}"
+      spec:
+        replicas: 1
+        revisionHistoryLimit: 0
+        selector:
+          matchLabels:
+            app: influxdb
+        serviceName: "influxdb-app"
+        template:
+          metadata:
+            labels:
+              app: influxdb
+          spec:
+            # $patch: delete
+            terminationGracePeriodSeconds: 0
+            volumes:
+              - name: data
+                persistentVolumeClaim:
+                  claimName: influxdb-data-pvc
+            serviceAccountName: influxdb-sa
+            containers:
+              - name: influxdb
+                image: "{{ influxdb_image_registry }}/{{ influxdb_image_name }}:{{ influxdb_image_tag }}"
+                imagePullPolicy: IfNotPresent
+                livenessProbe:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health
+                    port: influx
+                    scheme: HTTP
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 5
+                readinessProbe:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health
+                    port: influx
+                    scheme: HTTP
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 1
+                ports:
+                  - name: influx
+                    containerPort: 8086
+                    protocol: TCP
+                env:
+                  - name: DOCKER_INFLUXDB_INIT_MODE
+                    value: setup
+                  - name: DOCKER_INFLUXDB_INIT_USERNAME
+                    value: "{{ influxdb_admin_user }}"
+                  - name: DOCKER_INFLUXDB_INIT_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: influxdb-auth
+                        key: admin-password
+                  - name: DOCKER_INFLUXDB_INIT_ORG
+                    value: "{{ influxdb_organization }}"
+                  - name: DOCKER_INFLUXDB_INIT_BUCKET
+                    value: "{{ influxdb_bucket }}"
+                  - name: DOCKER_INFLUXDB_INIT_RETENTION
+                    value: "{{ influxdb_retention_policy }}"
+                  - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+                    valueFrom:
+                      secretKeyRef:
+                        name: influxdb-auth
+                        key: admin-token
+                  - name: INFLUXD_BOLT_PATH
+                    value: "{{ influxdb_mount_path }}/influxd.bolt"
+                  - name: INFLUXD_ENGINE_PATH
+                    value: "{{ influxdb_mount_path }}"
+                  - name: INFLUXDB_HTTP_LOG_ENABLED
+                    value: "false"
+                  - name: INFLUXDB_LOGGING_LEVEL
+                    value: "warning"
+                volumeMounts:
+                - name: data
+                  mountPath: "{{ influxdb_mount_path }}"
+                  subPath: ""

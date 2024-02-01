@@ -1,0 +1,170 @@
+// file: conf/items/hue.items
+// synopsis: Hue lights are defined here, including groups to handle them, and all wall switches (both Tap and Dimmer)
+// note: To query the persisted states of an Item in InfluxDB:
+//       e.g.: influx query 'from(bucket: "openhab") |> range(start: -1d) |> filter(fn: (r) => r._measurement == "Scene_office")'
+
+
+// ------ Downstairs evening light Items ------
+Dimmer              Brightness_downstairs      "Helderheid Avondverlichting [%d]"       <brightness>   (gGroundFloor)                                          {channel="hue:zone:br1:zone_downstairs:brightness"}
+Dimmer              Dimming_downstairs         "Dimmen Avondverlichting [%d]"           <brightness>   (gGroundFloor)                                          {channel="hue:zone:br1:zone_downstairs:dimming-only"}
+Switch              Switch_downstairs          "Avondverlichting Beneden"               <lightbulb>    (gGroundFloor)                                          {channel="hue:zone:br1:zone_downstairs:on-off-only"}
+String              Scene_downstairs           "Scene Avondverlichting"                 <sofa>         (gGroundFloor)            ["Control"]                   {channel="hue:zone:br1:zone_downstairs:scene"}
+Number:Time         Dynamics_downstairs        "Fade Avondverlichting"                                 (gGroundFloor)                                          {channel="hue:zone:br1:zone_downstairs:dynamics"}
+String              Alert_downstairs           "Alert Avondverlichting"                 <alarm>        (gGroundFloor)                                          {channel="hue:zone:br1:zone_downstairs:alert"}
+
+// ------ Livingroom light Items ------
+Dimmer              Brightness_living          "Helderheid woonkamer [%d]"              <brightness>   (gLiving)                                               {channel="hue:room:br1:room_living:brightness"}
+Dimmer              Dimming_living             "Dimmen woonkamer [%d]"                  <brightness>   (gLiving)                                               {channel="hue:room:br1:room_living:dimming-only"}
+Switch              Switch_living              "Verlichting woonkamer"                  <lightbulb>    (gLiving)                                               {channel="hue:room:br1:room_living:on-off-only"}
+String              Scene_living               "Scene woonkamer"                        <sofa>         (gLiving)                 ["Control"]                   {channel="hue:room:br1:room_living:scene"}
+Number:Time         Dynamics_living            "Fade woonkamer"                                        (gLiving)                                               {channel="hue:room:br1:room_living:dynamics"}
+String              Alert_living               "Alert woonkamer"                        <alarm>        (gLiving)                                               {channel="hue:room:br1:room_living:alert"}
+
+// ------ Hallway light Items ------
+Dimmer              Brightness_hallway         "Helderheid hal [%d]"                    <brightness>   (gHallway)                                              {channel="hue:room:br1:room_hallway:brightness"}
+Dimmer              Dimming_hallway            "Dimmen hal [%d]"                        <brightness>   (gHallway)                                              {channel="hue:room:br1:room_hallway:dimming-only"}
+Switch              Switch_hallway             "Halverlichting"                         <lightbulb>    (gHallway)                                              {channel="hue:room:br1:room_hallway:on-off-only"}
+String              Scene_hallway              "Scene Halverlichting"                   <sofa>         (gHallway)                ["Control"]                   {channel="hue:room:br1:room_hallway:scene"}
+Number:Time         Dynamics_hallway           "Fade Hal"                                              (gHallway)                                              {channel="hue:room:br1:room_hallway:dynamics"}
+String              Alert_hallway              "Alert Hal"                              <alarm>        (gHallway)                                              {channel="hue:room:br1:room_hallway:alert"}
+
+// ------ Hallway ceiling light Items ------
+Dimmer              Brightness_hallCeiling     "Helderheid Hal plafond [%d]"            <brightness>   (gHallway)                                              {channel="hue:zone:br1:zone_hallCeiling:brightness"}
+Dimmer              Dimming_hallCeiling        "Dimmen Hal plafond [%d]"                <brightness>   (gHallway)                                              {channel="hue:zone:br1:zone_hallCeiling:dimming-only"}
+Switch              Switch_hallCeiling         "Hal Plafondverlichting"                 <lightbulb>    (gHallway)                                              {channel="hue:zone:br1:zone_hallCeiling:on-off-only"}
+String              Scene_hallCeiling          "Scene Hal plafond"                      <sofa>         (gHallway)                ["Control"]                   {channel="hue:zone:br1:zone_hallCeiling:scene"}
+Number:Time         Dynamics_hallCeiling       "Fade Hal plafond"                                      (gHallway)                                              {channel="hue:zone:br1:zone_hallCeiling:dynamics"}
+String              Alert_hallCeiling          "Alert Hal plafond"                      <alarm>        (gHallway)                                              {channel="hue:zone:br1:zone_hallCeiling:alert"}
+
+// ------ Kitchen light Items ------
+Dimmer              Brightness_kitchen         "Helderheid Keuken [%d]"                 <brightness>   (gKitchen)                                              {channel="hue:room:br1:room_kitchen:brightness"}
+Dimmer              Dimming_kitchen            "Dimmen Keuken [%d]"                     <brightness>   (gKitchen)                                              {channel="hue:room:br1:room_kitchen:dimming-only"}
+Switch              Switch_kitchen             "Keukenverlichting"                      <lightbulb>    (gKitchen)                                              {channel="hue:room:br1:room_kitchen:on-off-only"}
+String              Scene_kitchen              "Scene Keuken"                           <sofa>         (gKitchen)                ["Control"]                   {channel="hue:room:br1:room_kitchen:scene"}
+Number:Time         Dynamics_kitchen           "Fade Keuken"                                           (gKitchen)                                              {channel="hue:room:br1:room_kitchen:dynamics"}
+String              Alert_kitchen              "Alert Keuken"                           <alarm>        (gKitchen)                                              {channel="hue:room:br1:room_kitchen:alert"}
+
+// ------ Kitchen Ceiling light Items ------
+Dimmer              Brightness_kitchenCeiling  "Helderheid Keuken plafond [%d]"         <brightness>   (gKitchen)                                              {channel="hue:zone:br1:zone_kitchenCeiling:brightness"}
+Dimmer              Dimming_kitchenCeiling     "Dimmen Keuken plafond [%d]"             <brightness>   (gKitchen)                                              {channel="hue:zone:br1:zone_kitchenCeiling:dimming-only"}
+Switch              Switch_kitchenCeiling      "Keukenverlichting plafond"              <lightbulb>    (gKitchen)                                              {channel="hue:zone:br1:zone_kitchenCeiling:on-off-only"}
+String              Scene_kitchenCeiling       "Scene Keuken plafond"                   <sofa>         (gKitchen)                ["Control"]                   {channel="hue:zone:br1:zone_kitchenCeiling:scene"}
+Number:Time         Dynamics_kitchenCeiling    "Fade Keuken plafond"                                   (gKitchen)                                              {channel="hue:zone:br1:zone_kitchenCeiling:dynamics"}
+String              Alert_kitchenCeiling       "Alert Keuken plafond"                   <alarm>        (gKitchen)                                              {channel="hue:zone:br1:zone_kitchenCeiling:alert"}
+
+// ------ Dining light Items ------
+Dimmer              Brightness_dining          "Helderheid Eettafel [%d]"               <brightness>   (gDining)                                               {channel="hue:room:br1:room_dining:brightness"}
+Dimmer              Dimming_dining             "Dimmen eettafel [%d]"                   <brightness>   (gDining)                                               {channel="hue:room:br1:room_dining:dimming-only"}
+Switch              Switch_dining              "Eettafelverlichting"                    <lightbulb>    (gDining)                                               {channel="hue:room:br1:room_dining:on-off-only"}
+String              Scene_dining               "Scene Eettafel"                         <sofa>         (gDining)                 ["Control"]                   {channel="hue:room:br1:room_dining:scene"}
+Number:Time         Dynamics_dining            "Fade Eettafel"                                         (gDining)                                               {channel="hue:room:br1:room_dining:dynamics"}
+String              Alert_dining               "Alert Eettafel"                         <alarm>        (gDining)                                               {channel="hue:room:br1:room_dining:alert"}
+
+// ------ Toilet light Items ------
+Dimmer              Brightness_toilet          "Helderheid Toilet [%d]"                 <brightness>   (gToilet)                                               {channel="hue:room:br1:room_toilet:brightness"}
+Dimmer              Dimming_toilet             "Dimmen Toilet [%d]"                     <brightness>   (gToilet)                                               {channel="hue:room:br1:room_toilet:dimming-only"}
+Switch              Switch_toilet              "Toiletverlichting"                      <lightbulb>    (gToilet)                                               {channel="hue:room:br1:room_toilet:on-off-only"}
+String              Scene_toilet               "Scene Toilet"                           <sofa>         (gToilet)                 ["Control"]                   {channel="hue:room:br1:room_toilet:scene"}
+Number:Time         Dynamics_toilet            "Fade Toilat"                                           (gToilet)                                               {channel="hue:room:br1:room_toilet:dynamics"}
+String              Alert_toilet               "Alert Toilet"                           <alarm>        (gToilet)                                               {channel="hue:room:br1:room_toilet:alert"}
+Switch              Toilet_Lamp                "Motion detect switch"                                  (gToilet)
+
+// ------ Laundryroom light Items ------
+Dimmer              Brightness_laundry         "Helderheid Bijkeuken [%d]"              <brightness>   (gLaundry)                                              {channel="hue:room:br1:room_laundry:brightness"}
+Dimmer              Dimming_laundry            "Dimmen Bijkeuken [%d]"                  <brightness>   (gLaundry)                                              {channel="hue:room:br1:room_laundry:dimming-only"}
+Switch              Switch_laundry             "Bijkeukenverlichting"                   <lightbulb>    (gLaundry)                                              {channel="hue:room:br1:room_laundry:on-off-only"}
+String              Scene_laundry              "Scene Bijkeuken"                        <sofa>         (gLaundry)                ["Control"]                   {channel="hue:room:br1:room_laundry:scene"}
+Number:Time         Dynamics_laundry           "Fade Bijkeuken"                                        (gLaundry)                                              {channel="hue:room:br1:room_laundry:dynamics"}
+String              Alert_laundry              "Alert Bijkeuken"                        <alarm>        (gLaundry)                                              {channel="hue:room:br1:room_laundry:alert"}
+
+// ------ Corridor light Items ------
+Dimmer              Brightness_corridor        "Helderheid Overloop [%d]"               <brightness>   (gCorridor)                                             {channel="hue:room:br2:room_corridor:brightness"}
+Dimmer              Dimming_corridor           "Dimmen Overloop [%d]"                   <brightness>   (gCorridor)                                             {channel="hue:room:br2:room_corridor:dimming-only"}
+Switch              Switch_corridor            "Overloopverlichting"                    <lightbulb>    (gCorridor)                                             {channel="hue:room:br2:room_corridor:on-off-only"}
+String              Scene_corridor             "Scene Overloop"                         <sofa>         (gCorridor)               ["Control"]                   {channel="hue:room:br2:room_corridor:scene"}
+Number:Time         Dynamics_corridor          "Fade Overloop"                                         (gCorridor)                                             {channel="hue:room:br2:room_corridor:dynamics"}
+String              Alert_corridor             "Alert Overloop"                         <alarm>        (gCorridor)                                             {channel="hue:room:br2:room_corridor:alert"}
+
+// ------ Bedroom light Items ------
+Dimmer              Brightness_bedroom         "Helderheid Slaapkamer [%d]"             <brightness>   (gBedroom)                                              {channel="hue:room:br1:room_bedroom:brightness"}
+Dimmer              Dimming_bedroom            "Dimmen Slaapkamer [%d]"                 <brightness>   (gBedroom)                                              {channel="hue:room:br1:room_bedroom:dimming-only"}
+Switch              Switch_bedroom             "Slaapkamerverlichting"                  <lightbulb>    (gBedroom)                                              {channel="hue:room:br1:room_bedroom:on-off-only"}
+String              Scene_bedroom              "Scene Slaapkamer"                       <sofa>         (gBedroom)                ["Control"]                   {channel="hue:room:br1:room_bedroom:scene"}
+Number:Time         Dynamics_bedroom           "Fade Slaapkamer"                                       (gBedroom)                                              {channel="hue:room:br1:room_bedroom:dynamics"}
+String              Alert_bedroom              "Alert Slaapkamer"                       <alarm>        (gBedroom)                                              {channel="hue:room:br1:room_bedroom:alert"}
+
+// ------ Bathroom light Items ------
+Dimmer              Brightness_bathroom        "Helderheid Slaapkamer [%d]"             <brightness>   (gBathroom)                                             {channel="hue:room:br2:room_bathroom:brightness"}
+Dimmer              Dimming_bathroom           "Dimmen Slaapkamer [%d]"                 <brightness>   (gBathroom)                                             {channel="hue:room:br2:room_bathroom:dimming-only"}
+Switch              Switch_bathroom            "Slaapkamerverlichting"                  <lightbulb>    (gBathroom)                                             {channel="hue:room:br2:room_bathroom:on-off-only"}
+String              Scene_bathroom             "Scene Slaapkamer"                       <sofa>         (gBathroom)               ["Control"]                   {channel="hue:room:br2:room_bathroom:scene"}
+Number:Time         Dynamics_bathroom          "Fade Slaapkamer"                                       (gBathroom)                                             {channel="hue:room:br2:room_bathroom:dynamics"}
+String              Alert_bathroom             "Alert Slaapkamer"                       <alarm>        (gBathroom)                                             {channel="hue:room:br2:room_bathroom:alert"}
+
+// ------ Menno's room light Items ------
+Dimmer              Brightness_menno           "Helderheid Menno [%d]"                  <brightness>   (gChildroom)                                            {channel="hue:room:br2:room_child:brightness"}
+Dimmer              Dimming_menno              "Dimmen Menno [%d]"                      <brightness>   (gChildroom)                                            {channel="hue:room:br2:room_child:dimming-only"}
+Switch              Switch_menno               "Menno's verlichting"                    <lightbulb>    (gChildroom)                                            {channel="hue:room:br2:room_child:on-off-only"}
+String              Scene_menno                "Scene Menno"                            <sofa>         (gChildroom)              ["Control"]                   {channel="hue:room:br2:room_child:scene"}
+Number:Time         Dynamics_menno             "Fade Menno"                                            (gChildroom)                                            {channel="hue:room:br2:room_child:dynamics"}
+String              Alert_menno                "Alert Menno"                            <alarm>        (gChildroom)                                            {channel="hue:room:br2:room_child:alert"}
+
+// ------ Office light Items ------
+Dimmer              Brightness_office          "Helderheid Kantoor [%d]"                <brightness>   (gOffice)                                               {channel="hue:room:br2:room_office:brightness"}
+Dimmer              Dimming_office             "Dimmen Kantoor [%d]"                    <brightness>   (gOffice)                                               {channel="hue:room:br2:room_office:dimming-only"}
+Switch              Switch_office              "Kantoorverlichting"                     <lightbulb>    (gOffice)                                               {channel="hue:room:br2:room_office:on-off-only"}
+String              Scene_office               "Scene Kantoor"                          <sofa>         (gOffice)                 ["Control"]                   {channel="hue:room:br2:room_office:scene"}
+Number:Time         Dynamics_office            "Fade Kantoor"                                          (gOffice)                                               {channel="hue:room:br2:room_office:dynamics"}
+String              Alert_office               "Alert Kantoor"                          <alarm>        (gOffice)                                               {channel="hue:room:br2:room_office:alert"}
+
+// ------ Fitnessroom light Items
+Dimmer              Brightness_fitness         "Helderheid Fitness [%d]"                <brightness>   (gFitness)                                              {channel="hue:room:br2:room_fitness:brightness"}
+Dimmer              Dimming_fitness            "Dimmen Fitness [%d]"                    <brightness>   (gFitness)                                              {channel="hue:room:br2:room_fitness:dimming-only"}
+Switch              Switch_fitness             "Fitnessverlichting"                     <lightbulb>    (gFitness)                                              {channel="hue:room:br2:room_fitness:on-off-only"}
+String              Scene_fitness              "Scene Fitness"                          <sofa>         (gFitness)                ["Control"]                   {channel="hue:room:br2:room_fitness:scene"}
+Number:Time         Dynamics_fitness           "Fade Fitness"                                          (gFitness)                                              {channel="hue:room:br2:room_fitness:dynamics"}
+String              Alert_fitness              "Alert Fitness"                          <alarm>        (gFitness)                                              {channel="hue:room:br2:room_fitness:alert"}
+
+// ------ Outdoor light Items ------
+Dimmer              Brightness_outdoor         "Helderheid Buiten [%d]"                 <brightness>   (gOutdoor)                                              {channel="hue:room:br1:room_outdoor:brightness"}
+Dimmer              Dimming_outdoor            "Dimmen Buiten [%d]"                     <brightness>   (gOutdoor)                                              {channel="hue:room:br1:room_outdoor:dimming-only"}
+Switch              Switch_outdoor             "Buitenverlichting"                      <lightbulb>    (gOutdoor)                                              {channel="hue:room:br1:room_outdoor:on-off-only"}
+String              Scene_outdoor              "Scene Buiten"                           <sofa>         (gOutdoor)                ["Control"]                   {channel="hue:room:br1:room_outdoor:scene"}
+Number:Time         Dynamics_outdoor           "Fade Buiten"                                           (gOutdoor)                                              {channel="hue:room:br1:room_outdoor:dynamics"}
+String              Alert_outdoor              "Alert Buiten"                           <alarm>        (gOutdoor)                                              {channel="hue:room:br1:room_outdoor:alert"}
+
+// ------ Motion sensor Toilet ------
+Switch              MotionDetected_toilet      "Beweging toilet"                                       (gToilet)                                               {channel="hue:device:br1:motion_toilet:motion"}	// ReadOnly
+Number:Illuminance  MotionLux_toilet           "Lichtsterkte Toilet [%d %unit%]"                       (gToilet)                                               {channel="hue:device:br1:motion_toilet:light-level", unit="lx"}
+Number:Temperature  MotionTemp_toilet          "Temperatuur Toilet [%.1f %unit%]"       <temperature>  (gToilet)                 ["Measurment","Temperature"]  {channel="hue:device:br1:motion_toilet:temperature", unit="°C"}
+DateTime            MotionUpdated_toilet       "LastUpdate Toilet [%1$tH:%1$tM:%1$tS]"  <clock>        (gToilet)                                               {channel="hue:device:br1:motion_toilet:last-updated"}
+
+// ------ Motion sensor Halway ------
+Switch              MotionDetected_hallway     "Beweging Hal"                                          (gHallway)                                              {channel="hue:device:br2:motion_hall:motion"}
+Number:Illuminance  MotionLux_hallway          "Lichtsterkte Hal [%d %%]"                              (gHallway)                                              {channel="hue:device:br2:motion_hall:illuminance"}
+Number:Temperature  MotionTemp_hallway         "Temperatuur Hal [%.1f %unit%]"          <temperature>  (gHallway,gTempSensor)                                  {channel="hue:device:br2:motion_hall:temperature"}
+DateTime            MotionUpdate_hallway       "LastUpdateHal [%1$tH:%1$tM:%1$tS]"      <clock>        (gHallway)                                              {channel="hue:device:br2:motion_hall:last_updated"}
+
+// ------ Battery levels Hue dimmers & sensors ------
+Switch              Motion_BattLow_toilet      "LowBattery sensor toilet"               <lowbattery>   (gBatteryLow,gToilet)                                   {channel="hue:device:br1:motion_toilet:battery-low"}
+Number              Motion_BattLvl_toilet      "Batterijniveau sensor toilet [%d %%]"   <battery>                                                              {channel="hue:device:br1:motion_toilet:battery-level"}
+Switch              Motion_BattLow_hallway     "LowBattery sensor hal"                  <lowbattery>   (gBatteryLow,gHallway)                                  {channel="hue:device:br2:motion_hall:battery_low"}
+Number              Motion_BattLvl_hallway     "Batterijniveau sensor hal [%d %%]"      <battery>                                                              {channel="hue:device:br2:motion_hall:battery_level"}
+Switch              Dim_BattLow_toilet         "LowBattery dimmer toilet"               <lowbattery>   (gBatteryLow,gToilet)                                   {channel="hue:device:br1:dim_toilet:battery-low"}
+Number              Dim_BattLvl_toilet         "Batterijniveau dimmer toilet"           <battery>                                                              {channel="hue:device:br1:dim_toilet:battery-level"}
+Switch              Dim_BattLow_hallway        "LowBattery dimmer hal"                  <lowbattery>   (gBatteryLow,gHallway)                                  {channel="hue:device:br1:dim_hallway:battery-low"}
+Number              Dim_Battevl_hallway        "Batterijniveau dimmer hal"              <battery>                                                              {channel="hue:device:br1:dim_hallway:battery-level"}
+Switch              Dim_Right_BattLow_bedroom  "LowBattery dimmer Arniël"               <lowbattery>   (gBatteryLow,gBedroom)                                  {channel="hue:device:br2:dim_rbedroom:battery-low"}
+Number              Dim_Right_BattLvl_bedroom  "Batterijniveau dimmer Arniël"           <battery>                                                              {channel="hue:device:br2:dim_rbedroom:battery-level"}
+Switch              Dim_Left_BattLow_bedroom   "LowBattery dimmer Ron"                  <lowbattery>   (gBatteryLow,gBedroom)                                  {channel="hue:device:br2:dim_lbedroom:battery-low"}
+Number              Dim_Left_BattLvl_bedroom   "Batterijniveau dimmer Ron"              <battery>                                                              {channel="hue:device:br2:dim_lbedroom:battery-level"}
+Switch              Dim_BattLow_menno          "LowBattery dimmer Menno"                <lowbattery>   (gBatteryLow,gChildroom)                                {channel="hue:device:br2:dim_menno:battery-low"}
+Number              Dim_BattLvl_menno          "Batterijniveau dimmer Menno"            <battery>                                                              {channel="hue:device:br2:dim_menno:battery-level"}
+Switch              Dim_BattLow_office         "LowBattery dimmer office"               <lowbattery>   (gBatteryLow,gOffice)                                   {channel="hue:device:br2:dim_office:battery-low"}
+Number              Dim_BattLvl_office         "Batterijniveau dimmer office"           <battery>                                                              {channel="hue:device:br2:dim_office:battery-level"}
+Switch              Dim_BattLow_fitness        "LowBattery dimmer Fitness"              <lowbattery>   (gBatteryLow,gFitness)                                  {channel="hue:device:br2:dim_switch1:battery-low"}
+Number              Dim_BattLvl_fitness        "Batterijniveau dimmer Fitness"          <battery>                                                              {channel="hue:device:br2:dim_switch1:battery-level"}
+Switch              Dim_BattLow_corridor       "LowBattery dimmer overloop"             <lowbattery>   (gBatteryLow,gCorridor)                                 {channel="hue:device:br2:sw_corridor:battery-low"}
+Number              Dim_BattLvl_corridor       "Batterijniveau dimmer overloop"         <battery>                                                              {channel="hue:device:br2:sw_corridor:battery-level"}
+
+// Group:Switch:COUNT(ON) gBattHue "Hue lege batterijen [(%d)]" <lowbattery> (gBatteryLow,gPersist)

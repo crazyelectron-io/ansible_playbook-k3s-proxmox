@@ -35,16 +35,16 @@
                 imagePullPolicy: IfNotPresent
                 resources:
                   limits:
-                    memory: "4096Mi"
-                    cpu: 4
+                    memory: "2048Mi"
+                    cpu: 1000m
                   requests:
-                    memory: "1024Mi"
-                    cpu: 500m
+                    memory: "512Mi"
+                    cpu: 300m
                 livenessProbe:
                   httpGet:
                     path: /
                     port: 8080
-                  initialDelaySeconds: 60
+                  initialDelaySeconds: 90
                   periodSeconds: 30
                 ports:
                   - name: qbittorrent-web
@@ -58,8 +58,8 @@
                 volumeMounts:
                   - name: qbittorrent-config
                     mountPath: /config
-                  - name: qbittorrent-downloads
-                    mountPath: /downloads
+                  - name: qbittorrent-data
+                    mountPath: /data
                 env:
                   - name: PUID
                     value: "1000"
@@ -73,8 +73,8 @@
               - name: qbittorrent-config
                 persistentVolumeClaim:
                   claimName: qbittorrent-config-pvc
-              - name: qbittorrent-downloads
+              - name: qbittorrent-data
                 persistentVolumeClaim:
-                  claimName: qbittorrent-downloads-pvc
+                  claimName: qbittorrent-data-pvc
             serviceName: qbittorrent-app
             revisionHistoryLimit: 0

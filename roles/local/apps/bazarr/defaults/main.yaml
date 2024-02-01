@@ -4,5 +4,7 @@ bazarr_namespace: default
 # External URL to access bazarr through Traefik
 bazarr_domain: "subs.{{ main_domain }}"
 # bazarr container info
-bazarr_image_registry: lscr.io/linuxserver
-bazarr_image_tag: 1.3.1
+bazarr_image_registry: "{{ private_registry }}"
+bazarr_image_tag: 1.4.0
+# Unique Volume ID for Bazarr SMB3 share
+bazarr_share_volid: "bazarr-media-share"

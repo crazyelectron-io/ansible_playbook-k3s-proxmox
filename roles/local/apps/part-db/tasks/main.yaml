@@ -1,0 +1,198 @@
+---
+- name: Make sure the namespace is present
+  kubernetes.core.k8s:
+    name: "{{ partdb_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create Let's Encrypt Certificate for Part-DB
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: "partdb-cert-{{ letsencrypt_environment }}"
+        namespace: "{{ partdb_namespace }}"
+      spec:
+        secretName: "partdb-{{ letsencrypt_environment }}-tls"
+        issuerRef:
+          name: "letsencrypt-{{ letsencrypt_environment }}"
+          kind: ClusterIssuer
+        commonName: "{{ partdb_domain }}"
+        dnsNames:
+          - "{{ partdb_domain }}"
+
+- name: Create Part-DB service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: partdb-ui
+        namespace: "{{ partdb_namespace }}"
+      spec:
+        selector:
+          app: partdb
+        ports:
+        - name: partdb-http
+          port: 80
+          targetPort: 80
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create IngressRoute for Part-DB
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: partdb-external
+        namespace: "{{ partdb_namespace }}"
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: "Host(`{{ partdb_domain }}`)"
+            kind: Rule
+            services:
+              - name: partdb-ui
+                port: 80
+        tls:
+          secretName: "partdb-{{ letsencrypt_environment }}-tls"
+
+- name: Create Part-DB Upload PVC
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: partdb-upload-pvc
+        namespace: "{{ partdb_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
+
+- name: Create Part-DB Web PVC
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: partdb-web-pvc
+        namespace: "{{ partdb_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
+
+- name: Create Part-DB Database PVC
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: partdb-data-pvc
+        namespace: "{{ partdb_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
+
+- name: Create Part-DB Deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: partdb-deployment
+        namespace: "{{ partdb_namespace }}"
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: partdb
+        template:
+          metadata:
+            labels:
+              app: partdb
+          spec:
+            containers:
+            - name: partdb
+              image: "{{ partdb_image_registry }}/part-db1:{{ partdb_image_tag }}"
+              imagePullPolicy: IfNotPresent
+              ports:
+              - containerPort: 80
+                name: partdb-http
+              env:
+              - name: APP_ENV
+                value: "docker"
+              - name: DATABASE_URL
+                value: "sqlite://%kernel.project.dir%/var/db/app.db"
+              - name: INITIAL_ADMIN_PW
+                value: "{{ partdb_password }}"
+              - name: DEFAULT_LANG
+                value: "en"
+              - name: DEFAULT_TIMEZONE
+                value: "Europe/Amsterdam"
+              - name: BASE_CURRENCY
+                value: "EUR"
+              - name: INSTANCE_NAME
+                value: "{{ partdb_instance_name }}"
+              - name: DEFAULT_URI
+                value: "https://{{ partdb_domain }}"
+              - name: ALLOW_ATTACHMENT_DOWNLOADS
+                value: "0"
+              - name: USE_GRAVATAR
+                value: "0"
+              - name: CHECK_FOR_UPDATES
+                value: "0"
+              - name: TABLE_DEFAULT_PAGE_SIZE
+                value: "0"
+              - name: BANNER
+                value: "CrazyElectron's Parts Database"
+              volumeMounts:
+              - name: partdb-data
+                mountPath: /var/www/html/var/db
+              - name: partdb-upload
+                mountPath: /var/www/html/uploads
+              - name: partdb-web
+                mountPath: /var/www/html/public/media
+              resources:
+                limits:
+                  memory: "2048Mi"
+                  cpu: 500m
+                requests:
+                  memory: "512Mi"
+                  cpu: 100m
+            volumes:
+              - name: partdb-data
+                persistentVolumeClaim:
+                  claimName: partdb-data-pvc
+              - name: partdb-upload
+                persistentVolumeClaim:
+                  claimName: partdb-upload-pvc
+              - name: partdb-web
+                persiastentVolumeClaim:
+                  claimName: partdb-web-pvc

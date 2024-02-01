@@ -1,0 +1,7 @@
+// file: conf/transform/weeralarm.map
+// synopsis: Translate KNMI weather alarm codes to status messages (in Dutch)
+
+0=Geen
+1=Code Geel
+2=Code Oranje
+3=CODE ROOD

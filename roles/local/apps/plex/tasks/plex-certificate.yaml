@@ -1,0 +1,20 @@
+# file:
+# synopsis:
+---
+- name: Create Plex PV for media NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: "plex-cert-{{ letsencrypt_environment }}"
+        namespace: "{{ plex_namespace }}"
+      spec:
+        secretName: "plex-{{ letsencrypt_environment }}-tls"
+        issuerRef:
+          name: "letsencrypt-{{ letsencrypt_environment }}"
+          kind: ClusterIssuer
+        commonName: "{{ plex_domain }}"
+        dnsNames:
+          - "{{ plex_domain }}"

@@ -35,16 +35,16 @@
                 imagePullPolicy: IfNotPresent
                 resources:
                   limits:
-                    memory: "2048Mi"
-                    cpu: 1000m
+                    memory: "512Mi"
+                    cpu: 500m
                   requests:
                     memory: "256Mi"
-                    cpu: 200m
+                    cpu: 50m
                 livenessProbe:
                   httpGet:
                     path: /
                     port: 6767
-                  initialDelaySeconds: 60
+                  initialDelaySeconds: 90
                   periodSeconds: 30
                 ports:
                   - name: http
@@ -52,10 +52,8 @@
                 volumeMounts:
                   - name: bazarr-config
                     mountPath: /config
-                  - name: bazarr-tv
-                    mountPath: /tv
-                  - name: bazarr-movies
-                    mountPath: /movies
+                  - name: bazarr-data
+                    mountPath: /data
                 env:
                   - name: PUID
                     value: "1000"
@@ -67,11 +65,8 @@
               - name: bazarr-config
                 persistentVolumeClaim:
                   claimName: bazarr-config-pvc
-              - name: bazarr-tv
+              - name: bazarr-data
                 persistentVolumeClaim:
-                  claimName: bazarr-tv-pvc
-              - name: bazarr-movies
-                persistentVolumeClaim:
-                  claimName: bazarr-movies-pvc
+                  claimName: bazarr-data-pvc
             serviceName: bazarr-app
             revisionHistoryLimit: 0

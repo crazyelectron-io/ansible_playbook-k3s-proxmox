@@ -1,0 +1,130 @@
+// file: conf/items/lgtv.items
+// synopsis: LG WebOS TV Items forTV in livingroom and kitchen
+
+        // ID: appLauncher
+        // Label: Application
+        // Type: lgwebos:appLauncherChannelType
+        // Description: Start application and monitor running applications.
+
+        // ID: rcButton
+        // Label: RCButton
+        // Type: lgwebos:rcButtonType
+        // Description: Simulate a Remote Control button press
+
+
+Switch  LGTV_Power_Livingroom        "TV Power Off"         <television>  {autoupdate="false", channel="lgwebos:WebOSTV:tvliving:power"}
+Switch  LGTV_WoL_Livingroom          "TV Power On"                        {wol="10.20.1.199#7c:64:6c:e6:b9:22"}
+Switch  LGTV_Mute_Livingroom         "TV Mute"                            {channel="lgwebos:WebOSTV:tvliving:mute"}
+Dimmer  LGTV_Volume_Livingroom       "TV Volume [%S]"                     {channel="lgwebos:WebOSTV:tvliving:volume"}
+String  LGTV_Channel_Livingroom      "TV Channel [%d]"                    {channel="lgwebos:WebOSTV:tvliving:channel"}
+String  LGTV_Toast_Livingroom        "TV Toast"                           {channel="lgwebos:WebOSTV:tvliving:toast"}
+Player  LGTV_Player_Livingroom       "TV Player"                          {channel="lgwebos:WebOSTV:tvliving:mediaPlayer"}
+Switch  LGTV_MediaStop_Livingroom    "TV Media Stop"                      {autoupdate="false", channel="lgwebos:WebOSTV:tvliving:mediaStop"}
+String  LGTV_Application_Livingroom  "TV Application [%s]"                {channel="lgwebos:WebOSTV:tvliving:appLauncher"}
+String  LGTV_Remote_Livingroom       "TV Remote command"                  {channel="lgwebos:WebOSTV:tvliving:rcButton"}
+// List off relevant applications:
+// airplay : AirPlay
+// amazon : Prime Video
+// amazon.alexa.view : Amazon Alexa
+// amazon.alexapr : Amazon Alexa
+// cdp-30 : Plex
+// com.davidxo.uhdf : UHD Fireplace
+// com.disney.disneyplus-prod : Disney+
+// com.mlvfun.fireplace : Fireplace 4K
+// com.palm.app.settings : Instellingen
+// com.skyshowtime.tv : SkyShowtime
+// com.webos.app.browser : Webbrowser
+// com.webos.app.btspeakerapp : Bluetooth Audio Playback
+// com.webos.app.btsurroundautotuning : Bluetooth Surround Auto Tuning
+// com.webos.app.crb : Connected Red Button
+// com.webos.app.dangbei-card : Search
+// com.webos.app.discovery : Apps
+// com.webos.app.home : Home
+// com.webos.app.homeconnect : Thuis-hub
+// com.webos.app.mediadiscovery : Media Player
+// com.webos.app.miracast : Screen Share
+// com.webos.app.multiviewsettings : Multi-view
+// com.webos.app.notificationcenter : Notificaties
+// com.webos.app.onetouchsoundtuning : One Touch Sound Tuning
+// com.webos.app.recordings : Opnames
+// com.webos.app.screensaver : Screen Saver
+// com.webos.app.softwareupdate : Software Update
+// com.webos.app.totalmusic : Muziek
+// com.webos.app.tvhotkey : Local Control Panel
+// com.webos.app.tvsimpleviewer : Viewer
+// com.webos.app.webapphost : Web App
+// com.webos.service.homeconnect.app : Home Dashboard service launcher
+// kpn.poc : KPN
+// netflix : Netflix
+// nlziet : NLZIET
+// viaplay-lg : Viaplay
+// youtube.leanback.v4 : YouTube
+
+Switch  LGTV_Power_Kitchen        "TV Power Off"         <television>  {autoupdate="false", channel="lgwebos:WebOSTV:tvkitchen:power"}
+Switch  LGTV_WoL_Kitchen          "TV Power On"                        {wol="10.20.1.237#b0:37:95:cc:cd:b4"}
+Switch  LGTV_Mute_Kitchen         "TV Mute"                            {channel="lgwebos:WebOSTV:tvkitchen:mute"}
+Dimmer  LGTV_Volume_Kitchen       "TV Volume [%S]"                     {channel="lgwebos:WebOSTV:tvkitchen:volume"}
+String  LGTV_Channel_Kitchen      "TV Channel [%d]"                    {channel="lgwebos:WebOSTV:tvkitchen:channel"}
+String  LGTV_Toast_Kitchen        "TV Toast"                           {channel="lgwebos:WebOSTV:tvkitchen:toast"}
+Player  LGTV_Player_Kitchen       "TV Player"                          {channel="lgwebos:WebOSTV:tvkitchen:mediaPlayer"}
+Switch  LGTV_MediaStop_Kitchen    "TV Media Stop"                      {autoupdate="false", channel="lgwebos:WebOSTV:tvkitchen:mediaStop"}
+String  LGTV_Application_Kitchen  "TV Application [%s]"                {channel="lgwebos:WebOSTV:tvkitchen:appLauncher"}
+String  LGTV_Remote_Kitchen       "TV Remote command"                  {channel="lgwebos:WebOSTV:tvkitchen:rcButton"}
+// Available applications:
+// airplay : AirPlay
+// amazon : Prime Video
+// amazon.alexa.view : Amazon Alexa
+// amazon.alexapr : Amazon Alexa
+// cdp-30 : Plex
+// com.appgeneration.app.radiobymytuner : Radio Luisteren - myTuner
+// com.apple.appletv : Apple TV
+// com.davidxo.uhdf : UHD Fireplace
+// com.discovery.dplus.emea : discovery+
+// com.filmzie.tv : Filmzie
+// com.fireplace.app : Relaxifire
+// com.haystacktv.app : Haystack Local & World News
+// com.hbo.hbomax : HBO Max
+// com.mihybrid.retrotv : RETRO music television
+// com.palm.app.settings : Instellingen
+// com.radio80.app : Radio 80
+// com.skyshowtime.tv : SkyShowtime
+// com.sofdzy.radio-dutch : Radio [Dutch]
+// com.space.channel : Space Channel
+// com.webos.app.browser : Webbrowser
+// com.webos.app.btspeakerapp : Bluetooth Audio Playback
+// com.webos.app.care365 : Remote Management for OLED TV
+// com.webos.app.crb : Connected Red Button
+// com.webos.app.discovery : Apps
+// com.webos.app.home : Home
+// com.webos.app.homeconnect : Thuisdashboard
+// com.webos.app.igallery : Kunstgalerij
+// com.webos.app.mediadiscovery : Media Player
+// com.webos.app.miracast : Screen Share
+// com.webos.app.miracast-overlay : Screen Share
+// com.webos.app.notificationcenter : Notificaties
+// com.webos.app.onetouchsoundtuning : One Touch Sound Tuning
+// com.webos.app.recordings : Opnames
+// com.webos.app.remoteservice : Remote Service
+// com.webos.app.screensaver : Screen Saver
+// com.webos.app.softwareupdate : Software Update
+// com.webos.app.tvhotkey : Local Control Panel
+// com.webos.app.voice : Zoeken
+// com.webos.service.homeconnect.app : Home Dashboard service launcher
+// de.2kit.castbrowserlg : TV Cast - Screen Mirroring
+// earthonline : Earth Online
+// google.assistant : Google Assistant
+// kpn.poc : KPN
+// landscape : Landscape
+// lg.castify.aquariumtv : Aquarium TV
+// lg.castify.classiccartoons : Classic Cartoons
+// lg.castify.classicrerunstv : Classic Reruns TV
+// lg.castify.freeclassicmovies : Free Classic Movies
+// lg.castify.getreelfireplaces : Getreel Fireplaces
+// netflix : Netflix
+// nlziet : NLZIET
+// org.jellyfin.webos : Jellyfin
+// sbs.eu.temp : Kijk
+// spotify-beehive : Spotify: muziek en podcasts
+// triple.nos.app : NOS
+// viaplay-lg : Viaplay
+// youtube.leanback.v4 : YouTube

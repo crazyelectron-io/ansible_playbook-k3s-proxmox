@@ -1,12 +1,12 @@
 ---
-- name: Scan the Volume Groupd of attached disks
+- name: Scan the Volume Group of attached disks
   ansible.builtin.command: vgscan --mknodes --cache
   become: true
   when: inventory_hostname == item
   with_items: "{{ groups[group_name_worker | default('worker')] }}"
   register: vgscan_result
 
-- name: Activate Longhorn volume group
+- name: Activate Longhorn Volume Group
   ansible.builtin.command: vgchange -ay
   become: true
   when: inventory_hostname == item

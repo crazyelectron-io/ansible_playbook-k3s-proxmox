@@ -1,0 +1,88 @@
+// file: conf/things/afval.things
+// synopis: defines the HTTP API connections to access Afvalwijzer
+
+// Example output:
+// {
+//   "ophaaldagen":{
+//     "response":"OK",
+//     "data":[
+//       {"nameType":"pmd","type":"pmd","date":"2024-01-05"},
+//       {"nameType":"gft","type":"gft","date":"2024-01-12"},
+//       {"nameType":"papier","type":"papier","date":"2024-01-15"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-01-19"},
+//       {"nameType":"gft","type":"gft","date":"2024-01-26"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-02-02"},
+//       {"nameType":"gft","type":"gft","date":"2024-02-09"},
+//       {"nameType":"papier","type":"papier","date":"2024-02-12"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-02-16"},
+//       {"nameType":"gft","type":"gft","date":"2024-02-23"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-03-01"},
+//       {"nameType":"gft","type":"gft","date":"2024-03-08"},
+//       {"nameType":"papier","type":"papier","date":"2024-03-11"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-03-15"},
+//       {"nameType":"gft","type":"gft","date":"2024-03-22"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-03-29"},
+//       {"nameType":"gft","type":"gft","date":"2024-04-05"},
+//       {"nameType":"papier","type":"papier","date":"2024-04-08"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-04-12"},
+//       {"nameType":"gft","type":"gft","date":"2024-04-19"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-04-26"},
+//       {"nameType":"gft","type":"gft","date":"2024-05-03"},
+//       {"nameType":"papier","type":"papier","date":"2024-05-06"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-05-10"},
+//       {"nameType":"gft","type":"gft","date":"2024-05-17"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-05-24"},
+//       {"nameType":"gft","type":"gft","date":"2024-05-31"},
+//       {"nameType":"papier","type":"papier","date":"2024-06-03"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-06-07"},
+//       {"nameType":"gft","type":"gft","date":"2024-06-14"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-06-21"},
+//       {"nameType":"gft","type":"gft","date":"2024-06-28"},
+//       {"nameType":"papier","type":"papier","date":"2024-07-01"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-07-05"},
+//       {"nameType":"gft","type":"gft","date":"2024-07-12"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-07-19"},
+//       {"nameType":"gft","type":"gft","date":"2024-07-26"},
+//       {"nameType":"papier","type":"papier","date":"2024-07-29"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-08-02"},
+//       {"nameType":"gft","type":"gft","date":"2024-08-09"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-08-16"},
+//       {"nameType":"gft","type":"gft","date":"2024-08-23"},
+//       {"nameType":"papier","type":"papier","date":"2024-08-26"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-08-30"},
+//       {"nameType":"gft","type":"gft","date":"2024-09-06"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-09-13"},
+//       {"nameType":"gft","type":"gft","date":"2024-09-20"},
+//       {"nameType":"papier","type":"papier","date":"2024-09-23"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-09-27"},
+//       {"nameType":"papier","type":"papier","date":"2024-10-02"},
+//       {"nameType":"gft","type":"gft","date":"2024-10-04"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-10-11"},
+//       {"nameType":"gft","type":"gft","date":"2024-10-18"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-10-25"},
+//       {"nameType":"gft","type":"gft","date":"2024-11-01"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-11-08"},
+//       {"nameType":"gft","type":"gft","date":"2024-11-15"},
+//       {"nameType":"papier","type":"papier","date":"2024-11-18"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-11-22"},
+//       {"nameType":"gft","type":"gft","date":"2024-11-29"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-12-06"},
+//       {"nameType":"gft","type":"gft","date":"2024-12-13"},
+//       {"nameType":"papier","type":"papier","date":"2024-12-16"},
+//       {"nameType":"pmd","type":"pmd","date":"2024-12-20"},
+//       {"nameType":"gft","type":"gft","date":"2024-12-27"}
+//     ],
+//     "error":false
+//   },
+//   "ophaaldagenNext":{
+//     "response":"NOK",
+//     "data":[],
+//     "error":"No data"
+//   }
+// }
+
+// Read the Afvalwijzer calendar in one string
+// Thing http:url:garbage "Afvalwijzer" [baseURL="https://api.mijnafvalwijzer.nl/webservices/appsinput/?apikey={{afvalwijzer_api_key}}&method=postcodecheck&postcode={{afvalwijzer_postal_code}}&street=&huisnummer={{afvalwijzer_housenumber}}&toevoeging=&app_name=afvalwijzer&platform=web&afvaldata={{afvalwijzer_date}}&langs=nl&", refresh=3600, delay=5000] {
+//   Channels:
+//     Type number : ChTemperature     "Huidige temperatuur" [stateExtension="temperatureActual", stateTransformation="JSONPATH:$.ophaaldagen.data.", unit="°C", mode="READONLY"]
+// }

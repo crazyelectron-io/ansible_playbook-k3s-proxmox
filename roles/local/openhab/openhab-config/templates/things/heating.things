@@ -1,0 +1,45 @@
+// file: conf/things/nefit.things
+// synopis: defines the HTTP API connections to access Nefit heater info
+
+// Get current livingroom temperature from Bosch EasyControl CT200 thermostat
+// Thing http:url:temp "EasyControl Temperature" [baseURL="http://bosch-xmpp:3000/bridge/zones/zn1/temperatureActual", refresh=120] {
+//     Channels:
+//         Type number : ChTemp "Temperature Livingroom" [ mode="READONLY", stateTransformation="JSONPATH:$.value", unit="°C" ]
+// }
+
+// Get current heating settings from Bosch API for EasyControl CT200 thermostat
+Thing http:url:zn1 "Bosch EasyControl" [baseURL="http://{{ bosch_api_endpoint }}:3000/bridge/zones/zn1", refresh=60, delay=1000] {
+  Channels:
+    Type number : ChTemperature     "Huidige temperatuur" [stateExtension="temperatureActual", stateTransformation="JSONPATH:$.value", unit="°C", mode="READONLY"]
+    Type number : ChHumidity        "Luchtvochtigheid"    [stateExtension="humidity", stateTransformation="JSONPATH:$.value", unit="%", mode="READONLY"]
+    Type string : ChProggram        "Programma"           [stateExtension="clockProgram", stateTransformation="JSONPATH:$.value"]
+    Type number : ChManual          "Handmatig"           [stateExtension="manualTemperatureHeating", stateTransformation="JSONPATH:$.value", unit="°C"]
+    Type number : ChSetPoint        "Doeltemperatuur"     [stateExtension="temperatureHeatingSetpoint", stateTransformation="JSONPATH:$.value", unit="°C"]
+    Type number : ChNextPoint       "Volgend programma"   [stateExtension="timeToNextSetpoint", stateTransformation="JSONPATH:$.value∩JS:min2hr.js", unit="min", mode="READONLY"]
+    Type string : ChMode            "Mode"                [stateExtension="userMode", stateTransformation="JSONPATH:$.value"]
+}
+
+// Get current error/maintenance status from Bosch EasyControl CT200
+Thing http:url:appliance "Bosch Appliance status" [baseURL="http://{{ bosch_api_endpoint }}:3000/bridge/system/appliance", refresh=600, delay=1000] {
+    Channels:
+        Type string : ChError       "Fout"                [stateExtension="blockingError", stateTransformation="JSONPATH:$.value", mode="READONLY"]
+        Type string : ChErrorCode   "Foutcode"            [stateExtension="displayCode",stateTransformation="JSONPATH:$.value", mode="READONLY"]
+        Type string : ChMaintenance "Onderhoud"           [stateExtension="maintenanceRequest", stateTransformation="JSONPATH:$.value", mode="READONLY"]
+        Type number : ChPressure    "Waterdruk"           [stateExtension="systemPressure", stateTransformation="JSONPATH:$.value", unit="bar", mode="READONLY"]
+}
+
+Thing http:url:heat "Bosch Heatsources" [baseURL="http://{{ bosch_api_endpoint }}:3000/bridge/heatSources", refresh=60] {
+    Channels:
+        Type number : ChWaterTemp   "Watertemperatuur"    [mode="READONLY", stateExtension="actualSupplyTemperature", stateTransformation="JSONPATH:$.value", unit="°C", mode="READONLY"]
+        Type number : ChStarts      "Aantal starts"       [mode="READONLY", stateExtension="numberOfStarts", stateTransformation="JSONPATH:$.value", mode="READONLY"]
+        Type string : ChFill        "Bijvullen"           [mode="READONLY", stateExtension="refillNeeded", stateTransformation="JSONPATH:$.value", mode="READONLY"]
+        Type number : ChReturnTemp  "Retourtemperatuur"   [mode="READONLY", stateExtension="returnTemperature", stateTransformation="JSONPATH:$.value", unit="°C", mode="READONLY"]
+        Type number : ChBurnTime    "Branduren"           [mode="READONLY", stateExtension="workingTime/totalSystem", stateTransformation="JSONPATH:$.value", mode="READONLY"]
+}
+
+// Thing http:url:gas "Bosch Gas usage" [baseURL="http://{{ bosch_api_endpoint }}:3000/bridge/energy/gas", refresh=240] {
+//     Channels:
+//         Type number : ChGasEntries  "Gas use # [%d]"    [mode="READONLY", stateExtension="historyEntries", stateTransformation="JSONPATH:$.value"]
+//         Type string : chGasHistory  "Gas historie [%s]" [mode="READONLY", stateExtension="history", stateTransformation="JSONPATH:$.value"]
+// }
+// "value":[{"d":"25-10-2023","T":10.8,"gCh":34.07,"gHw":1.77},{"d":"26-10-2023","T":9.9,"gCh":34.21,"gHw":2.53},{"d":"27-10-2023","T":11.9,"gCh":11.27,"gHw":3.94},{"d":"28-10-2023","T":12.1,"gCh":28.29,"gHw":1},{"d":"29-10-2023","T":12.9,"gCh":26.11,"gHw":0.88},{"d":"30-10-2023","T":11.8,"gCh":20.04,"gHw":7.41},{"d":"31-10-2023","T":11.6,"gCh":23.57,"gHw":11.27},{"d":"01-11-2023","T":12.5,"gCh":29.65,"gHw":4.03},{"d":"02-11-2023","T":11.5,"gCh":31.29,"gHw":4.8},{"d":"03-11-2023","T":10.9,"gCh":29.81,"gHw":3},{"d":"04-11-2023","T":9.4,"gCh":58.3,"gHw":3.13},{"d":"05-11-2023","T":11.2,"gCh":36.52,"gHw":3.55},{"d":"06-11-2023","T":10.9,"gCh":22.24,"gHw":8.83},{"d":"07-11-2023","T":10.7,"gCh":15.99,"gHw":0.4},{"d":"08-11-2023","T":10.2,"gCh":54.64,"gHw":1.04},{"d":"09-11-2023","T":10.3,"gCh":24.33,"gHw":3.94},{"d":"10-11-2023","T":8.2,"gCh":49.86,"gHw":10.35},{"d":"11-11-2023","T":9.3,"gCh":39.64,"gHw":5.55},{"d":"12-11-2023","T":7.3,"gCh":63.9,"gHw":0.32},{"d":"13-11-2023","T":10.5,"gCh":19.69,"gHw":4.18}]

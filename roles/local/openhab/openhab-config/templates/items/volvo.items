@@ -1,0 +1,53 @@
+// file: conf/items/volvo.items
+// synopsis:
+
+Group                          gVoc                      "Volvo On Call"                            (gDriveway)
+// Doors
+Group:Contact:OR(OPEN,CLOSED)  gDoorsOpen                "Deuren"                       <door>      (gVoc)
+Contact                        Voc_DoorsTailgate         "Achterklep"                               (gDoorsOpen)    ["OpenState"]  {channel="volvooncall:vehicle:v90:V90:doors#tailgate"}
+Contact                        Voc_DoorsRearRight        "Deur rechtsachter"            <door>      (gDoorsOpen)    ["OpenState"]  {channel="volvooncall:vehicle:v90:V90:doors#rearRight"}
+Contact                        Voc_DoorsRearLeft         "Deur linksachter"             <door>      (gDoorsOpen)    ["OpenState"]  {channel="volvooncall:vehicle:v90:V90:doors#rearLeft"}
+Contact                        Voc_DoorsFrontRight       "Passagiersdeur"               <door>      (gDoorsOpen)    ["OpenState"]  {channel="volvooncall:vehicle:v90:V90:doors#frontRight"}
+Contact                        Voc_DoorsFrontLeft        "Bestuurdersdeur"              <door>      (gDoorsOpen)    ["OpenState"]  {channel="volvooncall:vehicle:v90:V90:doors#frontLeft"}
+Contact                        Voc_DoorsHood             "Motorkap"                                 (gDoorsOpen)    ["OpenState"]  {channel="volvooncall:vehicle:v90:V90:doors#hood"}
+Switch                         Voc_DoorsCarLocked        "Deuren gesloten"                          (gVoc)                         {channel="volvooncall:vehicle:v90:V90:doors#carLocked"}
+// Windows
+Group:Contact:OR(OPEN,CLOSED)  gWindowsOpen              "Ramen"                        <window>    (gVoc)
+Contact                        Voc_WindowsRearRightWnd   "Raam rechtsachter"            <window>    (gWindowsOpen)  ["OpenState"]  {channel="volvooncall:vehicle:v90:V90:windows#rearRightWnd"}
+Contact                        Voc_WindowsRearLeftWnd    "Raam linksachter"             <window>    (gWindowsOpen)  ["OpenState"]  {channel="volvooncall:vehicle:v90:V90:windows#rearLeftWnd"}
+Contact                        Voc_WindowsFrontRightWnd  "Passagiersraam"               <window>    (gWindowsOpen)  ["OpenState"]  {channel="volvooncall:vehicle:v90:V90:windows#frontRightWnd"}
+Contact                        Voc_WindowsFrontLeftWnd   "Bestuurdersraam"              <window>    (gWindowsOpen)  ["OpenState"]  {channel="volvooncall:vehicle:v90:V90:windows#frontLeftWnd"}
+// Status
+Number:Length                  Voc_Odometer              "Kilometerstand [%d %unit%]"               (gVoc)                         {channel="volvooncall:vehicle:v90:V90:odometer#odometer"}
+Number:Dimensionless           Voc_FuelLevel             "Brandstof"                    <sewerage>  (gVoc)                         {channel="volvooncall:vehicle:v90:V90:tank#fuelLevel"}
+Switch                         Voc_Fuel_Alert            "Tanken"                       <siren>     (gVoc)                         {channel="volvooncall:vehicle:v90:V90:tank#fuelAlert"}
+Number                         Voc_Fluid_Message         "Ruitenwisservloeistof"                    (gVoc)                         {channel="volvooncall:vehicle:v90:V90:other#washerFluidLevel"}
+Location                       Voc_Location              "Locatie"                                  (gVoc)                         {channel="volvooncall:vehicle:v90:V90:position#location"}
+DateTime                       Voc_Location_LUD          "Timestamp [%1$tH:%1$tM]"      <time>      (gVoc)          ["Timestamp"]  {channel="volvooncall:vehicle:v90:V90:position#locationTimestamp"}
+Switch                         Voc_ServiceNeeded         "Onderhoudsbeurt"              <siren>     (gVoc)                         {channel="volvooncall:vehicle:v90:V90:other#serviceWarning"}
+String                         Voc_ServiceWarning        "Warning Onderhoudsbeurt"                  (gVoc)                         {channel="volvooncall:vehicle:v90:V90:other#serviceWarningStatus"}
+Switch                         Voc_BulbFailure           "Verlichting fout"             <alarm>     (gVoc)                         {channel="volvooncall:vehicle:v90:V90:other#bulbFailure"}
+Switch                         Voc_EngineStarted         "Contact aan"                              (gVoc)                         {channel="volvooncall:vehicle:v90:V90:other#engineRunning"}
+// Battery
+Number:Dimensionless           Voc_BattLevel             "Batterijniveau"               <battery>   (gVoc)                         {channel="volvooncall:vehicle:v90:V90:battery#batteryLevel"}
+String                         Voc_BattCharge            "Laadstatus"                   <battery>   (gVoc)                         {channel="volvooncall:vehicle:v90:V90:battery#chargeStatus"}
+Switch                         Voc_BattCharging          "Laden"                        <battery>   (gVoc)                         {channel="volvooncall:vehicle:v90:V90:battery#chargeStatusCharging"}
+DateTime                       Voc_BattCharged           "Eindtijd laden"               <battery>   (gVoc)                         {channel="volvooncall:vehicle:v90:V90:battery#chargingEnd"}
+Switch                         Voc_PluggedIn             "Laadkabel aangesloten"        <battery>   (gVoc)                         {channel="volvooncall:vehicle:v90:V90:battery#chargeStatusCable"}
+Number:Length                  Voc_DistanceBatt          "Bereik op Batterij"           <battery>   (gVoc)                         {channel="volvooncall:vehicle:v90:V90:battery#batteryDistanceToEmpty"}
+Switch                         Voc_FullyCharged          "Volledig geladen"             <battery>   (gVoc)                         {channel="volvooncall:vehicle:v90:V90:battery#chargeStatusFullyCharged"}
+Number:Time                    Voc_ChargeTime            "Tijd tot volledig opgeladen"  <battery>   (gVoc)                         {channel="volvooncall:vehicle:v90:V90:battery#timeToHVBatteryFullyCharged"}
+// Climate
+Switch                         Voc_RemoteHeater          "Standkachel"                  <heating>   (gVoc)          ["Control"]    {channel="volvooncall:vehicle:v90:V90:other#remoteHeater"}
+Switch                         Voc_PreClimat             "Klimatisering"                            (gVoc)          ["Control"]    {channel="volvooncall:vehicle:v90:V90:other#preclimatization"}
+//
+Number:Length                  Voc_Tripmeter_1           "Dagteller 1"                              (gVoc)                         {channel="volvooncall:vehicle:v90:V90:odometer#tripmeter1"}
+Number:Length                  Voc_Tripmeter_2           "Dagteller 2"                              (gVoc)                         {channel="volvooncall:vehicle:v90:V90:odometer#tripmeter2"}
+Number:Volume                  Voc_FuelAmount            "Brandstofniveau"              <sewerage>  (gVoc)                         {channel="volvooncall:vehicle:v90:V90:tank#fuelAmount"}
+Number                         Voc_AvgConsumption        "Gemiddeld verbruik"                       (gVoc)                         {channel="volvooncall:vehicle:v90:V90:tank#fuelConsumption"}
+Number:Length                  Voc_DistanceLeft          "Bereik"                                   (gVoc)                         {channel="volvooncall:vehicle:v90:V90:tank#distanceToEmpty"}
+Switch                         Voc_Heading               "Positie"                                  (gVoc)                         {channel="volvooncall:vehicle:v90:V90:position#heading"}
+Number                         Voc_TyreFrontLeft         "Voorband links"                           (gVoc)                         {channel="volvooncall:vehicle:v90:V90:tyrePressure#frontLeftTyre"}
+Number                         Voc_TyreFrontRight        "Voorband rechts"                          (gVoc)                         {channel="volvooncall:vehicle:v90:V90:tyrePressure#frontRightTyre"}
+Number                         Voc_TyreRearLeft          "Achterband links"                         (gVoc)                         {channel="volvooncall:vehicle:v90:V90:tyrePressure#rearLeftTyre"}
+Number                         Voc_TyreRearRight         "Achterband rechts"                        (gVoc)                         {channel="volvooncall:vehicle:v90:V90:tyrePressure#rearRightTyre"}

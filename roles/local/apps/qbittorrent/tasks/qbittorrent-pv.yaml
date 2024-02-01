@@ -1,20 +1,31 @@
 ---
-- name: Create qBittorrent Persisten Volume for completed downloads NFS share
+- name: Create qBittorrent Persistent Volume for media SMB3 share
   kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1
       kind: PersistentVolume
       metadata:
-        name: qbittorrent-downloads-pv
+        name: qbittorrent-data-pv
       spec:
-        persistentVolumeReclaimPolicy: Retain
+        storageClassName: ""
         capacity:
-          storage: 10Mi # Dummy value
+          storage: 10Ti # Dummy value
         accessModes:
           - ReadWriteMany
-        nfs:
-          path: /media
-          server: 10.0.0.2
+        persistentVolumeReclaimPolicy: Retain
         mountOptions:
-          - nolock
+          - dir_mode=0777
+          - file_mode=0777
+          - vers=3.0
+          - uid=1000
+          - gid=1000
+        csi:
+          driver: smb.csi.k8s.io
+          readOnly: false
+          volumeHandle: "{{ qbittorrent_share_volid }}"
+          volumeAttributes:
+            source: "//{{ nas_address }}/{{ smb_media_share }}"
+          nodeStageSecretRef:
+            name: smbcreds
+            namespace: default

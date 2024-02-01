@@ -1,0 +1,104 @@
+---
+- name: Make sure the namespace is present
+  kubernetes.core.k8s:
+    name: "{{ mariadb_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create MariaDB secret
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+          name: mariadb-secret
+          namespace: "{{ mariadb_namespace }}"
+      type: Opaque
+      data:
+        mariadb-root-password: d0FjaHRXMDByZA== #echo -n 'secret'|base64
+
+- name: Create MariaDB service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: mariadb
+        namespace: "{{ mariadb_namespace }}"
+        labels:
+          app: mariadb
+      spec:
+        ports:
+        - port: 3306
+          name: db-port
+        # clusterIP: None
+        selector:
+          app: mariadb
+
+- name: Create MariaDB Persistent Volume Claim for database
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: mariadb-pvc
+        namespace: "{{ mariadb_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
+
+- name: Create MariaDB Statefulset
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: mariadb
+        namespace: "{{ mariadb_namespace }}"
+      spec:
+        serviceName: mariadb
+        replicas: 1
+        selector:
+          matchLabels:
+            app: mariadb
+        template:
+          metadata:
+            labels:
+              app: mariadb
+          spec:
+            containers:
+            - name: mariadb
+              image: "{{ mariadb_image_registry }}/{{ mariadb_image_name }}:{{ mariadb_image_tag }}"
+              ports:
+              - containerPort: 3306
+                name: db-port
+              env:
+              - name: MYSQL_ROOT_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: mariadb-secret
+                    key: mariadb-root-password
+              - name: MYSQL_DATABASE
+                value: partkeepr
+              - name: MYSQL_USER
+                value: "{{ partkeepr_db_user }}"
+              - name: MYSQL_PASSWORD
+                value: "{{ partkeepr_db_password }}"
+              volumeMounts:
+              - name: data
+                mountPath: /var/lib/mysql/
+            volumes:
+              - name: data
+                persistentVolumeClaim:
+                  claimName: mariadb-pvc

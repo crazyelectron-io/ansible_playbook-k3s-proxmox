@@ -1,0 +1,25 @@
+// file: conf/items/knmi.items
+// synopsis: Weather information retreived from KNMI API (using http binding).
+
+// KNMI weatherstation temperature
+Number:Temperature    KNMI_TempStation      "KNMI temperatuur [%.0f %unit%]"         <temperature>  (gPersist,gWeather,OutsideTemperature)  ["Temperature"]  {channel="http:url:weather:currentTemp", unit="°C", stateDescription=" "[readOnly="true"]}
+// Feel temperature outdoor (from KNMI API)
+Number:Temperature    KNMI_TempFeelStation  "KNMI gevoelstemperatuur [%.0f %unit%]"  <temperature>  (gHist15,gWeather)                      ["Temperature"]  {channel="http:url:weather:feelTemp", unit="°C", stateDescription=" "[readOnly="true"]}
+// Wind direction (from KNMI API)
+String                KNMI_WindDirection    "KNMI windrichting"                                     (gHist15,gPersist,gWeather)                              {channel="http:url:weather:windDirection", stateDescription=" "[readOnly="true"]}
+// Wind force (from KNMI API)
+Number                KNMI_WindForce        "KNMI windkracht [%d]"                                  (gHist15,gPersist,gWeather)                              {channel="http:url:weather:windForce", stateDescription=" "[readOnly="true"]}
+// Humidity outdoor (from KNMI API)
+Number:Dimensionless  KNMI_Humidity         "KNMI luchtvochtigheid [%.0f %%]"        <humidity>     (gPersist,gWeather)                     ["Humidity"]     {channel="http:url:weather:humidity", unit="%", stateDescription=" "[readOnly="true"]}
+// Dew point outdoor (from KNMI API)
+Number:Temperature    KNMI_DewPoint         "KNMI dauwpunt [%.0f %unit%]"            <temperature>  (gTempSensor,gWeather)                  ["Temperature"]  {channel="http:url:weather:dewPoint", stateDescription=" "[readOnly="true"], unit="°C"}
+// Current weather condition description (bewolkt, halfbewolkt, zwaarbewolkt, zonnig, regen, buien, hagel, mist, sneeuw, nachtmist, wolkennacht, helderenacht..)
+String                KNMI_Condition        "KNMI [%s]"                              <none>         (gPersist,gWeather)                                      {channel="http:url:weather:weatherCondition", stateDescription=" "[readOnly="true"]}
+// Cloudy or clear switch (based on KNMI__Condition) used to switch lights
+Switch                KNMI_Cloudy           "KNMI bewolkt"                           <none>         (gPersist,gWeather)
+// Short weather forcast text (from KNMI)
+String                KNMI_Forcast          "[%s]"                                   <none>         (gWeather)                                               {channel="http:url:weather:weatherForecast", stateDescription=" "[readOnly="true"]}
+// Weather alarm
+Number                KNMI_Alarm            "Weeralarm [MAP(weeralarm.map):%s]"      <siren>        (gPersist,gWeather)                                      {channel="http:url:weather:alarm", stateDescription=" "[readOnly="true"]}
+// Last weather update
+DateTime              KNMI_LastUpdate       "KNMI LastUpdate"                        <time>         (gWeather)                              ["Timestamp"]

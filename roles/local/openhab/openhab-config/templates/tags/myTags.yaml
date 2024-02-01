@@ -1,0 +1,27 @@
+# file: conf/tags/mytags.yaml
+# synopsis: Configuration file containing a list of custom semantic tags
+# note: For each semantic tag `uid` and `label` are required, `description` and `synonyms` are optional
+
+version: 1
+
+tags:
+  # New location: Fitnessroom
+  - uid: Location_Indoor_Room_FitnessRoom
+    label: Fitnessruimte
+    description: The room containing our fitness equipment.
+    synonyms:
+      - Fitness room
+      - Fitness
+      - Fitnessruimte
+      - fitness ruimte
+  # New location: Lodge
+  - uid: Location_Outdoor_Patio_Lodge
+    label: Lodge
+    description: The outdoor Lodge.
+    synonyms:
+      - Lodge
+      - Overkapping
+
+  # Example of a new equipment
+  # - uid: Equipment_Curtain
+  #   label: Curtain

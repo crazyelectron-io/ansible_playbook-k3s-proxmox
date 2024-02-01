@@ -54,13 +54,13 @@ cert_manager_template_output_directory: "{{ '~/cert_manager/template' | expandus
 # see "tasks/install-issuer.yml".
 #
 cert_manager_le_clusterissuer_options:
-#   - name: letsencrypt-prod
-#     email: ron@moerman.online
-#     server: acme-v02
-#     private_key_secret_ref_name: letsencrypt-prod
-#     solvers_dns01_ingress_class: "traefik-external"
-  - name: letsencrypt-staging
+  - name: letsencrypt-prod
     email: ron@moerman.online
-    server: acme-staging-v02
-    private_key_secret_ref_name: letsencrypt-staging
+    server: acme-v02
+    private_key_secret_ref_name: letsencrypt-prod
     solvers_dns01_ingress_class: "traefik-external"
+  # - name: letsencrypt-staging
+  #   email: ron@moerman.online
+  #   server: acme-staging-v02
+  #   private_key_secret_ref_name: letsencrypt-staging
+  #   solvers_dns01_ingress_class: "traefik-external"

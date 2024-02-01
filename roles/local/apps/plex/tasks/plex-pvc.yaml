@@ -1,0 +1,37 @@
+# file: clusters/prod/plex/plex-pvc.yaml
+# synopsis:
+---
+- name: Create Plex Persistent Volume Claim for configuration files
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: plex-config-pvc
+        namespace: "{{ plex_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Gi
+
+- name: Create Plex Persistent Volume Claim for media NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: plex-data-pvc
+        namespace: "{{ plex_namespace }}"
+      spec:
+        volumeName: plex-data-pv
+        storageClassName: ""
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 8Ti # Dummy value

@@ -1,0 +1,6 @@
+Bridge openweathermap:weather-api:api "OpenWeatherMap Account" [apikey="{{openweathermap_api_key}}", refreshInterval=30, language="nl"]
+{
+    Thing onecall local                 "Local Weather and Forecast"  [location="{{ openhab_latitude }},{{ openhab_longitude }}", forecastHours=12, forecastDays=5]
+    Thing onecall-history local-history "Local History"               [location="{{ openhab_latitude }},{{ openhab_longitude }}", historyDay=1]
+    Thing air-pollution local           "Local air pollution info"    [location="{{ openhab_latitude }},{{ openhab_longitude }}"]
+}

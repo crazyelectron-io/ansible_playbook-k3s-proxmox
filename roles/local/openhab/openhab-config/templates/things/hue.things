@@ -1,0 +1,109 @@
+// file: conf/things/hue.things
+// synopsis:
+
+// (Not) supported channels on Hue device types (#TODO)
+// --------------------------------------------
+//  Device      switch dynamic effect alert
+//  LCL001        N       N       Y     Y
+//  LTW001
+
+Bridge hue:bridge-api2:br1 [ipAddress="10.20.2.246", applicationKey="{{ hue_bridge1_user }}"]
+{
+  // --- Hue Bridge home things
+  Thing zone    all_lights            "All lights"                          [resourceId="5ecdc65b-999a-4fcc-98fb-5ee7d0947d5a"] // Zone idV1:/groups/0
+  // --- Hue Zone things
+  // Hue Bridge 1
+  Thing zone    zone_downstairs       "Avondverlichting"                    [resourceId="d0e12c12-9126-4753-934d-bb7a281c35c9"] // Zone idV1:/groups/81
+  Thing zone    zone_hallCeiling      "Halplafond"                          [resourceId="2c3581ea-cc56-4446-a5ac-9f8275cb253c"] // Zone idV1:/groups/84
+  Thing zone    zone_kitchenCeiling   "Keuken plafond"                      [resourceId="6e765311-4401-451f-9975-373c38317009"] // Zone idV1:/groups/83
+
+  // -- Hue Room things
+  // Hue Bridge 1
+  Thing room    room_laundry          "Bijkeuken"                           [resourceId="a49e2806-88e8-4a8c-b7ff-559c795672b5"] // Room idV1:/groups/85
+  Thing room    room_outdoor          "Buiten"                              [resourceId="32a938b4-c13f-4ab3-97ea-1b299480b125"] // Room idV1:/groups/82
+  Thing room    room_dining           "Eethoek"                             [resourceId="6a270a9a-8fd3-4cb0-b8d8-c31eff8f108c"] // Room idV1:/groups/10
+  Thing room    room_hallway          "Hal"                                 [resourceId="84aa463c-f30a-4c27-b242-852643d5eda9"] // Room idV1:/groups/7
+  Thing room    room_kitchen          "Keuken"                              [resourceId="67756053-3832-423d-9ffe-8a8fc1536c7c"] // Room idV1:/groups/5
+  Thing room    room_bedroom          "Slaapkamer"                          [resourceId="82452783-5628-4e7a-bbda-4e038eafb5d1"] // Room idV1:/groups/3
+  Thing room    room_toilet           "Toilet"                              [resourceId="980c5402-0c3a-4c13-a577-d4f0a18f7533"] // Room idV1:/groups/9
+  Thing room    room_living           "Woonkamer"                           [resourceId="f442179d-18b8-4ee5-a278-ae4aaea084df"] // Room idV1:/groups/1
+  // Hue Bridge 2
+  Thing room    room_bathroom         "Badkamer"                            [resourceId="e85712d6-2fe8-41ea-8c85-cb71b5ba88fb"] // Room idV1:/groups/1
+  Thing room    room_fitness          "Fitness"                             [resourceId="da495663-1892-46f4-8acd-1a63e8079203"] // Room idV1:/groups/81
+  Thing room    room_office           "Kantoor"                             [resourceId="31d24474-4f92-40ec-b265-31bcc146efb2"] // Room idV1:/groups/3
+  Thing room    room_child            "Menno"                               [resourceId="2781d24a-e527-409f-addc-052e3ca1e8c0"] // Room idV1:/groups/5
+  Thing room    room_corridor         "Overloop"                            [resourceId="d4c2de28-92ca-44dc-aa7e-f3cc39597f1d"] // Room idV1:/groups/82
+  Thing room    room_bedroom          "Slaapkamer"                          [resourceId="4179e9d6-1106-4545-9a77-47f5e72414df"] // Room idV1:/groups/4
+  // --- Hue lights
+  Thing device  lightWallL_kitchen     "Wandlamp links" @ "Keuken"          [resourceId="21e7bf70-69e9-4ab6-94a2-408059938e53"] // Hue ambiance lamp idV1:/lights/13 (LTW001)
+  Thing device  lightWallR_kitchen     "Wandlamp rechts" @ "Keuken"         [resourceId="357db7f7-4fbe-4470-8b73-275ba4e4d33f"] // Hue ambiance lamp idV1:/lights/14 (LTW001)
+  Thing device  lightCeiling_kitchen   "Plafondlamp" @ "Keuken"             [resourceId="013da9fd-0004-440e-be99-ea5c44a8c75c"] // Hue Aurelle Panel idV1:/lights/42 (929003099201)
+  Thing device  lightCabinet_living    "Lichtstrip kast" @ "Woonkamer"      [resourceId="bd3f7299-56e8-4640-89df-aee2fae9ff40"] // Hue lightstrip plus idV1:/lights/44 (LCL001)
+  Thing device  lightWallL_living      "Wandlamp muur links" @ "Woonkamer"  [resourceId="96acbce5-3830-4e19-a958-3a27ad0c62c3"] // Hue ambiance lamp idV1:/lights/6 (LTW001)
+  Thing device  lightWallR_living      "Wandlamp muur rechts" @ "Woonkamer" [resourceId="9fc543c7-74c0-4989-bbd0-c8cad78a1cd0"] // Hue ambiance lamp idV1:/lights/1 (LTW001)
+  Thing device  lightSideR_living      "Sidetable rechts" @ "Woonkamer"     [resourceId="ba4757f1-425b-401e-958e-24504f8c970e"] // Hue ambiance lamp idV1:/lights/3 (sultan light) (LTW001)
+  Thing device  lightSideL_living      "Sidetable links" @ "Woonkamer"      [resourceId="010eeb49-dff4-4bda-9a8f-aeefa4c5c2c3"] // Hue ambiance lamp idV1:/lights/4 (sultan light) (LTW001)
+  Thing device  lightWandc_living      "Wandlamp kast" @ "Woonkamer"        [resourceId="079783cd-3b94-4960-b894-e34b8ee64c3e"] // Hue Liane wall idV1:/lights/45 (???)
+  Thing device  lightCouch_living      "Booglamp bank" @ "Woonkamer"        [resourceId="f1f5afc2-fab6-4322-b288-ea208a084800"] // Hue ambiance lamp idV1:/lights/7 (LTW001)
+  Thing device  lightLeft_dining       "Eettafellamp links" @ "Eetkamer"    [resourceId="b4e20a01-c75a-4f98-9f38-0661015c8f3b"] // Hue color lamp idV1:/lights/25 (LTC015)
+  Thing device  lightMiddle_dining     "Eettafellamp midden" @ "Eetkamer"   [resourceId="558a10a2-1deb-4c7c-875c-bc1d427c341e"] // Hue color lamp idV1:/lights/23 (LTC015)
+  Thing device  lightRight_dining      "Eettafellamp rechts" @ "Eetkamer"   [resourceId="b1cfcf50-11b0-4317-a731-3756ef4744f3"] // Hue color lamp idV1:/lights/24 (LTC015)
+  Thing device  lightCoats_hallway     "Wandlamp kapstok" @ "Hal"           [resourceId="94f418c9-b255-4b33-9f88-9de420c30c36"] // Hue ambiance candle idV1:/lights/27 (LTW012)
+  Thing device  lightFdoor_hallway     "Wandlamp voordeur" @ "Hal"          [resourceId="eb060704-a1a5-4a1c-b3b5-4a968d8d5961"] // Hue ambiance candle idV1:/lights/26 (LTW012)
+  Thing device  lightCeiling_hallway   "Hal plafondlamp"                    [resourceId="d05dad94-b7a9-4236-92a2-376b6d852920"] // Hue Surimu panel idV1:/lights/47 (929003598101)
+  Thing device  lightCeiling_toilet    "Plafondlamp" @ "Toilet"             [resourceId="970cd948-b0e7-4033-837e-146b4dc5cb4d"] // Hue ambiance ceiling idV1:/lights/20 (LTC001)
+  Thing device  lightCeiling_laundry   "Plafondlamp" @ "Washok"             [resourceId="36f95f39-f8f9-4453-ad13-17b81e6bff1a"] // Hue Aurelle Panel idV1:/lights/43 (???)
+  Thing device  lightRight_bedroom     "Bedlamp Arniël" @ "Slaapkamer"      [resourceId="6d525b69-2cac-4c94-aeb7-97b130583bb0"] // Hue ambiance lamp idV1:/lights/10 (LTW001)
+  Thing device  lightLeft_bedroom      "Bedlamp Ron" @ "Slaapkamer"         [resourceId="1033f334-febb-4a0e-a411-3b6075dc827c"] // Hue ambiance lamp idV1:/lights/9 (LTW001)
+  Thing device  lightBackL_outside     "Lantaarn linksachter" @ "Buiten"    [resourceId="0b54b9ab-27bd-4a70-a205-7ae660ba4cf5"] // Hue filament bulb idV1:/lights/34  (LWV001)
+  Thing device  lightFrontd_outside    "Lantaarn voordeur" @ "Buiten"       [resourceId="7e74adf2-f410-4901-9944-0d82515338fa"] // Hue filament bulb idV1:/lights/29 (LWV001)
+  Thing device  lightBackR_outside     "Lantaarn rechtsachter" @ "Buiten"   [resourceId="9433626d-3eb4-4e48-9946-4b1f4092aba2"] // Hue filament bulb idV1:/lights/35 (LWV001)
+  // --- Hue dimmers & switches
+  Thing device  dim_toilet            "Dimmer Toilet" @ "Toilet"            [resourceId="dfa45a29-b9fc-4c8b-96b1-7d3f213e9ac3"] // Hue dimmer switch idV1:/sensors/26 (RWL021)
+  Thing device  tap_living            "Tap Eethoek" @ "Eetkamer"            [resourceId="d3f6a4ff-94f2-40c9-ad25-83273dc6f06a"] // Hue tap switch idV1:/sensors/32 (ZGPSWITCH)
+  Thing device  dim_stairs            "Dimmer trap" @ "Wenteltrap"          [resourceId="93586152-3c05-421e-94d8-08eaa3d26a44"] // Hue dimmer switch idV1:/sensors/65 (RWL022)
+  Thing device  dim_hallway           "Dimmer hal" @ "Hal"                  [resourceId="194d6c5f-31d5-474e-b490-104ec2d3bf63"] // Hue dimmer switch idV1:/sensors/59 (RWL022)
+  Thing device  sw_frontdoor          "Schakelaar voordeur" @ "Hal"         [resourceId="0cf00837-cd08-485c-a1e5-ef729746248f"] // Hue wall switch module idV1:/sensors/64 (RDM001)
+  Thing device  tap_kitchen           "Tap keuken" @ "Keuken"               [resourceId="02ef704b-2715-4516-9c04-735962218c64"] // Hue tap switch idV1:/sensors/20 (ZGPSWITCH)
+  // --- Hue sensors
+  Thing device  motion_toilet         "Bewegingsmelder" @ "Toilet"          [resourceId="568def22-c3a4-404d-98c4-a7870c1d40f4"] // Hue motion sensor idV1:/sensors/28 (SML001)
+}
+
+Bridge hue:bridge-api2:br2 [ipAddress="10.20.2.247", applicationKey="{{ hue_bridge2_user }}"]
+{
+  // --- Bridge home things
+  Thing zone    all_lights_2          "All lights"                          [resourceId="1546e6c1-c257-4d65-8fed-9192f07e8f81"] // Zone idV1:/groups/0
+  // // --- Room things
+  Thing room    room_bathroom         "Badkamer"                            [resourceId="e85712d6-2fe8-41ea-8c85-cb71b5ba88fb"] // Room idV1:/groups/1
+  Thing room    room_office           "Kantoor"                             [resourceId="31d24474-4f92-40ec-b265-31bcc146efb2"] // Room idV1:/groups/3
+  Thing room    room_fitness          "Fitness"                             [resourceId="da495663-1892-46f4-8acd-1a63e8079203"] // Room idV1:/groups/81
+  Thing room    room_menno            "Menno"                               [resourceId="2781d24a-e527-409f-addc-052e3ca1e8c0"] // Room idV1:/groups/5
+  Thing room    room_corridor         "Overloop"                            [resourceId="d4c2de28-92ca-44dc-aa7e-f3cc39597f1d"] // Room idV1:/groups/82
+  Thing room    room_bedroom          "Slaapkamer"                          [resourceId="4179e9d6-1106-4545-9a77-47f5e72414df"] // Room idV1:/groups/4
+  Thing room    room_garden           "Tuin"                                [resourceId="963f0109-acc8-4532-b395-2f4094483c50"] // Room idV1:/groups/2
+  // // --- Hue lights
+  Thing device  lightToilet_bathroom  "Bathroom Toilet" @ "Badkamer"        [resourceId="f228cdff-f7e0-40a0-9ee5-619d38fb631c"] // Hue ambiance spot idV1:/lights/7 (LTG002)
+  Thing device  lightBench_bathroom   "Bathroom Bench" @ "Badkamer"         [resourceId="8d3311b8-ceba-44ed-8277-dcdc9691a35e"] // Hue ambiance spot idV1:/lights/5 (LTG002)
+  Thing device  lightShower_bathroom  "Bathroom Shower" @ "Badkamer"        [resourceId="3983c83b-d5bf-46bf-9357-6bc99a15ce68"] // Hue ambiance spot idV1:/lights/6 (LTG002)
+  Thing device  lightDoor_bathroom    "Bathroom door" @ "Badkamer"          [resourceId="dbb6b88a-f699-43b9-947e-7b4a31a72c92"] // Hue ambiance spot idV1:/lights/4 (LTG002)
+  Thing device  lightSink_bathroom    "Bathroom sink" @ "Badkamer"          [resourceId="b0581805-541c-4597-852b-dcf024f1a4f1"] // Hue ambiance spot idV1:/lights/3 (LTG002)
+  Thing device  lightWorkb_office     "ElektroShag LED-strip" @ "Kantoor"   [resourceId="5603bd24-5941-402d-96d0-5977572ff51e"] // Hue lightstrip plus idV1:/lights/15
+  Thing device  lightCeiling_hall     "Hue Aurelle Hal" @ "Hal"             [resourceId="865a7c8c-cd8d-431e-a761-5741c6fdba26"] // Hue Aurelle Panel idV1:/lights/17
+  Thing device  lightStrip_menno      "Menno lightstrip" @ "Menno"          [resourceId="2d010fd6-4023-4d2b-a26d-6904954a1f4c"] // Hue lightstrip plus idV1:/lights/18
+  Thing device  lightCeiling_office   "Office plafondlamp" @ "Office"       [resourceId="8916f506-80c6-4f67-a0b5-8d4da65e990d"] // Hue Aurelle Panel idV1:/lights/11
+  Thing device  lightCeiling_corridor "Plafondlamp overloop" @ "Overloop"   [resourceId="a971a4a1-8cf5-4521-a758-73ad3d316025"] // Hue filament light idV1:/lights/16
+  Thing device  lightCeiling_fitness  "Plafondlamp Fitness" @ "Fitness"     [resourceId="77221aef-d1c4-48c9-8ae1-a18dedaf22a1"] // Hue Aurelle Panel idV1:/lights/14
+  Thing device  lightCeiling_menno    "Plafondlamp Menno" @ "Menno"         [resourceId="e832302a-766c-4621-9b78-e9e4b9f67f2b"] // Hue Aurelle Panel idV1:/lights/13
+  // Thing device  lightLantern_terrace  "Tuinlantaarn"                        [resourceId="3f65f32c-3e45-4b77-b8e1-137ecd68f2b3"] // Hue filament bulb idV1:/lights/8 (LWV001)
+  // --- Hue dimmers & switches
+  Thing device  dim_switch1           "Dimmer switch 1"                     [resourceId="50d835f3-bbfa-401d-a0bd-e14b4d0f1079"] // Hue dimmer switch idV1:/sensors/22 --- landry?
+  Thing device  diml_bedroom          "Dimmer Bed Ron" @ "Slaapkamer"       [resourceId="bdea212f-52fb-4ca5-8ee3-a78f9ff3f048"] // Hue dimmer switch idV1:/sensors/16
+  Thing device  dim_menno             "Dimmer Menno" @ "Menno"              [resourceId="a8fe3028-39d8-4c20-ae19-733d3bf30a72"] // Hue dimmer switch idV1:/sensors/18
+  Thing device  dimr_bedroom          "Dimmer Bed Arniël" @ "Slaapkamer"    [resourceId="813e7e52-2670-4781-9964-f82f32e8cd8c"] // Hue dimmer switch idV1:/sensors/17
+  Thing device  dim_office            "Dimmer Office" @ "Kantoor"           [resourceId="23b70803-9a0d-4d4c-b59a-6e144e5e3896"] // Hue dimmer switch idV1:/sensors/12
+  Thing device  tap_bathroom          "Tap Badkamer" @ "Badkamer"           [resourceId="fc5b9e28-1d94-4266-882a-a85fd1cc71c0"] // Hue tap switch idV1:/sensors/5
+  Thing device  sw_corridor           "Switch overloop" @ "Overloop"        [resourceId="93bc9ba5-fe4a-4531-9ea6-a23ad787708f"] // Hue wall switch module idV1:/sensors/25
+  // --- Hue sensors
+  Thing device 6ad0a883-b29c-4c65-811a-f197a2282ed1 "Hue motion sensor 1"   [resourceId="6ad0a883-b29c-4c65-811a-f197a2282ed1"] // Hue motion sensor idV1:/sensors/19 (SML001)
+  Thing device  motion_hallway        "Bewegingssensor" @ "Hal"             [resourceId="555e12c2-f64a-49ac-96af-fb327ba82e30"] // Hue motion sensor idV1:/sensors/9 (SML001)
+}

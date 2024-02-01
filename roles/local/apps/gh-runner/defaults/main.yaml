@@ -1,0 +1,24 @@
+# file: roles/local/apps/gh-arc/defaults/main.yaml
+# synopsis:
+---
+# Helm chart version
+gh_arc_chart_version: "x.y.z"
+# Container image version
+gh_arc_image_tag: latest
+# Helm release name
+gh_arc_release_name: "arc"
+# Helm repository name
+gh_arc_repo_name: "xxxxxx"
+# Helm chart name
+gh_arc_chart_name: "{{ gh_arc_repo_name }}/{{ gh_arc_release_name }}"
+# Helm chart URL
+gh_arc_chart_url: "https://helm.traefik.io/traefik"
+
+# Kubernetes namespace where ARC resources should be installed
+gh_arc_namespace: "arc-systems"
+
+# By default all tasks that needs to communicate with the Kubernetes
+# cluster are executed on your local host (127.0.0.1). But if that one
+# doesn't have direct connection to this cluster or should be executed
+# elsewhere this variable can be changed accordingly.
+gh_arc_delegate_to: 127.0.0.1

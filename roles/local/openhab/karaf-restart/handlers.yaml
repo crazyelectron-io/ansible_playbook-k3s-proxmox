@@ -1,0 +1,12 @@
+# file: roles/local/openhab/openhab-setup/tasks/main.yaml
+# synopsis: Restart OpenAB StatefulSet and wait for SSH sidecar for Ansible access
+---
+- name: Restart OpenHAB (Karaf)
+  ansible.builtin.shell: "/usr/bin/sshpass -p {{karaf_password}} ssh -o StrictHostKeyChecking=no {{karaf_user}}@{{karaf_service}} -p {{karaf_port}} system:shutdown -r --force"
+  ignore_errors: true
+  listen: Restart OpenHAB
+
+- name: Wait for SSH sidecar Pod to come up
+  wait_for: host="{{karaf_ip_address}}" port=22 delay=10  timeout=90
+  delegate_to: localhost
+  listen: Restart OpenHAB

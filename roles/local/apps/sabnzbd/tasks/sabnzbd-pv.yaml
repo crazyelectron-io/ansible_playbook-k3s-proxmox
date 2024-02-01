@@ -1,20 +1,31 @@
 ---
-- name: Create SABnzbd PV for media files NFS share
+- name: Create SABnzbd Persistent Volume for media SMB3 share
   kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1
       kind: PersistentVolume
       metadata:
-        name: sabnzbd-downloads-pv
+        name: sabnzbd-data-pv
       spec:
-        persistentVolumeReclaimPolicy: Retain
+        storageClassName: ""
         capacity:
-          storage: 10Mi # Dummy value
+          storage: 10Ti
         accessModes:
           - ReadWriteMany
-        nfs:
-          path: /media/usenet
-          server: 10.0.0.2
+        persistentVolumeReclaimPolicy: Retain
         mountOptions:
-          - nolock
+          - dir_mode=0777
+          - file_mode=0777
+          - uid=1000
+          - gid=1000
+          - vers=3.0
+        csi:
+          driver: smb.csi.k8s.io
+          readOnly: false
+          volumeHandle: sabnzbd_share_volid  # make sure it's a unique id in the cluster
+          volumeAttributes:
+            source: "//{{ nas_address }}/{{ smb_media_share }}"
+          nodeStageSecretRef:
+            name: smbcreds
+            namespace: default

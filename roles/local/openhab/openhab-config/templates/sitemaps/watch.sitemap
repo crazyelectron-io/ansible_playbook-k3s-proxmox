@@ -1,0 +1,30 @@
+sitemap watch label="watch" {
+    Frame label="Lights" {
+        Switch item=Scene_living label="Woonkamer"   icon="sofa"     mappings=[OFF="UIT", EVENING="AVOND"]
+        Switch item=Scene_dining          label="Eethoek"     icon="cinema"   mappings=[OFF="UIT", EVENING="AVOND"]
+        Switch item=Scene_kitchen         label="Keuken"      icon="kitchen"  mappings=[OFF="UIT", EVENING="AVOND"]
+        Switch item=Scene_bathShwr         label="Slaapkamer"  icon="bedroom"  mappings=[OFF="UIT", EVENING="AVOND"]
+    }
+
+//     Frame label="Shelly" {
+//         Switch item=Shelly_FireBin_Switch
+//         Switch item=Shelly_XmasTree_Switch
+//         Switch item=Shelly_XmasOutdoor_Switch
+//     }
+//     Frame label="Energy" {
+//         Text item=Power_Delta_All_Current
+//         Text item=Solar_Power_Actual
+//         Text item=Gas_Use_Day_Summary //label="Today's Gas use [%s]"
+//     }
+
+//     Frame label="Heating" {
+//         Switch item=gswChBurnerActive mappings=[ON="Aan"] visibility=[gswChBurnerActive==ON]
+//         Switch item=gswChBurnerActive mappings=[OFF="Uit"] visibility=[gswChBurnerActive==OFF]
+//         Text item=uChSetpoint_living
+//     }
+
+//     Frame label="RollerShutters" {
+//         Default item=Shelly_GarageDoor_Roller
+//         Slider item=Shelly_GarageDoor_Position
+//     }
+}

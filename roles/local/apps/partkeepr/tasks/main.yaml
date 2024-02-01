@@ -1,0 +1,205 @@
+---
+- name: Make sure the namespace is present
+  kubernetes.core.k8s:
+    name: "{{ partkeepr_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create Let's Encrypt Certificate for Partkeepr
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: "partkeepr-cert-{{ letsencrypt_environment }}"
+        namespace: "{{ partkeepr_namespace }}"
+      spec:
+        secretName: "partkeepr-{{ letsencrypt_environment }}-tls"
+        issuerRef:
+          name: "letsencrypt-{{ letsencrypt_environment }}"
+          kind: ClusterIssuer
+        commonName: "{{ partkeepr_domain }}"
+        dnsNames:
+          - "{{ partkeepr_domain }}"
+
+- name: Create Part-DB service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: partkeepr-ui
+        namespace: "{{ partkeepr_namespace }}"
+      spec:
+        selector:
+          app: partkeepr
+        ports:
+        - name: partkeepr-ui
+          port: 80
+          targetPort: 80
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create IngressRoute for Partkeepr
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: partkeepr-external
+        namespace: "{{ partkeepr_namespace }}"
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: "Host(`{{ partkeepr_domain }}`)"
+            kind: Rule
+            services:
+              - name: partkeepr-ui
+                port: 80
+        tls:
+          secretName: "partdb-{{ letsencrypt_environment }}-tls"
+
+- name: Create Partkeepr Web PVC
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: partkeepr-web-pvc
+        namespace: "{{ partkeepr_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
+
+- name: Create Partkeepr Config PVC
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: partkeepr-config-pvc
+        namespace: "{{ partkeepr_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 200Mi
+
+- name: Create Partkeepr Data PVC
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: partkeepr-data-pvc
+        namespace: "{{ partkeepr_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+- name: Create Partkeepr Deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: partkeepr
+        namespace: "{{ partkeepr_namespace }}"
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: partkeepr
+        template:
+          metadata:
+            labels:
+              app: partkeepr
+          spec:
+            containers:
+            - name: partkeepr
+              image: "{{ partkeepr_image_registry }}/{{ partkeepr_image_name }}:{{ partkeepr_image_tag }}"
+              imagePullPolicy: IfNotPresent
+              ports:
+              - containerPort: 80
+                name: partkeepr-ui
+              env:
+              - name: PARTKEEPR_DATABASE_HOST
+                value: mariadb
+              - name: PARTKEEPR_DATABASE_NAME
+                value: partkeepr
+              - name: PARTKEEPR_DATABASE_PORT
+                value: "3306"
+              - name: PARTKEEPR_DATABASE_USER
+                value: "{{ partkeepr_db_user }}"
+              - name: PARTKEEPR_DATABASE_PASS
+                value: "{{ partkeepr_db_password }}"
+              volumeMounts:
+              - name: partkeepr-data
+                mountPath: /var/www/html/data
+              - name: partkeepr-config
+                mountPath: /var/www/html/app/config
+              - name: partkeepr-web
+                mountPath: /var/www/html/web
+              resources: {}
+                # limits:
+                #   memory: "2048Mi"
+                #   cpu: 1000m
+                # requests:
+                #   memory: "512Mi"
+                #   cpu: 100m
+            - name: partkeepr-cronjob
+              image: "{{ partkeepr_image_registry }}/{{ partkeepr_image_name }}:{{ partkeepr_image_tag }}"
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+              - name: partkeepr-data
+                mountPath: /var/www/html/data
+              - name: partkeepr-config
+                mountPath: /var/www/html/app/config
+              - name: partkeepr-web
+                mountPath: /var/www/html/web
+            initContainers:
+            - name: partkeepr-init
+              image: "{{ partkeepr_image_registry }}/{{ partkeepr_image_name }}:{{ partkeepr_image_tag }}"
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+              - name: partkeepr-data
+                mountPath: /var/www-dest/html/data
+              - name: partkeepr-config
+                mountPath: /var/www-dest/html/app/config
+              - name: partkeepr-web
+                mountPath: /var/www-dest/html/web
+              restartPolicy: Never
+              command: ["/bin/bash", "-c", "apt update && apt install -y rsync && rsync -avHhSp /var/www/ /var/www-dest/"]
+            volumes:
+              - name: partkeepr-data
+                persistentVolumeClaim:
+                  claimName: partkeepr-data-pvc
+              - name: partkeepr-config
+                persistentVolumeClaim:
+                  claimName: partkeepr-config-pvc
+              - name: partkeepr-web
+                persistentVolumeClaim:
+                  claimName: partkeepr-web-pvc

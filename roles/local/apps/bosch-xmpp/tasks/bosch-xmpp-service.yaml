@@ -1,0 +1,24 @@
+---
+- name: Create Bosch XMPP LB Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: bosch-xmpp
+        namespace: "{{ openhab_namespace }}"
+        # annotations:
+        #   metallb.universe.tf/allow-shared-ip: xmpp
+      spec:
+        type: LoadBalancer
+        loadBalancerIP: 10.100.3.107
+        selector:
+          app: bosch-xmpp
+        ports:
+        - name: bosch-xmpp
+          port: 3000
+          targetPort: 3000
+        # externalTrafficPolicy: Local
+  delegate_to: 127.0.0.1
+  run_once: true

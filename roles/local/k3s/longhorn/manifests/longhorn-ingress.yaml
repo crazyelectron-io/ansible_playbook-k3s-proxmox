@@ -1,0 +1,24 @@
+---
+kind: IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+metadata:
+  name: longhorn-frontend
+  namespace: longhorn-system
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`longhorn.moerman.online`)
+      kind: Rule
+      services:
+        - name: longhorn-frontend
+          port: 8000
+      # middlewares:
+      #   - name: longhorn-system-svc-longhorn-headers@kubernetescrd
+      #     namespace: traefik
+  tls:
+    secretName: longhorn-dashboard-prod-tls

@@ -1,0 +1,23 @@
+---
+- name: Create Plex PV for media NFS share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: plex-external
+        namespace: "{{ plex_namespace }}"
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: "Host(`{{ plex_domain }}`)"
+            kind: Rule
+            services:
+              - name: plex-tcp
+                port: pms-web
+        tls:
+          secretName: "plex-{{ letsencrypt_environment }}-tls"

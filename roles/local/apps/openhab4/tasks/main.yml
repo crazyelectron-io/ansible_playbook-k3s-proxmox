@@ -1,0 +1,208 @@
+---
+- name: Make sure the namespace is present
+  kubernetes.core.k8s:
+    name: "{{ openhab4_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create openHAB4 WebUI/API certificate
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: openhab4-cert-{{ letsencrypt_environment }}
+        namespace: "{{ openhab4_namespace }}"
+      spec:
+        secretName: openhab4-{{ letsencrypt_environment }}-tls
+        issuerRef:
+          name: letsencrypt-{{ letsencrypt_environment }}
+          kind: ClusterIssuer
+        commonName: "{{ openhab4_domain }}"
+        dnsNames:
+          - "{{ openhab4_domain }}"
+
+- name: Create OpenHAB4 WebUI/API Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: openhab4-ui
+        namespace: "{{ openhab4_namespace }}"
+      spec:
+        ports:
+          - name: openhab4-http
+            port: 80
+            targetPort: 8080
+        selector:
+          app: openhab4
+
+- name: Create OpenHAB4 Karaf Console Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: openhab4-ssh
+        namespace: "{{ openhab4_namespace }}"
+        annotations:
+          metallb.universe.tf/allow-shared-ip: openhab4-ssh
+      spec:
+        type: LoadBalancer
+        loadBalancerIP: 10.100.3.112
+        ports:
+        - name: openhab4
+          port: 8080
+          targetPort: 8080
+        - name: openhab4-karaf
+          port: 8101
+          targetPort: 8101
+        - name: openhab4-lps
+          port: 5007
+          targetPort: 5007
+        - name: ssh-server
+          port: 22
+          targetPort: 22
+        selector:
+          app: openhab4
+
+- name: Create IngressRoute for OpenHAB4 WebUI/API
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: openhab4-external
+        namespace: "{{ openhab4_namespace }}"
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: "Host(`{{ openhab4_domain }}`)"
+            kind: Rule
+            services:
+              - name: openhab4-ui
+                port: 80
+        tls:
+          secretName: "openhab4-{{ letsencrypt_environment }}-tls"
+
+- name: Create OpenHAB4 configuration PVC
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: openhab4-config-pvc
+        namespace: "{{ openhab4_namespace }}"
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+
+- name: Create OpenHAB4 StatefulSet
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: StatefulSet
+      apiVersion: apps/v1
+      metadata:
+        name: openhab4
+        labels:
+          app: openhab4
+        namespace: "{{ openhab4_namespace }}"
+      spec:
+        serviceName: "openhab4-app"
+        selector:
+          matchLabels:
+            app: openhab4
+        replicas: 1
+        revisionHistoryLimit: 0
+        template:
+          metadata:
+            labels:
+              app: openhab4
+          spec:
+            terminationGracePeriodSeconds: 0
+            containers:
+              - name: openhab4
+                image: "{{ openhab4_image_registry }}/{{ openhab4_image_name }}:{{ openhab4_image_tag }}"
+                imagePullPolicy: IfNotPresent
+                ports:
+                  - containerPort: 8080
+                    name: http
+                    protocol: TCP
+                  - containerPort: 8101
+                    name: console
+                    protocol: TCP
+                  - containerPort: 5007
+                    name: openhab4-lsp
+                    protocol: TCP
+                env:
+                  - name: CRYPTO_POLICY
+                    value: "unlimited"
+                  - name: EXTRA_JAVA_OPTS
+                    value: "-Duser.timezone=Europe/Amsterdam -Djava.net.preferIPv4Stack=true --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED"
+                  - name: OPENHAB_HTTP_PORT
+                    value: "8080"
+                  - name: OPENHAB_HTTPS_PORT
+                    value: "8443"
+                  - name: USER_ID
+                    value: "9001"
+                  - name: GROUP_ID
+                    value: "9001"
+                volumeMounts:
+                  - name: openhab4-pvc
+                    mountPath: /openhab/conf
+                    subPath: conf
+                    readOnly: false
+                  - name: openhab4-pvc
+                    mountPath: /openhab/userdata
+                    subPath: userdata
+                    readOnly: false
+                  - name: openhab4-pvc
+                    mountPath: /openhab/addons
+                    subPath: addons
+                    readOnly: false
+                  - name: openhab4-pvc
+                    mountPath: /openhab/.java
+                    subPath: java
+                    readOnly: false
+                  - name: openhab4-pvc
+                    mountPath: /openhab/.karaf
+                    subPath: karaf
+                    readOnly: false
+              - name: ssh-server
+                image: crazyelectron/ssh-server:latest
+                imagePullPolicy: IfNotPresent
+                resources: {}
+                ports:
+                  - containerPort: 22
+                    name: openhab4-ssh
+                    protocol: TCP
+                volumeMounts:
+                  - name: openhab4-pvc
+                    mountPath: /openhab
+            volumes:
+              - name: openhab4-pvc
+                persistentVolumeClaim:
+                  claimName: openhab4-config-pvc
+  register: openhab_started
+
+- name: Wait for SSH sidecar Pod to come up
+  wait_for: host="{{karaf_ip_address}}" port=22 delay=5  timeout=90
+  delegate_to: localhost
+  when: openhab_started.changed

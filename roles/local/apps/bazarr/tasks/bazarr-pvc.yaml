@@ -11,42 +11,24 @@
         name: bazarr-config-pvc
         namespace: "{{ bazarr_namespace }}"
       spec:
-        storageClassName: longhorn
+        storageClassName: longhorn-rwx
         accessModes:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 100Mi
+            storage: 1Gi
 
-- name: Create bazarr Persistent Volume Claim for TV SHows NFS share
+- name: Create bazarr Persistent Volume Claim for media data NFS share
   kubernetes.core.k8s:
     state: present
     definition:
       kind: PersistentVolumeClaim
       apiVersion: v1
       metadata:
-        name: bazarr-tv-pvc
+        name: bazarr-data-pvc
         namespace: "{{ bazarr_namespace }}"
       spec:
-        volumeName: bazarr-tv-pv
-        storageClassName: ""
-        accessModes:
-          - ReadWriteMany
-        resources:
-          requests:
-            storage: 10Mi # Dummy value
-
-- name: Create bazarr Persistent Volume Claim for Movies NFS share
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      kind: PersistentVolumeClaim
-      apiVersion: v1
-      metadata:
-        name: bazarr-movies-pvc
-        namespace: "{{ bazarr_namespace }}"
-      spec:
-        volumeName: bazarr-movies-pv
+        volumeName: bazarr-data-pv
         storageClassName: ""
         accessModes:
           - ReadWriteMany

@@ -1,0 +1,10 @@
+
+Group     gAfvalData               "Afval ophaaldata"                             <calendar>           (gGarden)
+DateTime  AfvalData_gft            "Groente, Fruit en Tuin [%1$ta %1$td/%1$tm]"   <garbage_gft>        (gAfvalData)
+DateTime  AfvalData_papier         "Papier [%1$ta %1$td/%1$tm]"                   <garbage_papier>     (gAfvalData)
+DateTime  AfvalData_pmd            "Plastic [%1$ta %1$td/%1$tm]"                  <garbage_pmd>        (gAfvalData)
+DateTime  AfvalData_kca            "Chemisch [%1$ta %1$td/%1$tm]"                 <garbage_kca>        (gAfvalData)
+DateTime  AfvalData_volgendeDatum  "Volgende afvalophaaldag [%1$ta %1$td/%1$tm]"  <clock>              (gAfvalData)
+String    AfvalData_volgendeType   "Volgende afvalophaalsoort"                                         (gAfvalData)
+
+// https://api.mijnafvalwijzer.nl/webservices/appsinput/?apikey=5ef443e778f41c4f75c69459eea6e6ae0c2d92de729aa0fc61653815fbd6a8ca&method=postcodecheck&postcode=3232HH&street=&huisnummer=8&toevoeging=&app_name=afvalwijzer&platform=web&afvaldata=2024-01-12&langs=nl&

@@ -1,0 +1,4 @@
+// file: conf/things/buienradar.things
+// synopsis: Thing configuration for Buienradar binding
+
+Thing buienradar:rain_forecast:home [ location="{{ openhab_latitude }},{{ openhab_longitude }}" ]

@@ -35,28 +35,28 @@
                 imagePullPolicy: IfNotPresent
                 resources:
                   limits:
-                    memory: "4096Mi"
-                    cpu: 4000m
+                    memory: "1024Mi"
+                    cpu: 2000m
                   requests:
-                    memory: "2048Mi"
-                    cpu: 500m
-                livenessProbe:
-                  httpGet:
-                    path: /
-                    port: 8080
-                  initialDelaySeconds: 60
-                  periodSeconds: 30
+                    memory: "512Mi"
+                    cpu: 300m
+                # livenessProbe:
+                #   httpGet:
+                #     path: /
+                #     port: 8080
+                #   initialDelaySeconds: 60
+                #   periodSeconds: 30
                 ports:
                   - name: nzb-web
                     containerPort: 8080
                 volumeMounts:
                   - name: sabnzbd-config
                     mountPath: /config
-                  - name: sabnzbd-incomplete-downloads
+                  - name: sabnzbd-incomplete
                     mountPath: /incomplete-downloads
-                  - name: sabnzbd-downloads
-                    mountPath: /data/usenet
-                env:
+                  - name: sabnzbd-data
+                    mountPath: /data
+                enviornment:
                   - name: PUID
                     value: "1000"
                   - name: PGID
@@ -69,11 +69,11 @@
               - name: sabnzbd-config
                 persistentVolumeClaim:
                   claimName: sabnzbd-config-pvc
-              - name: sabnzbd-incomplete-downloads
+              - name: sabnzbd-incomplete
                 persistentVolumeClaim:
                   claimName: sabnzbd-incomplete-downloads-pvc
-              - name: sabnzbd-downloads
+              - name: sabnzbd-data
                 persistentVolumeClaim:
-                  claimName: sabnzbd-downloads-pvc
+                  claimName: sabnzbd-data-pvc
             serviceName: sabnzbd-app
             revisionHistoryLimit: 0

@@ -74,7 +74,7 @@
 - name: Add context to KUBECONFIG
   block:
 
-    - name: Build kubeconfig path ig not empty
+    - name: Build kubeconfig path if not empty
       when: lookup('env', 'KUBECONFIG') | length > 1
       set_fact:
         new_path: "{{ lookup('env','KUBECONFIG') }}:{{ context_path }}"

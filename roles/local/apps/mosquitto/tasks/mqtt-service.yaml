@@ -1,0 +1,51 @@
+---
+- name: Create Mosquitto LB Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: mosquitto
+        namespace: "{{ openhab_namespace }}"
+        # annotations:
+        #   metallb.universe.tf/allow-shared-ip: mosquitto
+      spec:
+        type: LoadBalancer
+        loadBalancerIP: 10.100.3.105
+        selector:
+          app: mosquitto
+        ports:
+        - name: mqtt
+          port: 1883
+          targetPort: 1883
+        - name: wss
+          port: 9001
+          targetPort: 9001
+        # externalTrafficPolicy: Local
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create Mosquitto bridge Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: mosquitto-bridge
+        namespace: "{{ openhab_namespace }}"
+        # annotations:
+        #   metallb.universe.tf/allow-shared-ip: mosquitto
+      spec:
+        # type: ClusterIP
+        selector:
+          app: mosquitto
+          type: primary
+        ports:
+        - name: mqtt
+          port: 1883
+          targetPort: 1883
+  delegate_to: 127.0.0.1
+  run_once: true
+

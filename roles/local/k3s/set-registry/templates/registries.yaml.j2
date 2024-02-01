@@ -1,0 +1,9 @@
+mirrors:
+  registry.moerman.online:5000:
+    endpoint:
+      - "http://{{ registry_domain }}"
+configs:
+  "{{ registry_domain }}":
+    auth:
+      username: "{{ registry_user }}"
+      password: "{{ registry_pwd }}"

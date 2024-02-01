@@ -3,25 +3,44 @@
 # synopsis: Deploy K3s cluster (specify the environment 'dev' or 'prod' on the command line), optionally with VM nodes
 
 shopt -s nocasematch
+DEBUG=""
 
-if [ "$#" -lt 3 ]
+if [ "$#" -ne 2 ]
 then
   echo "Error: no arguments supplied."
-  echo " Usage: $0 [ENV] [USER] [SCOPE]"
-  echo "  [ENV]   = Environment, e.g. prod"
-  echo "  [USER]  = Ansible user, e.g. mainuser"
-  echo "  [SCOPE] = ALL or HOST or CLUSTER"
+  echo " Usage: $0 [ENV] [SCOPE]"
+  echo "  [ENV]   = Environment, e.g. prod or dev"
+  echo "  [SCOPE] = ALL, CLUSTER, APPS, OPENHAB"
+  echo " "
+  echo "Example:"
+  echo "   $0 prod openhab  - installs OpenHAB configuration"
+  echo "   $0 prod apps - installs the applications"
   exit 1
 fi
 
-SCOPE=$3
+SCOPE=$2
 
-if [[ ${SCOPE} = "host" ]] || [[ ${SCOPE} = "all" ]]
+RC=0
+# if [[ ${SCOPE} = "cluster" ]] || [[ ${SCOPE} = "all" ]]
+# then
+#   ansible-playbook ${DEBUG} deploy-cluster.yaml --inventory ./inventory/$1 --key-file $HOME/.ssh/beheerder_key -u beheerder --extra-vars k3s_environment=$1
+#   if [ $? -ne 0 ]; then
+#     exit 1
+#   fi
+# fi
+
+if [[ ${SCOPE} = "apps" ]] || [[ ${SCOPE} = "all" ]]
 then
-  ansible-playbook deploy-hosts.yaml --inventory ./inventory/$1 -u root --extra-vars "ansible_user=root k3s_environment=$1"
+  ansible-playbook ${DEBUG} deploy-apps.yaml --inventory ./inventory/$1 --extra-vars k3s_environment=$1
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
 fi
 
-if [[ ${SCOPE} = "cluster" ]] || [[ ${SCOPE} = "all" ]]
+if [[ ${SCOPE} = "openhab" ]] || [[ ${SCOPE} = "all" ]]
 then
-  ansible-playbook deploy-cluster.yaml --inventory ./inventory/$1 --key-file $HOME/.ssh/$2_key -u $2 --extra-vars k3s_environment=$1
+  ansible-playbook ${DEBUG} deploy-openhab.yaml --inventory ./inventory/$1
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
 fi

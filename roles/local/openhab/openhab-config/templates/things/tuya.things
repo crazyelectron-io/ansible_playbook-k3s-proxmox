@@ -1,0 +1,7 @@
+Thing tuya:project:infraheater "Tuya Cloud Project" @ "Office" [accessId="{{tuya_id}}",schema="smartLife",password="{{tuya_password}}",dataCenter="https://openapi.tuyaeu.com",countryCode="31",accessSecret="{{tuya_secret}}",username="{{tuya_user}}"]
+Thing tuya:tuyaDevice:infraheaterheater "Infrared Heater" @ "Office" [protocol="3.3", productId="{{heater_product_id}}", deviceId="{{heater_device_id}}", ip="{{heater_ip}}", localKey="{{heater_local_key}}"] {
+  Channels:
+    Type switch : switch "Paneel Aan/Uit" [dp=1]
+    Type number : temp_set "Doeltemperatuur" [dp=2]
+    Type number : temp_current "Huidige temperatuur" [dp=3]
+}

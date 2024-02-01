@@ -1,0 +1,9 @@
+# file: roles/local/apps/partkeepr/defaults/main.yaml
+# synopsis:
+---
+# Namespace for MariaDB resources
+mariadb_namespace: crazyelectron
+# MariaDB container info
+mariadb_image_registry: docker.io
+mariadb_image_name: mariadb
+mariadb_image_tag: 10.0

@@ -35,11 +35,11 @@
                 imagePullPolicy: IfNotPresent
                 resources:
                   limits:
-                    memory: "2048Mi"
-                    cpu: 2000m
-                  requests:
                     memory: "1024Mi"
-                    cpu: 500m
+                    cpu: 1000m
+                  requests:
+                    memory: "512Mi"
+                    cpu: 200m
                 livenessProbe:
                   httpGet:
                     path: /
@@ -52,10 +52,8 @@
                 volumeMounts:
                   - name: radarr-config
                     mountPath: /config
-                  - name: radarr-movies
-                    mountPath: /movies
-                  - name: radarr-downloads
-                    mountPath: /downloads
+                  - name: radarr-data
+                    mountPath: /data
                 env:
                   - name: PUID
                     value: "1000"
@@ -67,11 +65,8 @@
               - name: radarr-config
                 persistentVolumeClaim:
                   claimName: radarr-config-pvc
-              - name: radarr-movies
+              - name: radarr-data
                 persistentVolumeClaim:
-                  claimName: radarr-movies-pvc
-              - name: radarr-downloads
-                persistentVolumeClaim:
-                  claimName: radarr-downloads-pvc
+                  claimName: radarr-data-pvc
             serviceName: radarr-app
             revisionHistoryLimit: 0

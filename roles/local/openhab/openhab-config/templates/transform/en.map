@@ -1,0 +1,6 @@
+// file: conf/transform/en.map
+// synopsis: Translate English status messages to text
+
+CLOSED=closed
+OPEN=open
+NULL=unknown

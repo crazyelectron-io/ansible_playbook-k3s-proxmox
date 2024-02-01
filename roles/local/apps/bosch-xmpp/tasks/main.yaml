@@ -1,0 +1,383 @@
+# file:
+# synopsis:
+
+# API endpoints:
+#   /devices
+#     /list
+#       {"id":"/devices/list","type":"deviceArray","writeable":0,"recordable":0,"value":[{"name":"RWFzeUNvbnRyb2w=","zone":1,"protocol":"no_protocol","id":1,"battery":"unknown","signal":0,"type":"thermostat"}]}
+#     /dev1
+#       {"id":"/devices/dev1","type":"deviceArray","writeable":1,"recordable":0,"value":[{"name":"RWFzeUNvbnRyb2w=","zone":1,"protocol":"unknown","sgtin":"000000000000000000000000","dlk":"00000000000000000000000000000000","signal":0,"battery":"unknown","type":"thermostat"}]}
+#     /device1          *See below*
+#     /productLookup    *Not available*
+#   /dhwCircuits        *See below*
+#   /energy             *See below*
+#   /events
+#     /list1
+#     /list2
+#     /list3
+#   /gateway            *See below*
+#   /heatSources        *See below*
+#   /heatingCircuits
+#     /hc1              *See below*
+#   /heatpumps          *Not available*
+#   /notifications
+#     {"id":"/notifications","type":"errorList","writeable":0,"recordable":0,"used":"true","available":"true","value":[]}
+#   /programs
+#     /list
+#     /pg1
+#       {"id":"/programs/pg1","type":"refEnum","references":[{"id":"/programs/pg1/friday"},{"id":"/programs/pg1/monday"},{"id":"/programs/pg1/name"},{"id":"/programs/pg1/saturday"},{"id":"/programs/pg1/sunday"},{"id":"/programs/pg1/thursday"},{"id":"/programs/pg1/tuesday"},{"id":"/programs/pg1/wednesday"},{"id":"/programs/pg1/week"}]}
+#   /solarCircuits      *Not available*
+#   /system             *See below*
+#   /zones
+#     /list
+#       {"id":"/zones/list","type":"zoneArray","writeable":0,"recordable":0,"value":[{"id":1,"name":"V29vbmthbWVy","icon":"living room","program":1,"temp":20.4,"status":"heat request","functionIcons":""}]}
+#     /zn1              *See below*
+#
+# API endpoint /zones:
+#   /zones/zn1:
+#     /actualValvePosition  (Not used)
+#     /clockOverride/temperatureHeating
+#       {"id":"/zones/zn1/clockOverride/temperatureHeating","type":"floatValue","writeable":1,"recordable":0,"value":0,"unitOfMeasure":"C","minValue":0,"maxValue":30,"stepSize":0.5}
+#     /clockProgram
+#       {"id":"/zones/zn1/clockProgram","type":"floatValue","writeable":1,"recordable":0,"value":1,"used":"true","unitOfMeasure":"","minValue":0,"maxValue":24,"stepSize":1}
+#     /heatingType
+#       {"id":"/zones/zn1/heatingType","type":"stringValue","writeable":1,"recordable":0,"used":"true","available":"true","value":"radiator"}
+#     /humidity
+#       {"id":"/zones/zn1/humidity","type":"floatValue","writeable":0,"recordable":0,"value":50,"used":"true","available":"true","unitOfMeasure":"%","minValue":0,"maxValue":100,"stepSize":1}
+#     /icon
+#       {"id":"/zones/zn1/icon","type":"stringValue","writeable":1,"recordable":0,"value":"living room"}
+#     /manualTemperatureHeating
+#       {"id":"/zones/zn1/manualTemperatureHeating","type":"floatValue","writeable":1,"recordable":0,"value":20,"unitOfMeasure":"C","minValue":5,"maxValue":30,"stepSize":0.5}
+#     /name
+#       {"id":"/zones/zn1/name","type":"stringValue","writeable":1,"recordable":0,"value":"V29vbmthbWVy"}
+#     /nextSetpoint
+#       {"id":"/zones/zn1/nextSetpoint","type":"floatValue","writeable":0,"recordable":0,"value":19,"used":"true","unitOfMeasure":"C","minValue":0,"maxValue":30,"stepSize":0.5}
+#     /openWindowDetection
+#     /optimumStartHeatupRate
+#       {"id":"/zones/zn1/optimumStartHeatupRate","type":"floatValue","writeable":0,"recordable":0,"value":9000,"unitOfMeasure":"s/K","minValue":0,"maxValue":1,"stepSize":0.000001}
+#     /optimumStartState
+#       {"id":"/zones/zn1/optimumStartState","type":"stringValue","writeable":0,"recordable":0,"value":"idle"}
+#     /temperatureActual
+#       {"id":"/zones/zn1/temperatureActual","type":"floatValue","writeable":0,"recordable":0,"value":19.8,"used":"true","unitOfMeasure":"C","minValue":5,"maxValue":30,"stepSize":0.5}
+#     /temperatureHeatingSetpoint
+#       {"id":"/zones/zn1/temperatureHeatingSetpoint","type":"floatValue","writeable":0,"recordable":0,"value":20,"used":"true","unitOfMeasure":"C","minValue":5,"maxValue":30,"stepSize":0.5}
+#     /timeToNextSetpoint
+#       {"id":"/zones/zn1/timeToNextSetpoint","type":"floatValue","writeable":0,"recordable":0,"value":392,"used":"true","unitOfMeasure":"mins","minValue":0,"maxValue":1440,"stepSize":1}
+#     /userMode
+#       {"id":"/zones/zn1/userMode","type":"stringValue","writeable":1,"used":"true","recordable":0,"value":"clock"}
+#
+# API endpoint /system:
+#     /system/appliance
+#       /blockingError
+#         {"id":"/system/appliance/blockingError","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"true","value":"false"}
+#       /causeCode
+#         {"id":"/system/appliance/causeCode","type":"floatValue","writeable":0,"recordable":0,"value":200,"used":"true","available":"true","unitOfMeasure":"","minValue":200,"maxValue":65535,"stepSize":1}
+#       /displayCode
+#         {"id":"/system/appliance/displayCode","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"true","value":"-H"}
+#       /firstMaintenanceRequest
+#         {"id":"/system/appliance/firstMaintenanceRequest","type":"floatValue","writeable":0,"recordable":0,"value":0,"used":"true","available":"true","unitOfMeasure":"","minValue":0,"maxValue":99,"stepSize":1}
+#       /lockingError
+#         {"id":"/system/appliance/lockingError","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"true","value":"false"}
+#       /maintenanceRequest
+#         {"id":"/system/appliance/maintenanceRequest","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"true","value":"false"}
+#       /systemPressure
+#         {"id":"/system/appliance/systemPressure","type":"floatValue","writeable":0,"recordable":0,"value":1.5,"used":"true","available":"true","unitOfMeasure":"bar","minValue":0,"maxValue":25,"stepSize":0.1}
+#     /system/autoAway
+#     /system/awayMode
+#     /system/brand
+#       {"id":"/system/brand","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"true","value":"Nefit"}
+#     /system/fireplace/enabled
+#       {"id":"/system/fireplace/enabled","type":"stringValue","writeable":1,"recordable":0,"used":"true","available":"true","value":"false"}
+#     /system/hydraulicBalancing        *Not available*
+#     /system/info
+#       {"id":"/system/info","type":"systeminfo","writeable":0,"recordable":0,"used":"true","available":"true","value":[{"Tok":"8","Id":"123","Ver":"NF6.1","No":"873790910B0123280446"}]}
+#     /system/interfaces/ems
+#       /connectionType
+#         {"id":"/system/interfaces/ems/connectionType","type":"stringValue","writeable":0,"recordable":0,"value":"wired"}
+#       /enabled
+#         {"id":"/system/interfaces/ems/enabled","type":"stringValue","writeable":1,"used":"false","recordable":0,"value":"true"}
+#     /system/location
+#       /coordinates
+#       /localization
+#     /system/openWindowDetection       *Not available*
+#     /system/sensors
+#       /humidity/indoor_h1
+#         {"id":"/system/sensors/humidity/indoor_h1","type":"floatValue","writeable":0,"recordable":0,"value":49.8,"unitOfMeasure":"%","minValue":0,"maxValue":100,"stepSize":1}
+#       /temperatures/indoorAirDigital
+#         {"id":"/system/sensors/temperatures/indoorAirDigital","type":"floatValue","writeable":0,"recordable":0,"value":23.5,"unitOfMeasure":"C","minValue":0,"maxValue":90,"stepSize":1}
+#       /temperatures/indoorChip
+#         {"id":"/system/sensors/temperatures/indoorChip","type":"floatValue","writeable":0,"recordable":0,"value":35.5,"unitOfMeasure":"C","minValue":0,"maxValue":90,"stepSize":1}
+#       /temperatures/indoorPCB
+#         {"id":"/system/sensors/temperatures/indoorPCB","type":"floatValue","writeable":0,"recordable":0,"value":32,"unitOfMeasure":"C","minValue":0,"maxValue":90,"stepSize":1}
+#       /temperatures/offset
+#         {"id":"/system/sensors/temperatures/offset","type":"floatValue","writeable":1,"recordable":0,"value":0,"unitOfMeasure":"C","minValue":-2,"maxValue":2,"stepSize":0.5}
+#       /temperatures/outdoor_t1
+#         {"id":"/system/sensors/temperatures/outdoor_t1","type":"floatValue","recordable":0,"writeable":0,"value":1,"unitOfMeasure":"C","status":"ok","srcType":"virtual","minValue":-25,"maxValue":50,"stepSize":1}
+#
+# API endpoint /heatingCircuits/hc1
+#   /boostDuration
+#     {"id":"/heatingCircuits/hc1/boostDuration","type":"floatValue","writeable":1,"recordable":0,"value":1,"used":"true","available":"true","unitOfMeasure":"hour","minValue":1,"maxValue":8,"stepSize":1}
+#   /boostMode
+#     {"id":"/heatingCircuits/hc1/boostMode","type":"stringValue","writeable":1,"recordable":0,"used":"true","available":"true","value":"off"}
+#   /boostRemainingTime     *Not available*
+#   /boostShortcut
+#     {"id":"/heatingCircuits/hc1/boostShortcut","type":"boostShortcutStruct","writeable":1,"recordable":0,"used":"true","available":"true","value":[{"mode":"off","temperature":25,"duration":1,"zones":[1],"allowedZones":[1]}]}
+#   /boostTemperature
+#     {"id":"/heatingCircuits/hc1/boostTemperature","type":"floatValue","writeable":1,"recordable":0,"value":25,"used":"true","available":"true","unitOfMeasure":"C","minValue":5,"maxValue":30,"stepSize":0.5}
+#   /boostZones
+#     {"id":"/heatingCircuits/hc1/boostZones","type":"boostZoneStruct","writeable":1,"recordable":0,"used":"true","available":"true","value":[{"zones":[1],"allowedZones":[1]}]}
+#   /buildingHeatup
+#     {"id":"/heatingCircuits/hc1/buildingHeatup","type":"stringValue","writeable":1,"used":"true","recordable":0,"value":"normal"}
+#   /control
+#     {"id":"/heatingCircuits/hc1/control","type":"stringValue","writeable":1,"recordable":0,"used":"true","available":"true","value":"room"}
+#   /cooling                *Not available*
+#   /heatCurveMax
+#     {"id":"/heatingCircuits/hc1/heatCurveMax","type":"floatValue","writeable":1,"recordable":0,"value":75,"unitOfMeasure":"C","minValue":40,"maxValue":90,"stepSize":1}
+#   /heatCurveMin
+#     {"id":"/heatingCircuits/hc1/heatCurveMin","type":"floatValue","writeable":1,"recordable":0,"value":20,"unitOfMeasure":"C","minValue":20,"maxValue":90,"stepSize":1}
+#   /maxSupply
+#     {"id":"/heatingCircuits/hc1/maxSupply","type":"floatValue","writeable":1,"recordable":0,"value":90,"unitOfMeasure":"C","minValue":25,"maxValue":90,"stepSize":1}
+#   /minSupply
+#     {"id":"/heatingCircuits/hc1/minSupply","type":"floatValue","writeable":1,"recordable":0,"value":20,"unitOfMeasure":"C","minValue":10,"maxValue":90,"stepSize":1}
+#   /nightSwitchMode        *Not avialable*
+#   /nightThreshold
+#   /operatingSeason        *Not available*
+#   /powerSetpoint
+#     {"id":"/heatingCircuits/hc1/powerSetpoint","type":"floatValue","writeable":0,"recordable":0,"value":100,"used":"true","available":"true","unitOfMeasure":"%","minValue":0,"maxValue":100,"stepSize":1}
+#   /roomInfluence
+#     {"id":"/heatingCircuits/hc1/roomInfluence","type":"floatValue","writeable":1,"recordable":0,"value":0,"used":"true","available":"true","unitOfMeasure":"","minValue":0,"maxValue":3,"stepSize":1}
+#   /seasonOptMode          *Not available*
+#   /setpointOptimization
+#     {"id":"/heatingCircuits/hc1/setpointOptimization","type":"stringValue","writeable":1,"recordable":0,"used":"true","available":"true","value":"on"}
+#   /suWiSwitchMode         *Not available*
+#   /suWiThreshold          *Not available*
+#   /supplyTemperatureSetpoint
+#     {"id":"/heatingCircuits/hc1/supplyTemperatureSetpoint","type":"floatValue","writeable":0,"recordable":0,"value":53,"used":"true","available":"true","unitOfMeasure":"C","minValue":5,"maxValue":90,"stepSize":1}
+#   /type                   *Not available*
+#   /typeRoomControl
+#     {"id":"/heatingCircuits/hc1/typeRoomControl","type":"stringValue","writeable":1,"used":"true","recordable":0,"value":"radiator"}
+#
+# API endpoint /heatSources
+#   /CHpumpModulation
+#     {"id":"/heatSources/CHpumpModulation","type":"floatValue","writeable":0,"recordable":0,"value":41,"used":"true","available":"true","unitOfMeasure":"%","minValue":0,"maxValue":100,"stepSize":1}
+#   /actualModulation
+#     {"id":"/heatSources/actualModulation","type":"floatValue","writeable":0,"recordable":0,"value":23,"used":"true","available":"true","unitOfMeasure":"%","minValue":0,"maxValue":100,"stepSize":1}
+#   /actualSupplyTemperature
+#     {"id":"/heatSources/actualSupplyTemperature","type":"floatValue","writeable":0,"recordable":0,"value":45.9,"used":"true","available":"true","unitOfMeasure":"C","minValue":0,"maxValue":90,"stepSize":1}
+#   /antiFastCycleTime
+#     {"id":"/heatSources/antiFastCycleTime","type":"floatValue","writeable":0,"recordable":0,"value":10,"used":"true","available":"true","unitOfMeasure":"mins","minValue":0,"maxValue":60,"stepSize":1}
+#   /enabled                *Not avialable*
+#   /flameIndication
+#     {"id":"/heatSources/flameIndication","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"true","value":"ch"}
+#   /info
+#     {"id":"/heatSources/info","type":"systeminfo","writeable":0,"recordable":0,"used":"true","available":"true","value":[{"Tok":"8","Id":"1294","Ver":"8","No":" 3290-306-000110-7746901514"}]}
+#   /numberOfStarts
+#     {"id":"/heatSources/numberOfStarts","type":"floatValue","writeable":0,"recordable":0,"value":123173,"used":"true","available":"true","unitOfMeasure":"","minValue":0,"maxValue":16777215,"stepSize":1}
+#   /refillNeeded
+#   /returnTemperature
+#     {"id":"/heatSources/returnTemperature","type":"floatValue","writeable":0,"recordable":0,"value":37.7,"used":"true","available":"true","unitOfMeasure":"C","minValue":-3276,"maxValue":3276,"stepSize":0.1}
+#   /type
+#     {"id":"/heatSources/type","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"true","value":"Boiler"}
+#   /workingTime/totalSystem
+#     {"id":"/heatSources/workingTime/totalSystem","type":"floatValue","writeable":0,"recordable":0,"value":850013,"used":"true","available":"true","unitOfMeasure":"mins","minValue":0,"maxValue":16777215,"stepSize":1}
+#
+# API endpoint /gateway
+#   /DateTime
+#     {"id":"/gateway/DateTime","type":"stringValue","writeable":1,"recordable":0,"value":"2023-12-03T09:33:32+01:00 Su"}
+#   /brand
+#     {"id":"/gateway/brand","type":"stringValue","writeable":0,"recordable":0,"value":"Bosch"}
+#   /displayType
+#     {"id":"/gateway/displayType","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"false","value":"Tianma_top_view"}
+#   /eco
+#     /factor1
+#     /factor2
+#     /item1
+#   /gwlogging            *Not available*
+#   /hmip
+#     /versionApplication
+#       {"id":"/gateway/hmip/versionApplication","type":"stringValue","writeable":0,"recordable":0,"value":"2.6.14"}
+#     /versionOS
+#       {"id":"/gateway/hmip/versionOS","type":"stringValue","writeable":0,"recordable":0,"value":"1.36.0"}
+#   /housingType
+#     {"id":"/gateway/housingType","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"false","value":"BoschWhite"}
+#   /identificationKey
+#     {"id":"/gateway/identificationKey","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"true","value":"PmXDBDFd8c6rD4ad"}
+#   /installer
+#     /companyName
+#       {"id":"/gateway/installer/companyName","type":"stringValue","writeable":1,"recordable":0,"value":""}
+#     /contactName
+#       {"id":"/gateway/installer/contactName","type":"stringValue","writeable":1,"recordable":0,"value":""}
+#     /email
+#       {"id":"/gateway/installer/email","type":"stringValue","writeable":1,"recordable":0,"value":""}
+#     /phone
+#       {"id":"/gateway/installer/phone","type":"stringValue","writeable":1,"recordable":0,"value":""}
+#   /localisation
+#     {"id":"/gateway/localisation","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"false","value":"Celsius"}
+#   /logging
+#     /switch
+#       {"id":"/gateway/logging/switch","type":"stringValue","writeable":1,"recordable":0,"used":"false","available":"true","value":"off"}
+#     /userAcceptance
+#       {"id":"/gateway/logging/userAcceptance","type":"stringValue","writeable":1,"recordable":0,"value":"false"}
+#   /notificationLight
+#     /active             write only?
+#     /enabled
+#       {"id":"/gateway/notificationLight/enabled","type":"stringValue","writeable":1,"recordable":0,"value":"true"}
+#   /operatingMode
+#     {"id":"/gateway/operatingMode","type":"stringValue","writeable":0,"recordable":0,"value":"regular"}
+#   /pirSensitivity
+#     {"id":"/gateway/pirSensitivity","type":"stringValue","writeable":1,"recordable":0,"value":"high"}
+#   /productID
+#     {"id":"/gateway/productID","type":"stringValue","writeable":0,"recordable":0,"value":"8736926539"}
+#   /productType
+#     {"id":"/gateway/productType","type":"stringValue","writeable":0,"recordable":0,"value":"RRC 2.0"}
+#   /region
+#     {"id":"/gateway/region","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"false","value":"EU"}
+#   /serialnumber
+#     {"id":"/gateway/serialnumber","type":"stringValue","writeable":0,"recordable":0,"value":"05823363077239747926688"}
+#   /time
+#     /clockType
+#       {"id":"/gateway/time/clockType","type":"stringValue","writeable":1,"recordable":0,"value":"24hour"}
+#     /connected
+#       {"id":"/gateway/time/connected","type":"stringValue","writeable":0,"recordable":0,"value":"2023-12-01T09:41:49+01:00 Fr"}
+#     /current
+#       {"id":"/gateway/time/current","type":"stringValue","writeable":1,"recordable":0,"value":"2023-12-03T09:47:59+01:00 Su"}
+#   /tosAccepted
+#     {"id":"/gateway/tosAccepted","type":"stringValue","writeable":1,"recordable":0,"value":"3.0"}
+#   /ui
+#     /eco
+#       {"id":"/gateway/ui/eco","type":"floatValue","writeable":0,"recordable":0,"value":60,"unitOfMeasure":"%","minValue":0,"maxValue":100,"stepSize":10}
+#     /icons
+#       {"id":"/gateway/ui/icons","type":"stringArray","writeable":0,"recordable":0,"value":["","","",""]}
+#     /splashScreen
+#       {"id":"/gateway/ui/splashScreen","type":"stringValue","writeable":1,"recordable":0,"value":"clock"}
+#   /update
+#     /enabled
+#       {"id":"/gateway/update/enabled","type":"stringValue","writeable":1,"recordable":0,"value":"true"}
+#     /lastCheck
+#       {"id":"/gateway/update/lastCheck","type":"stringValue","writeable":0,"recordable":0,"value":"2023-12-02T10:30:47+01:00 Sa"}
+#     /lastUpdate
+#       {"id":"/gateway/update/lastUpdate","type":"stringValue","writeable":0,"recordable":0,"value":"2023-10-25T19:52:26+01:00 We"}
+#     /state
+#       {"id":"/gateway/update/state","type":"stringValue","writeable":1,"recordable":0,"value":"no update"}
+#   /user
+#     /address
+#       {"id":"/gateway/user/address","type":"addressInfo","writeable":1,"recordable":0,"value":[{"address":"V2llbGluZ2VuIDg=","city":"QnJpZWxsZQ==","zip":"MzIzMiBISA==","state":"WnVpZC1Ib2xsYW5k","country":"TmVkZXJsYW5k"}]}
+#     /email
+#       {"id":"/gateway/user/email","type":"stringValue","writeable":1,"recordable":0,"value":"cm9uQG1vZXJtYW4ub25saW5l"}
+#     /name
+#       {"id":"/gateway/user/name","type":"stringValue","writeable":1,"recordable":0,"value":"TW9lcm1hbg=="}
+#     /phone
+#       {"id":"/gateway/user/phone","type":"stringValue","writeable":1,"recordable":0,"value":"MDYyMDQ5NDMwMA=="}
+#   /uuid
+#     {"id":"/gateway/uuid","type":"stringValue","writeable":0,"recordable":0,"value":"101592982"
+#   /versionFirmware
+#     {"id":"/gateway/versionFirmware","type":"stringValue","writeable":0,"recordable":0,"value":"04.02.01"}
+#   /versionFirmwareBuild
+#     {"id":"/gateway/versionFirmwareBuild","type":"stringValue","writeable":0,"recordable":0,"value":"RPP_6aa2ef9ab+"}
+#   /versionHardware
+#     {"id":"/gateway/versionHardware","type":"stringValue","writeable":0,"recordable":0,"value":"10"}
+#   /wifi
+#     /rssi
+#       {"id":"/gateway/wifi/rssi","type":"floatValue","writeable":0,"recordable":0,"value":-44,"unitOfMeasure":"dB","minValue":-32768,"maxValue":100,"stepSize":1}
+#     /versionFirmware
+#       {"id":"/gateway/wifi/versionFirmware","type":"stringValue","writeable":0,"recordable":0,"value":"01.10.02"}
+#     /versionFirmwareBuild
+#       {"id":"/gateway/wifi/versionFirmwareBuild","type":"stringValue","writeable":0,"recordable":0,"value":"RP_adc5e5b"}
+#   /wizardStepsDone
+#     {"id":"/gateway/wizardStepsDone","type":"stringArray","writeable":1,"recordable":0,"value":["OPTIONS","REGISTER","RRC","HMIP"]}
+#   /zigbee
+#     /versionFirmware
+#       {"id":"/gateway/zigbee/versionFirmware","type":"stringValue","writeable":0,"recordable":0,"value":"00.00.01"}
+#
+# API endpoint /energy
+#   /currency
+#     {"id":"/energy/currency","type":"stringValue","writeable":1,"recordable":0,"value":"4oKs"}
+#   /electricity
+#     /annualGoal
+#       {"id":"/energy/electricity/annualGoal","type":"floatValue","writeable":1,"recordable":0,"value":0,"used":"true","available":"true","unitOfMeasure":"kWh","minValue":0,"maxValue":1000000,"stepSize":1}
+#     /dayAverage
+#       {"id":"/energy/electricity/dayAverage","type":"floatValue","writeable":0,"recordable":0,"value":0,"used":"true","available":"false","unitOfMeasure":"kWh","minValue":0,"maxValue":33555,"stepSize":0.001}
+#     /monthAverage
+#       {"id":"/energy/electricity/monthAverage","type":"floatValue","writeable":0,"recordable":0,"value":0,"used":"true","available":"false","unitOfMeasure":"kWh","minValue":0,"maxValue":33555,"stepSize":0.001}
+#     /price
+#       {"id":"/energy/electricity/price","type":"floatValue","writeable":1,"recordable":0,"value":0,"used":"false","available":"false","unitOfMeasure":"","minValue":0,"maxValue":1000,"stepSize":0.00001}
+#   /gas
+#     /annualGoal
+#       {"id":"/energy/gas/annualGoal","type":"floatValue","writeable":1,"recordable":0,"value":0,"used":"true","available":"true","unitOfMeasure":"kWh","minValue":0,"maxValue":1000000,"stepSize":1}
+#     /price
+#       {"id":"/energy/gas/price","type":"floatValue","writeable":1,"recordable":0,"value":0,"used":"true","available":"true","unitOfMeasure":"","minValue":0,"maxValue":1000,"stepSize":0.00001}
+#     /type
+#       {"id":"/energy/gas/type","type":"stringValue","writeable":1,"recordable":0,"used":"true","available":"true","value":"natural"}
+#     /unit
+#       {"id":"/energy/gas/unit","type":"stringValue","writeable":1,"recordable":0,"used":"true","available":"true","value":"m3"}
+#   /history
+#     {"id":"/energy/history","type":"energyRecordings","writeable":0,"recordable":0,"used":"true","available":"true","value":[{"d":"25-10-2023","T":10.8,"gCh":34.07,"gHw":1.77},{"d":"26-10-2023","T":9.9,"gCh":34.21,"gHw":2.53},{"d":"27-10-2023","T":11.9,"gCh":11.27,"gHw":3.94},{"d":"28-10-2023","T":12.1,"gCh":28.29,"gHw":1},{"d":"29-10-2023","T":12.9,"gCh":26.11,"gHw":0.88},{"d":"30-10-2023","T":11.8,"gCh":20.04,"gHw":7.41},{"d":"31-10-2023","T":11.6,"gCh":23.57,"gHw":11.27},{"d":"01-11-2023","T":12.5,"gCh":29.65,"gHw":4.03},{"d":"02-11-2023","T":11.5,"gCh":31.29,"gHw":4.8},{"d":"03-11-2023","T":10.9,"gCh":29.81,"gHw":3},{"d":"04-11-2023","T":9.4,"gCh":58.3,"gHw":3.13},{"d":"05-11-2023","T":11.2,"gCh":36.52,"gHw":3.55},{"d":"06-11-2023","T":10.9,"gCh":22.24,"gHw":8.83},{"d":"07-11-2023","T":10.7,"gCh":15.99,"gHw":0.4},{"d":"08-11-2023","T":10.2,"gCh":54.64,"gHw":1.04},{"d":"09-11-2023","T":10.3,"gCh":24.33,"gHw":3.94},{"d":"10-11-2023","T":8.2,"gCh":49.86,"gHw":10.35},{"d":"11-11-2023","T":9.3,"gCh":39.64,"gHw":5.55},{"d":"12-11-2023","T":7.3,"gCh":63.9,"gHw":0.32},{"d":"13-11-2023","T":10.5,"gCh":19.69,"gHw":4.18}]}
+#   /historyEntries
+#     {"id":"/energy/historyEntries","type":"floatValue","writeable":0,"recordable":0,"value":39,"used":"true","available":"true","unitOfMeasure":"","minValue":0,"maxValue":6400,"stepSize":1}
+#   /offset
+#     {"id":"/energy/offset","type":"floatValue","writeable":1,"recordable":0,"value":0,"used":"true","available":"true","unitOfMeasure":"%","minValue":1,"maxValue":200,"stepSize":1}
+#   /water
+#     /annualGoal
+#       {"id":"/energy/water/annualGoal","type":"floatValue","writeable":1,"recordable":0,"value":0,"used":"false","available":"false","unitOfMeasure":"m3","minValue":0,"maxValue":1000000,"stepSize":1}
+#     /price
+#       {"id":"/energy/water/price","type":"floatValue","writeable":1,"recordable":0,"value":0,"used":"false","available":"false","unitOfMeasure":"","minValue":0,"maxValue":1000,"stepSize":0.00001}
+#
+# API endpoint /dhwCircuits/dhw1
+#   /actualTemp               *Not available*
+#   /extraDhw                 *Not avialable*
+#   /extraDhwDuration         *Not available*
+#   /hotWaterSystem
+#     {"id":"/dhwCircuits/dhw1/hotWaterSystem","type":"stringValue","writeable":0,"recordable":0,"used":"true","available":"true","value":"instant"}
+#   /operationMode
+#     {"id":"/dhwCircuits/dhw1/operationMode","type":"stringValue","writeable":1,"recordable":0,"used":"false","available":"true","infoText":"eco","value":"Off"}
+#   /programs/pg1/week
+#     {"id":"/dhwCircuits/dhw1/programs/pg1/week","type":"dhwProgram","writeable":1,"recordable":0,"used":"true","available":"true","value":[{"d":"Su","t":390,"dhw":"high"},{"d":"Su","t":510,"dhw":"off"},{"d":"Su","t":990,"dhw":"high"},{"d":"Su","t":1350,"dhw":"off"},{"d":"Mo","t":390,"dhw":"high"},{"d":"Mo","t":510,"dhw":"off"},{"d":"Mo","t":990,"dhw":"high"},{"d":"Mo","t":1350,"dhw":"off"},{"d":"Tu","t":390,"dhw":"high"},{"d":"Tu","t":510,"dhw":"off"},{"d":"Tu","t":990,"dhw":"high"},{"d":"Tu","t":1350,"dhw":"off"},{"d":"We","t":390,"dhw":"high"},{"d":"We","t":510,"dhw":"off"},{"d":"We","t":990,"dhw":"high"},{"d":"We","t":1350,"dhw":"off"},{"d":"Th","t":390,"dhw":"high"},{"d":"Th","t":510,"dhw":"off"},{"d":"Th","t":990,"dhw":"high"},{"d":"Th","t":1350,"dhw":"off"},{"d":"Fr","t":390,"dhw":"high"},{"d":"Fr","t":510,"dhw":"off"},{"d":"Fr","t":990,"dhw":"high"},{"d":"Fr","t":1350,"dhw":"off"},{"d":"Sa","t":390,"dhw":"high"},{"d":"Sa","t":510,"dhw":"off"},{"d":"Sa","t":990,"dhw":"high"},{"d":"Sa","t":1350,"dhw":"off"}]}
+#   /state
+#     {"id":"/dhwCircuits/dhw1/state","type":"stringValue","writeable":0,"recordable":0,"value":"off"}
+#   /temperatureLevels/high   *Not available*
+#   /thermalDisinfect
+#     /lastResult
+#       {"id":"/dhwCircuits/dhw1/thermalDisinfect/lastResult","type":"stringValue","writeable":0,"recordable":0,"value":"done"}
+#     /off
+#       {"id":"/dhwCircuits/dhw1/thermalDisinfect/state","type":"stringValue","writeable":1,"recordable":0,"used":"false","available":"true","value":"off"}
+#     /time
+#       {"id":"/dhwCircuits/dhw1/thermalDisinfect/time","type":"floatValue","writeable":1,"recordable":0,"value":60,"unitOfMeasure":"mins","minValue":0,"maxValue":1439,"stepSize":1}
+#     /weekDay
+#       {"id":"/dhwCircuits/dhw1/thermalDisinfect/weekDay","type":"stringValue","writeable":1,"recordable":0,"value":"Mo"}
+#
+# API endpoint /devices/device1
+#   /battery
+#     {"id":"/devices/device1/battery","type":"stringValue","writeable":0,"recordable":0,"value":"unknown"}
+#   /name
+#     {"id":"/devices/device1/name","type":"stringValue","writeable":1,"recordable":0,"value":"RWFzeUNvbnRyb2w="}
+#   /protocol
+#     {"id":"/devices/device1/protocol","type":"stringValue","writeable":0,"recordable":0,"value":"unknown"}
+#   /signal
+#     {"id":"/devices/device1/signal","type":"floatValue","writeable":0,"recordable":0,"value":0,"unitOfMeasure":"%","minValue":0,"maxValue":100,"stepSize":1}
+#   /thermostat/childLock/enabled
+#     {"id":"/devices/device1/thermostat/childLock/enabled","type":"stringValue","writeable":1,"recordable":0,"value":"false"}
+#   /type
+#     {"id":"/devices/device1/type","type":"stringValue","writeable":0,"recordable":0,"value":"thermostat"}
+#   /versionFirmware
+#     {"id":"/devices/device1/versionFirmware","type":"stringValue","writeable":0,"recordable":0,"value":"4.2.1"}
+#   /zone
+#     {"id":"/devices/device1/zone","type":"floatValue","writeable":1,"recordable":0,"value":1,"unitOfMeasure":"","minValue":0,"maxValue":24,"stepSize":1}
+#
+
+---
+- name: Make sure the namespace is present
+  kubernetes.core.k8s:
+    name: "{{ openhab_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create Services
+  ansible.builtin.include_tasks:
+    file: bosch-xmpp-service.yaml
+
+- name: Create Deployments
+  ansible.builtin.include_tasks:
+    file: bosch-xmpp-deploy.yaml

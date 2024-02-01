@@ -129,7 +129,7 @@
     remote_src: yes
     owner: root
     mode: "u=rw,g=,o="
-  when: inventory_hostname == hostvars[groups[group_name_master | default('master')][0]]['ansible_hostname']
+  when: inventory_hostname == groups[group_name_master | default('master')][0]
 
 - include_tasks: kubeconfig.yml
 

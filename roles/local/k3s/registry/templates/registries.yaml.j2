@@ -1,0 +1,9 @@
+mirrors:
+  docker.moerman.online:
+    endpoint:
+      - "https://{{ registry_domain }}"
+configs:
+  "{{ registry_domain }}":
+    auth:
+      username: "{{ registry_user }}"
+      password: "{{ registry_pwd }}"

@@ -1,0 +1,130 @@
+---
+- name: Create Mosquitto Deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: mosquitto
+        labels:
+          app: mosquitto
+        namespace: "{{ openhab_namespace }}"
+      spec:
+        selector:
+          matchLabels:
+            app: mosquitto
+        template:
+          metadata:
+            labels:
+              app: mosquitto
+              type: primary
+          spec:
+            containers:
+            - name: mosquitto
+              image: "eclipse-mosquitto:{{ mosquitto_image_tag }}"
+              imagePullPolicy: IfNotPresent
+              ports:
+              - containerPort: 9001
+              - containerPort: 1883
+              # - containerPort: 9883
+              volumeMounts:
+              - name: config
+                mountPath: /mosquitto/config
+                # livenessProbe:
+                #   failureThreshold: 3
+                #   tcpSocket:
+                #     port: wss
+                #   initialDelaySeconds: 30
+                #   periodSeconds: 10
+                #   successThreshold: 1
+                #   timeoutSeconds: 5
+                # readinessProbe:
+                #   failureThreshold: 3
+                #   tcpSocket:
+                #     port: wss
+                #   initialDelaySeconds: 10
+                #   periodSeconds: 10
+                #   successThreshold: 1
+                #   timeoutSeconds: 2
+            # securityContext:
+            #   runAsUser: 1883
+            #   runAsGroup: 1883
+            volumes:
+              - configMap:
+                  name: mosquitto-conf
+                name: config
+            affinity:
+              podAntiAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                      - mosquitto
+                  topologyKey: kubernetes.io/hostname
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create Mosquitto Deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: mosquitto-backup
+        namespace: "{{ openhab_namespace }}"
+      spec:
+        selector:
+          matchLabels:
+            app: mosquitto
+        template:
+          metadata:
+            labels:
+              app: mosquitto
+              type: bridge
+          spec:
+            containers:
+              - image: "{{ mosquitto_image_registry }}/{{ mosquitto_image_name }}:{{ mosquitto_image_tag }}"
+                imagePullPolicy: IfNotPresent
+                name: mosquitto
+                ports:
+                  - containerPort: 1883
+                  - containerPort: 9001
+                volumeMounts:
+                - name: config
+                  mountPath: /mosquitto/config
+                # livenessProbe:
+                #   failureThreshold: 3
+                #   tcpSocket:
+                #     port: 9001
+                #   initialDelaySeconds: 30
+                #   periodSeconds: 10
+                #   successThreshold: 1
+                #   timeoutSeconds: 5
+                # readinessProbe:
+                #   failureThreshold: 3
+                #   tcpSocket:
+                #     port: 9001
+                #   initialDelaySeconds: 10
+                #   periodSeconds: 10
+                #   successThreshold: 1
+                #   timeoutSeconds: 2
+            volumes:
+            - configMap:
+                name: mosquitto-bridge
+              name: config
+            affinity:
+              podAntiAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                      - mosquitto
+                  topologyKey: kubernetes.io/hostname
+  delegate_to: 127.0.0.1
+  run_once: true

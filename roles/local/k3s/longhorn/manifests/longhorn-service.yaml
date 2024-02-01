@@ -1,0 +1,17 @@
+---
+# kubectl delete service longhorn-frontend -n longhorn-system
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: longhorn-ui
+  name: longhorn-frontend
+  namespace: longhorn-system
+spec:
+  ports:
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000
+    name: http
+  selector:
+    app: longhorn-ui

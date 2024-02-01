@@ -1,0 +1,244 @@
+---
+- name: Make sure the namespace is present
+  kubernetes.core.k8s:
+    name: "{{ openhab_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  delegate_to: 127.0.0.1
+  run_once: true
+
+- name: Create openHAB WebUI/API certificate
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: openhab-cert-{{ letsencrypt_environment }}
+        namespace: "{{ openhab_namespace }}"
+      spec:
+        secretName: openhab-{{ letsencrypt_environment }}-tls
+        issuerRef:
+          name: letsencrypt-{{ letsencrypt_environment }}
+          kind: ClusterIssuer
+        commonName: "{{ openhab_domain }}"
+        dnsNames:
+          - "{{ openhab_domain }}"
+
+- name: Create OpenHAB WebUI/API Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: openhab-ui
+        namespace: "{{ openhab_namespace }}"
+      spec:
+        ports:
+          - name: openhab-http
+            port: 80
+            targetPort: 8080
+        selector:
+          app: openhab
+
+- name: Create OpenHAB Karaf Console Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: openhab-ssh
+        namespace: "{{ openhab_namespace }}"
+        annotations:
+          metallb.universe.tf/allow-shared-ip: openhab-ssh
+      spec:
+        type: LoadBalancer
+        loadBalancerIP: 10.100.3.110
+        ports:
+        - name: openhab-karaf
+          port: 8101
+          targetPort: 8101
+        - name: openhab-lps
+          port: 5007
+          targetPort: 5007
+        selector:
+          app: openhab
+
+- name: Create IngressRoute for OpenHAB WebUI/API
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: openhab-external
+        namespace: "{{ openhab_namespace }}"
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: "Host(`{{ openhab_domain }}`)"
+            kind: Rule
+            services:
+              - name: openhab-ui
+                port: 80
+        tls:
+          secretName: "openhab-{{ letsencrypt_environment }}-tls"
+
+- name: Create OpenHAB Secret for SMB credentials
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: openhabcreds
+        namespace: default
+        annotations:
+          replicator.v1.mittwald.de/replication-allowed: "true"
+          replicator.v1.mittwald.de/replication-allowed-namespaces: "openhab"
+      type: Opaque
+      data:
+        username: YmVoZWVyZGVy
+        password: RiFlc0czM1NU
+
+- name: Create OpenHAB Persistent Volume for config SMB3 share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: openhab-config-pv
+      spec:
+        storageClassName: ""
+        capacity:
+          storage: 2Gi
+        accessModes:
+          - ReadWriteMany
+        persistentVolumeReclaimPolicy: Retain
+        mountOptions:
+          # - dir_mode=0770
+          # - file_mode=0770
+          - username=openhab
+          - uid=9001
+          - gid=9001
+          - vers=3.0
+        csi:
+          driver: smb.csi.k8s.io
+          readOnly: false
+          volumeHandle: "{{ openhab_share_volid }}"  # make sure it's a unique id in the cluster
+          volumeAttributes:
+            source: "//{{ nas_address }}/{{ smb_openhab_share }}"
+          nodeStageSecretRef:
+            name: openhabcreds
+            namespace: default
+
+- name: Create OpenHAB configuration PVC SMB3 share
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: openhab-config-pvc
+        namespace: "{{ openhab_namespace }}"
+      spec:
+        volumeName: openhab-config-pv
+        storageClassName: ""
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 2Gi
+
+- name: Create OpenHAB StatefulSet
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: StatefulSet
+      apiVersion: apps/v1
+      metadata:
+        name: openhab
+        labels:
+          app: openhab
+        namespace: "{{ openhab_namespace }}"
+        # annotations:
+        #   keel.sh/policy: minor # <-- policy name according to https://semver.org/
+        #   keel.sh/trigger: poll # <-- actively query registry, otherwise defaults to webhooks
+      spec:
+        serviceName: "openhab-app"
+        selector:
+          matchLabels:
+            app: openhab
+        replicas: 1
+        revisionHistoryLimit: 0
+        template:
+          metadata:
+            labels:
+              app: openhab
+          spec:
+            terminationGracePeriodSeconds: 0
+            volumes:
+              - name: openhab-pvc
+                persistentVolumeClaim:
+                  claimName: openhab-config-pvc
+              - name: ssh-volume
+                configMap:
+                  name: ssh-config
+            containers:
+              - name: openhab
+                image: "{{ openhab_image_registry }}/{{ openhab_image_name }}:{{ openhab_image_tag }}"
+                imagePullPolicy: IfNotPresent
+                ports:
+                  - containerPort: 8080
+                    name: http
+                    protocol: TCP
+                  - containerPort: 8101
+                    name: console
+                    protocol: TCP
+                  - containerPort: 5007
+                    name: openhab-lsp
+                    protocol: TCP
+                env:
+                  - name: CRYPTO_POLICY
+                    value: "unlimited"
+                  - name: EXTRA_JAVA_OPTS
+                    value: "-Duser.timezone=Europe/Amsterdam -Djava.net.preferIPv4Stack=true"
+                  - name: OPENHAB_HTTP_PORT
+                    value: "8080"
+                  - name: OPENHAB_HTTPS_PORT
+                    value: "8443"
+                  - name: USER_ID
+                    value: "9001"
+                  - name: GROUP_ID
+                    value: "9001"
+                volumeMounts:
+                  - name: openhab-pvc
+                    mountPath: /openhab/conf
+                    subPath: conf
+                    readOnly: false
+                  - name: openhab-pvc
+                    mountPath: /openhab/userdata
+                    subPath: userdata
+                    readOnly: false
+                  - name: openhab-pvc
+                    mountPath: /openhab/addons
+                    subPath: addons
+                    readOnly: false
+                  - name: openhab-pvc
+                    mountPath: /openhab/.java
+                    subPath: java
+                    readOnly: false
+                  - name: openhab-pvc
+                    mountPath: /openhab/.karaf
+                    subPath: karaf
+                    readOnly: false
+                  - name: ssh-volume
+                    subPath: sshd_config
+                    mountPath: /etc/ssh/sshd_config

@@ -1,0 +1,63 @@
+# file: roles/local/openhab/openhab-config/tasks/main.yaml
+# synopsis:
+---
+- name: Check if apitoken file exists
+  stat:
+    path: "{{openhab_conf_dir}}/apitoken.txt"
+  register: api_token_path
+
+- name: Create a new token if no file exists
+  when: "not api_token_path.stat.exists"
+  block:
+    - name: Remove the existing OpenHAB API token
+      ansible.builtin.command: "ssh karaf openhab:users rmApiToken {{openhab_user_name}} RulesToken"
+      delegate_to: localhost
+    - name: Create a new OpenHAB API token
+      ansible.builtin.command: "ssh karaf openhab:users addApiToken {{openhab_user_name}} RulesToken All"
+      delegate_to: localhost
+      register: token_result
+
+- name: Create the token file
+  when: "not api_token_path.stat.exists"
+  block:
+    - name: Create a file to store the API token
+      ansible.builtin.file:
+        path: "{{openhab_conf_dir}}/apitoken.txt"
+        state: touch
+    - name: Write the API token to a file for future reference
+      ansible.builtin.lineinfile:
+        path: "{{openhab_conf_dir}}/apitoken.txt"
+        regexp: '^(.*)RulesToken(.*)$'
+        line: '{{ token_result.stdout }}'
+
+- name: Get API token in Ansible variable
+  ansible.builtin.slurp:
+    src: "{{openhab_conf_dir}}/apitoken.txt"
+  register: api_token
+- name: Decode token and store as fact
+  ansible.builtin.set_fact:
+    openhab_api_token: "{{ api_token.content | b64decode }}"
+
+# Apply the JRuby Automation files
+- name: Ensure JRuby Automation directory exists
+  ansible.builtin.file:
+    path: '{{ openhab_conf_dir }}/automation/ruby'
+    state: directory
+- name: Ensure JRuby files are populated from the templates
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ openhab_conf_dir }}/automation/{{ item.path }}'
+  with_community.general.filetree: templates/automation
+  when: item.state == 'file'
+  register: jruby_result
+  # notify: Restart OpenHAB
+
+# - name: Wait until OpenHAB rules are installed
+#   wait_for:
+#     path: "{{openhab_logfile}}"
+#     search_regex: "{{openhab_started_log_entry | default('Rule engine started')}}"
+#     delay: 5
+#     timeout: 180
+#     msg: "Not able to find entry '{{openhab_started_log_entry | default('Rule engine started')}}' in openhab.log"
+#   register: openhab_started
+#   when: jruby_result.changed

@@ -1,0 +1,115 @@
+---
+- name: Create crazyelectron.io website certificate
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: crazyelectron-io-cert-{{ letsencrypt_environment }}
+        namespace: default
+      spec:
+        secretName: crazyelectron-io-{{ letsencrypt_environment }}-tls
+        issuerRef:
+          name: letsencrypt-{{ letsencrypt_environment }}
+          kind: ClusterIssuer
+        commonName: crazyelectron.io
+        dnsNames:
+          - crazyelectron.io
+          - www.crazyelectron.io
+
+- name: Create CrazyElectron website service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: crazyelectron-io
+        namespace: default
+      spec:
+        ports:
+          - name: blog
+            port: 80
+            targetPort: 80
+        selector:
+          app: crazyelectron-io
+
+- name: Create IngressRoute for CrazyElectron website
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: crazyelectron-io
+        namespace: default
+        annotations:
+          kubernetes.io/ingress.class: traefik-external
+      spec:
+        entryPoints:
+          - websecure
+        routes:
+          - match: Host(`www.crazyelectron.io`)
+            kind: Rule
+            services:
+              - name: crazyelectron-io
+                port: 80
+          - match: Host(`crazyelectron.io`)
+            kind: Rule
+            services:
+              - name: crazyelectron-io
+                port: 80
+            middlewares:
+              - name: default-headers
+        tls:
+          secretName: "crazyelectron-io-{{ letsencrypt_environment }}-tls"
+
+- name: Create CrazyElectron Website deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: crazyelectron-io
+        namespace: default
+        # annotations:
+        #   keel.sh/policy: minor # <-- policy name according to https://semver.org/
+        #   keel.sh/trigger: poll # <-- actively query registry, otherwise defaults to webhooks
+      spec:
+        replicas: 3
+        progressDeadlineSeconds: 600
+        minReadySeconds: 5
+        revisionHistoryLimit: 2
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 1
+        selector:
+          matchLabels:
+            app: crazyelectron-io
+        template:
+          metadata:
+            labels:
+              app: crazyelectron-io
+          spec:
+            affinity:
+              podAntiAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                      - crazyelectron-io
+                  topologyKey: "kubernetes.io/hostname"
+            containers:
+              - name: crazyelectron-io
+                image: crazyelectron/crazyelectron.io:latest
+                imagePullPolicy: IfNotPresent
+                ports:
+                  - name: http-blog
+                    containerPort: 80
+                    protocol: TCP

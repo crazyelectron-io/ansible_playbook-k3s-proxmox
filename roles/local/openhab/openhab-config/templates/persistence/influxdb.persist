@@ -1,0 +1,18 @@
+Strategies {
+    everyMinute: "0 * * * * ?"
+    every5Minutes: "0 */5 * * * ?"
+    every10Minutes: "0 */10 * * * ?"
+    every15Minutes: "0 */15 * * * ?"
+    everyHour: "0 0 * * * ?"
+    everyDay: "0 0 0 * * ?"
+    default = everyChange
+}
+Items {
+    gHist0* : strategy = everyChange
+    gHist1* : strategy = everyChange, everyMinute
+    gHist5* : strategy = everyChange, every5Minutes
+    gHist10* : strategy = everyChange, every10Minutes
+    gHist15* : strategy = everyChange, every15Minutes
+    gHist60* : strategy = everyChange, everyHour
+    gDaily* : strategy = everyChange, everyDay
+}

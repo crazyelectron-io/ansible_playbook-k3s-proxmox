@@ -1,0 +1,1 @@
+Thing hpprinter:printer:ljprinter "Laser Printer" @ "Office" [ ipAddress="10.20.1.236", usageInterval="30", statusInterval="4" ]

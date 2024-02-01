@@ -2,7 +2,9 @@
 # Namespace to deploy Radarr into
 radarr_namespace: default
 # External URL to access Radarr through Traefik
-radarr_domain: "radarr.{{ main_domain }}"
+radarr_domain: "movies.{{ main_domain }}"
 # Radarr container info
-radarr_image_registry: lscr.io/linuxserver
-radarr_image_tag: 5.0.3
+radarr_image_registry: "{{ private_registry }}"
+radarr_image_tag: 5.2.6
+# Unique Volume ID for Radarr SMB3 share
+radarr_share_volid: "radarr-media-share"

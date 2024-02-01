@@ -1,0 +1,16 @@
+# file: 
+# synopsis: 
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jellyfin-cert-staging
+  namespace: jellyfin
+spec:
+  secretName: jellyfin-staging-tls
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  commonName: "plex.moerman.online"
+  dnsNames:
+    - "plex.moerman.online"

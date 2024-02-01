@@ -1,0 +1,14 @@
+---
+# Namespace to deploy Plex into
+plex_namespace: default
+# External URL to access Plex through Traefik
+plex_domain: "plex.{{ main_domain }}"
+# Plex container info
+plex_image_registry: "{{ private_registry }}"
+#plexinc/pms-docker:1.32.5.7349-8f4248874@sha256:580f97c26448a5a99ddf537533006baa233b3feb3c4da8da9bb7e1ad7ce8165b
+plex_container_image: pms-docker
+plex_image_tag: 1.32.7.7621-871adbd44
+# Plex cluster LB addrress
+plex_ip_address: 10.100.3.103
+# Unique Volume ID for SMB media share
+plex_share_volid: plex-media-share

@@ -1,0 +1,15 @@
+# file: clusters/prod/jellyfin/jellyfin-pvcs.yaml
+# synopsis: 
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: jellyfin-config-pvc
+  namespace: jellyfin
+spec:
+  storageClassName: longhorn
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi

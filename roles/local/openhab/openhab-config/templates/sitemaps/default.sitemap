@@ -1,0 +1,245 @@
+sitemap default label="At Home" {
+    Frame label="Thuis" {
+        Switch item=DayMode label="Dagfase []" icon="sun_clouds" mappings=[MORNING="Ochtend"]  visibility=[DayMode=="MORNING"]
+        Switch item=DayMode label="Dagfase []" icon="sun_clouds" mappings=[DAY="Dag"]          visibility=[DayMode=="DAY"]
+        Switch item=DayMode label="Dagfase []" icon="sun_clouds" mappings=[EVENING="Avond"]    visibility=[DayMode=="EVENING"]
+        Switch item=DayMode label="Dagfase []" icon="sun_clouds" mappings=[NIGHT="Nacht"]      visibility=[DayMode=="NIGHT"]
+
+        Text item=KNMI_Condition label="Weer [%s]" icon="sun_clouds" {
+            Frame label="Buiten" {
+                Text item=OutsideTemperature  label="Buitentemperatuur [%.0f %unit%]"
+                Text item=KNMI_TempFeelStation
+                Text item=KNMI_Humidity
+                Text item=KNMI_DewPoint
+                Text item=RainCurrent
+                Text item=KNMI_Alarm         labelcolor=[>=3="red"] valuecolor=[0="green",1="gold",2="orange",3="red"]
+                Text item=OWM_Current_WindDirection
+                Text item=KNMI_WindForce
+                Text item=Sunrise_Next
+                Text item=Sunset_Next
+                Text item=Astro_SunAzimuth    visibility=[Astro_SunElevation >= 0]
+                Text item=Astro_SunElevation  visibility=[Astro_SunElevation >= 0]
+                Text item=Astro_MoonPhase     visibility=[Astro_SunElevation < 0]
+                Text item=Astro_MoonDistance  visibility=[Astro_SunElevation < 0]
+                Text item=Astro_MoonFullNext
+                Text item=Astro_MoonNewNext
+                Text item=KNMI_Forcast
+                Text item=OWM_Pollution_Quality_Index
+                Text item=OWM_Pollution_PM25
+                Text item=OWM_Pollution_Ozone_Current
+                Text item=OWM_Pollution_NO2_Current
+                Text item=OWM_Pollution_CO_Current
+            }
+            Frame label="Beganegrond" {
+                Text item=LivingTemperature            valuecolor=[>=22="red",>18="green",<=18="orange"]
+                Text item=AlarmTempSiren_kitchen       label="Keuken temperatuur [%.0f %unit%]"        valuecolor=[>=22="red",>18="green",<=18="orange"]
+                Text item=MotionTemp_toilet            label="Toilet temperatuur [%.0f %unit%]"        valuecolor=[>=22="red",>=19="orange",<19="green"]
+                Text item=AlarmTempSmoke_garage        label="Garage temperatuur [%.0f %unit%]"        valuecolor=[>22="red",>20="orange",<=20="green"]
+                Text item=HeatHumidity_living          label="Luchtvochtigheid kamer [%.0f %unit%]"    valuecolor=[>65="orange",>40="green",<=40="red"]
+                Text item=AlarmHumSmoke_garage         label="Luchtvochtigheid Garage [%.0f %unit%]"   valuecolor=[>65="orange",>40="green",<=40="red"]
+            }
+            Frame label="Boven" {
+                Text item=AlarmTempSmoke_corridor      label="Overloop temperatuur [%.0f %unit%]"      valuecolor=[>22="red",>=18="green",<18="orange"]
+                Text item=hvacTemp_bedroom             label="Slaapkamer temperatuur [%.0f %unit%]"    valuecolor=[>21="red",>18="orange",<=18="green"]
+                Text item=hvacTemp_fitnessroom         label="Fitness temperatuur [%.0f %unit%]"       valuecolor=[>22="red",>18="orange",<=18="green"]
+                Text item=hvacTemp_office              label="Kantoor temperatuur [%.0f %unit%]"       valuecolor=[>22="red",>20="orange",>10="green",<=10="blue"]
+                Text item=hvacTemp_menno               label="Menno's kamer temperatuur [%.0f %unit%]" valuecolor=[>20="red",>18="orange",>10="green",<=10="blue"]
+                Text item=AlarmHumSmoke_corridor       label="Luchtvochtigheid overloop"               valuecolor=[>60="orange",>40="green",<=40="red"]
+            }
+        }
+
+        Text item=LivingTemperature   label="Woonkamer temperatuur [%.1f %unit%]"
+        Text item=OutsideTemperature  label="Buitentemperatuur [%.0f %unit%]"
+        Text item=RainCurrent         labelcolor=[>=3="red"] valuecolor=[<=0.1="green",<=1="gold",<=3="orange",>3="red"] visibility=[RainCurrent>2]
+        Text item=KNMI_Forcast
+        Text item=KNMI_Alarm          labelcolor=[>=3="red"] valuecolor=[0="green",1="gold",2="orange",3="red"]          visibility=[KNMI_Alarm>1]
+        Text item=Sunrise_Next
+        Text item=Sunset_Next
+    }
+
+    Frame label="Verlichting beneden" {
+        Switch item=Scene_living         label="Woonkamer"       mappings=[OFF="UIT", EVENING="AVOND", MOVIE="FILM", READ="LEES"]
+        Switch item=Scene_dining         label="Eethoek"         mappings=[OFF="UIT", EVENING="AVOND", READ="LEES", BRIGHT="MAX"]
+        Switch item=Scene_kitchen        label="Keuken"          mappings=[OFF="UIT", EVENING="AVOND", WORK="WERK", BRIGHT="MAX"]
+        Switch item=Scene_kitchenCeiling label="Keuken plafond"  mappings=[OFF="UIT", EVENING="AVOND", WORK="WERK", BRIGHT="MAX"]
+        Switch item=Scene_hallway        label="Hal"             mappings=[OFF="UIT", EVENING="AVOND", READ="LEES", BRIGHT="MAX"]
+        Switch item=Scene_hallwayCeiling label="Hal plafond"     mappings=[OFF="UIT", EVENING="AVOND", READ="LEES", BRIGHT="MAX"]
+        // Switch item=Scene_garage      label="Garage"          icon="garage"   mappings=[OFF="UIT", EVENING="AVOND", WORK="WERK",  BRIGHT="MAX"]
+        // Frame label="Benedenverlichting individueel" {
+        //     Group item=gLightLiving
+        //     Group item=gLightDining
+        //     Group item=gLightKitchen
+        //     Group item=gLightKitchenCeiling
+        //     Group item=gLightHall
+        //     Group item=gLightHallwayCeiling
+        //     Group item=gLightToilet
+        //     Group item=gLightGarage
+        // }
+        // Frame label="Verlichtingsscenes beneden" {
+        //     Group item=gScene_living
+        //     Group item=gScene_kitchen
+        //     Group item=gScene_kitchenCeiling
+        //     Group item=gScene_dining
+        //     Group item=gScene_hallway
+        //     Group item=gScene_hallwayCeiling
+        //     Group item=gScene_toilet
+        //     Group item=gScene_garage
+        // }
+    }
+
+    Frame icon="firstfloor" label="Verlichting boven" {
+        Switch item=Scene_corridor    label="Overloop"       mappings=[OFF="UIT", EVENING="AVOND", WORK="WERK",  BRIGHT="MAX"]
+        Switch item=Scene_bedroom     label="Slaapkamer"     mappings=[OFF="UIT", EVENING="AVOND", READ="LEES",  COSY="KNUS"]
+        Switch item=Scene_office      label="Kantoor"        mappings=[OFF="UIT", EVENING="AVOND", READ="LEES",  BRIGHT="MAX"]
+        Switch item=Scene_laundry     label="Fitness"        mappings=[OFF="UIT", EVENING="AVOND", WORK="WERK",  BRIGHT="MAX"]
+        Switch item=Scene_bathroom    label="Badkamer"       mappings=[OFF="UIT", EVENING="AVOND", READ="LEES",  BRIGHT="MAX"]
+        Switch item=Scene_menno       label="Menno's kamer"  mappings=[OFF="UIT", EVENING="AVOND", READ="LEES",  BRIGHT="MAX"]
+        // Group item=gLights icon="lightbulb" label="Bovenverlichting individueel" {
+        //     Group item=gScene_corridor
+        //     Group item=gScene_bedroom
+        //     Group item=gScene_office
+        //     Group item=gScene_fitness
+        //     Group item=gScene_bathroom
+        //     Group item=gScene_menno
+        // }
+        // Group item=gScenes icon="firstfloor" label="Verlichtingsscenes boven" {
+        //     Group item=gScene_corridor
+        //     Group item=gScene_bedroom
+        //     Group item=gScene_bathroom
+        //     Group item=gScene_office
+        //     Group item=gScene_fitness
+        //     Group item=gScene_menno
+        // }
+    }
+
+    Frame icon="garden" label="Verlichting buiten" {
+        Switch item=Scene_outdoor   label="Buiten"  mappings=[OFF="UIT", EVENING="AVOND", WORK="WERK",  BRIGHT="MAX"]
+        // Group item=gScene_outdoor icon="lightbulb" label="Buitenverlichting individueel"
+        // Group item=gScene_outdoor icon="garden" label="Verlichtingsscenes buiten"
+    }
+
+    Frame label="Energy" {
+        Text item=Power_Delta_All_Current {
+            Text item=Power_Delta_All_Current
+            Text item=Power_Delta_L1_Current
+            Text item=Power_Delta_L2_Current
+            Text item=Power_Delta_L3_Current
+        }
+        Text item=Solar_Prod_Current
+        Text item=Power_Delta_Hour {
+            Text item=Power_Use_Hour_Cost
+            Text item=Power_Ret_Hour_Cost
+            Text item=Power_Use_Total icon="pressure"
+            Text item=Power_Ret_Total icon="pressure"
+        }
+        Text item=Gas_Use_Hour
+        Text item=Gas_Use_Total icon="pressure"
+    }
+
+    Frame label="Verwarming" {
+        Text item=HeatTemp_living valuecolor=[>=22="red",>18="green",<=18="orange"]
+        Text item=HeatSetPoint {
+            Text item=HeatNextPoint
+            Text item=Heatmode
+            Text item=HeatPressure
+            Text item=HeatWaterTemp
+            Text item=HeatStarts
+            Text item=HeatBurnTime
+        }
+        Text item=Heatfill
+        Text item=Heatmaintenance
+    }
+
+    Frame label="Airco" {
+        Text item=HeatTemp_living label="Woonkamer" icon="snow" valuecolor=[>22="red",>=19="green",<19="oranje"] visibility=[hvacPower_living==ON]
+        Text item=HeatTemp_living label="Woonkamer" icon="switch-off" valuecolor=[>22="red",>=19="green",<19="oranje"] visibility=[hvacPower_living==OFF]
+          Text item=hvacPower_living label="Airco [%s]" icon="snow" {
+            Switch item=hvacPower_living
+            Setpoint item=hvacSetTemp_living minValue=18 maxValue=24 step=1
+            Switch item=hvacMode_living label="Mode" mappings=["8"="Auto", "3"="Koud", "1"="Warm"]
+            Switch item=hvacFanSpeed_living label="Fan " mappings=["0"="Auto", "1"="Stil", "2"="1", "3"="2", "4"="3"]
+            Switch item=hvacVaneHor_living label="Vane H" mappings=["0"="Auto", "12"="Swing", "1"="1", "3"="3", "5"="5"]
+            Switch item=hvacVaneVert_living label="Vane V" mappings=["0"="Auto", "12"="Swing", "1"="1", "3"="3", "5"="5"]
+            Switch item=hvacVacation_living
+          }
+
+        Text item=hvacTemp_bedroom label="Slaapkamer" icon="snow" visibility=[hvacPower_bedroom==ON]
+        Text item=hvacTemp_bedroom label="Slaapkamer" icon="switch-off" visibility=[hvacPower_bedroom==OFF]
+          Text item=hvacPower_bedroom label="Airco [%s]" icon="snow" {
+            Switch item=hvacPower_bedroom
+            Setpoint item=hvacSetTemp_bedroom minValue=18 maxValue=23 step=1
+            Switch item=hvacMode_bedroom label=" " mappings=["AUTO"="Auto", "COLD"="Koud", "HEAT"="Warm"]
+            Switch item=hvacFanSpeed_bedroom label=" " mappings=["AUTO"="Auto", "SILENCE"="Stil", "LEVEL_2"="1", "LEVEL_3"="2", "LEVEL_5"="3"]
+            Text item=hvacFanDirection_bedroom label=" "
+            Switch item=hvacVacation_bedroom
+          }
+        Text item=hvacTemp_office icon="snow" visibility=[hvacPower_office==ON]
+        Text item=hvacTemp_office icon="switch-off" visibility=[hvacPower_office==OFF]
+          Text item=hvacPower_office label="Airco [%s]" icon="snow" {
+            Switch item=hvacPower_office
+            Setpoint item=hvacSetTemp_office minValue=18 maxValue=23 step=1
+            Switch item=hvacMode_office label="" mappings=["AUTO"="Auto", "COLD"="Koud", "HEAT"="Warm"]
+            Switch item=hvacFanSpeed_office label="" mappings=["AUTO"="Auto", "SILENCE"="Stil", "LEVEL_2"="1", "LEVEL_3"="2", "LEVEL_5"="3"]
+            Text item=hvacFanDirection_office label=""
+          }
+        Text item=hvacTemp_fitnessroom icon="snow" visibility=[hvacPower_fitnessroom==ON]
+        Text item=hvacTemp_fitnessroom icon="switch" visibility=[hvacPower_fitnessroom==OFF]
+          Text item=hvacPower_fitnessroom label="Airco [%s]" icon="snow" {
+            Switch item=hvacPower_fitnessroom
+            Setpoint item=hvacSetTemp_fitnessroom minValue=18 maxValue=23 step=1
+            Switch item=hvacMode_fitnessroom label="" mappings=["AUTO"="Auto", "COLD"="Koud", "HEAT"="Warm"]
+            Switch item=hvacFanSpeed_fitnessroom label="" mappings=["AUTO"="Auto", "SILENCE"="Stil", "LEVEL_2"="1", "LEVEL_3"="2", "LEVEL_5"="3"]
+            Text item=hvacFanDirection_fitnessroom label=""
+          }
+        Text item=hvacTemp_menno icon="snow" visibility=[hvacPower_menno==ON]
+        Text item=hvacTemp_menno icon="switch" visibility=[hvacPower_menno==OFF]
+          Text item=hvacPower_menno label="Airco status [%s]" icon="snow" {
+            Switch item=hvacPower_menno
+            Setpoint item=hvacSetTemp_menno minValue=18 maxValue=23 step=1
+            Switch item=hvacMode_menno label="" mappings=["AUTO"="Auto", "COLD"="Koud", "HEAT"="Warm"]
+            Switch item=hvacFanSpeed_menno label="" mappings=["AUTO"="Auto", "SILENCE"="Stil", "LEVEL_2"="1", "LEVEL_3"="2", "LEVEL_5"="3"]
+            Text item=hvacFanDirection_menno label=""
+          }
+    }
+
+    Frame label="Alarm" {
+        Switch  item=AlarmStatus icon="alarm" label="Alarm []"  mappings=["DISARMED"="Disarm", "ARMED_HOME"="Arm Home", "ARMED_AWAY"="Arm Away"]
+        Text item=gDoors {
+            Text item=AlarmDoorSide_garage
+            Text item=AlarmDoor_front
+            Text item=AlarmDoor_laundry
+            Text item=AlarmDoor_bedroom
+            Text item=AlarmDoor_dining
+            Text item=AlarmDoor_living
+        }
+    }
+
+    Frame label="Christmas" {
+        Switch  item=ShellyXmasTree_Switch
+        Text    item=ShellyXmasTree_Power
+        Switch  item=ShellyFireBin_Switch
+        Text    item=ShellyFireBin_Power
+        Switch  item=ShellyInfrared_Switch
+        Text    item=ShellyInfrared_Power
+        // Switch  item=ShellyXmasOutdoor_Switch
+        // Text    item=ShellyXmasOutdoor_Power
+        Switch  item=ShellyXmasChurch_Switch
+        Text    item=ShellyXmasChurch_Power
+    }
+
+    Frame label="Batterijstatus" {
+        Group item=gBatteryLow label="Lege batterij [(%d)]" //{
+          // Switch item=AlarmLowBattDoor_bedroom label="Deursensor Slaapkamer []" icon="battery" mappings=[ON="Yes",OFF="No"]
+          // Switch item=AlarmLowBattDoor_dining label="Deursensor Eethoek zijdeur []" icon="battery" mappings=[ON="Yes",OFF="No"]
+          // Switch item=AlarmLowBattDoor_front label="Deursensor Voordeur []" icon="battery" mappings=[ON="Yes",OFF="No"]
+          // Switch item=AlarmLowBattDoor_fusebox label="Deursensor Meterkast []" icon="battery" mappings=[ON="Yes",OFF="No"]
+          // Switch item=AlarmLowBattDoorSide_garage label="Deursensor Garagezijdeur []" icon="battery" mappings=[ON="Yes",OFF="No"]
+          // Switch item=AlarmLowBattDoor_living label="Deursensor Tuindeur []" icon="battery" mappings=[ON="Yes",OFF="No"]
+          // Switch item=AlarmLowBattDoor_laundry label="Deursensor Washok []" icon="battery" mappings=[ON="Yes",OFF="No"]
+          // Switch item=AlarmLowBattSiren_kitchen label="Alarm Keuken []" icon="battery" mappings=[ON="Yes",OFF="No"]
+          // Switch item=AlarmLowBattSmoke_garage label="Rookmelder Garage []" icon="battery" mappings=[ON="Yes",OFF="No"]
+        // }
+    }
+
+	Webview url="/static/hideheader.html" icon=none     // Hide default navigation
+}

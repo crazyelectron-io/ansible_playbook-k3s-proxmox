@@ -1,0 +1,31 @@
+sitemap menno label="Menno" {
+    Frame label="Airco" {
+        Text item=hvacTemp_menno label="Menno's kamer [%.1f °C]" valuecolor=[>23="red",>19="orange",>10="green",<=10="blue"]
+
+        Text item=hvacTemp_menno label="Menno" icon="snow" visibility=[hvacPower_menno==ON]
+        Text item=hvacTemp_menno label="Menno" icon="switch" visibility=[hvacPower_menno==OFF]
+        Switch item=hvacPower_menno
+        //Switch item=AC_Timer_Guestroom label="Nachtmodus [%s]" icon="switch"
+        Setpoint item=hvacSetTemp_menno minValue=18 maxValue=22 step=1
+        Switch item=hvacMode_menno label="" mappings=["AUTO"="Auto", "COLD"="Koud", "HEAT"="Warm"]
+        Switch item=hvacFanSpeed_menno label="" mappings=["AUTO"="Auto", "SILENCE"="Stil", "LEVEL_2"="Norm", "LEVEL_4"="Hi"]
+    }
+    Frame label="Lighting" {
+        Switch item=Scene_menno label="Menno's lighting" icon="office" mappings=[OFF="UIT", EVENING="AVOND", READ="LEES",  BRIGHT="MAX"]
+        Text item=Scene_menno {
+            Slider  item=menno_Brightness_EVENING
+            Text    item=menno_Brightness_EVENING label="Brightness [%d]"
+            Slider  item=menno_ColorTemp_EVENING
+            Text    item=menno_ColorTemp_EVENING label="ColorTemp [%d]"
+            Slider  item=menno_Brightness_READ
+            Text    item=menno_Brightness_READ label="Brightness [%d]"
+            Slider  item=menno_ColorTemp_READ
+            Text    item=menno_ColorTemp_READ label="ColorTemp [%d]"
+            Slider  item=menno_Brightness_BRIGHT
+            Text    item=menno_Brightness_BRIGHT label="Brightness [%d]"
+            Slider  item=menno_ColorTemp_BRIGHT
+            Text    item=menno_ColorTemp_BRIGHT label="ColorTemp [%d]"
+        }
+    }
+    Webview url="/static/hideheader.html" icon=none
+}

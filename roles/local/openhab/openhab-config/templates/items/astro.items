@@ -1,0 +1,33 @@
+// file: conf/items/astro.items
+// synopsis: Items for the Astro binding providing sun, moon, time of day related info.
+
+Group             gAstro                                                           <sun_clouds>  (gHome)
+String            DayMode                 "Dag mode"                               <sun>         (gPersist,gAstro)                 	// Calculated
+
+// ------ Date and Time Items ------
+// Current day phase: SUN_RISE, ASTRO_DAWN, NAUTIC_DAWN, CIVIL_DAWN, CIVIL_DUSK, NAUTIC_DUSK, ASTRO_DUSK, SUN_SET, DAYLIGHT, NIGHT
+String            Astro_DayPhase          "Dagfase"                                              (gPersist,gAstro)                 {channel="astro:sun:home:phase#name", stateDescription=" "[readOnly="true"]}
+Number:Time       Astro_DayLight          "Daglicht"                                             (gPersist,gAstro)  ["Duration"]   {channel="astro:sun:home:daylight#duration", unit="min",stateDescription=" "[pattern="[%1$tH:%1$tM]",readOnly="true"]}
+String            Astro_Season            "Seizoen"                                              (gPersist,gAstro)                 {channel="astro:sun:home:season#name", stateDescription=" "[readOnly="true"]}
+String            Astro_Zodiac            "Sterrenbeeld [MAP(astro.map):%s]"       <zodiac>      (gAstro)                          {channel="astro:sun:home:zodiac#sign", stateDescription=" "[readOnly="true"]}
+
+// ------ Sun Items ------
+// rise, set, noon, night, morningNight, astroDawn, nauticDawn, civilDawn, astroDusk, nauticDusk, civilDusk, eveningNight, daylight
+DateTime          Astro_Sunrise_Start     "Start zondsopkomst"          <sun> (gAstro) {channel="astro:sun:home:rise#start"}
+
+// Next sunrise and sunset times (calclated from tomorrows/todays values and the time of day)
+DateTime          Sunrise_Next            "Volgende zonsopkomst [%1$tH:%1$tM]"     <sunrise>     (gPersist)                        {stateDescriptiom=" "[pattern="[%1$tH:%1$tM]"]}
+DateTime          Sunset_Next             "Volgende zonsondergang [%1$tH:%1$tM]"   <sunset>      (gPersist)                        {stateDescriptiom=" "[pattern="[%1$tH:%1$tM]"]}
+// Sun position Items
+Number:Angle      Astro_SunElevation      "Zonhoogte"                              <sun>         (gAstro)                          {channel="astro:sun:home:position#elevation", stateDescription=" "[pattern="[%.0f %unit%]",readOnly="true"]}	// °
+Number:Angle      Astro_SunAzimuth        "Zonrichting [SCALE(windDir.scale):%s]"  <sun>         (gAstro)                          {channel="astro:sun:home:position#azimuth", stateDescription=" "[readOnly="true"]}
+// Sun radiation Items (UoM is W/m2)
+Number:Intensity  Astro_RadiationTotal    "Totale straling"                        <sun>         (gAstro,gHist15)                  {channel="astro:sun:home:radiation#total", stateDescription=" "[pattern="[%.2f %unit%]",readOnly="true"]}	// W/m\u00B2
+Number:Intensity  Astro_RadiationDirect   "Directe straling"                       <sun>         (gAstro,gHist15)                  {channel="astro:sun:home:radiation#direct", stateDescription=" "[pattern="[%.2f %unit%]",readOnly="true"]}	// W/m\u00B2
+Number:Intensity  Astro_RadiationDiffuse  "Indirecte straling"                     <sun>         (gHist15,gAstro)                  {channel="astro:sun:home:radiation#diffuse", stateDescription=" "[pattern="[%.2f %unit%]",readOnly="true"]}	// W/m\u00B2
+
+// ------ Moon Items ------
+Number:Length     Astro_MoonDistance      "Maannafstand"                           <moon>        (gAstro)                          {channel="astro:moon:home:distance#distance", unit="km", stateDescription=" "[pattern="[%.0f %unit%]",readOnly="true"]}
+String            Astro_MoonPhase         "Maanfase [MAP(astro.map):%s]"           <moon>        (gAstro)                          {channel="astro:moon:home:phase#name", stateDescription=" "[readOnly="true"]}
+DateTime          Astro_MoonFullNext      "Volle maan"                             <moon>        (gAstro)                          {channel="astro:moon:home:phase#full", stateDescription=" "[pattern="[%1$td.%1$tm.%1$tY]",readOnly="true"]}
+DateTime          Astro_MoonNewNext       "Nieuwe maan"                            <moon>        (gAstro)                          {channel="astro:moon:home:phase#new", stateDescription=" "[pattern="[%1$td.%1$tm.%1$tY]",readOnly="true"]}

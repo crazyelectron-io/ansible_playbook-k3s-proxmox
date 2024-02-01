@@ -1,0 +1,23 @@
+// file: conf/transform/hue.map
+// synopsis: Translate Hue switch codes to status messageas
+
+16.0=Button TopLeft
+17.0=Button BottomLeft
+34.0=Button TopRight
+18.0=Button BottomRight
+1000.0=Button(ON) INITIAL_PRESSED
+1001.0=Button(ON) HOLD
+1002.0=Button(ON) SHORT RELEASED
+1003.0=Button(ON) LONG RELEASED
+2000.0=Button(DIM UP) INITIAL_PRESSED
+2001.0=Button(DIM UP) HOLD
+2002.0=Button(DIM UP) SHORT RELEASED
+2003.0=Button(DIM UP) LONG RELEASED
+3000.0=Button(DIM DOWN) INITIAL_PRESSED
+3001.0=Button(DIM DOWN) HOLD
+3002.0=Button(DIM DOWN) SHORT RELEASED
+3003.0=Button(DIM DOWN) LONG RELEASED
+4000.0=Button(OFF) INITIAL_PRESSED
+4001.0=Button(OFF) HOLD
+4002.0=Button(OFF) SHORT RELEASED
+4003.0=Button(OFF) LONG RELEASED

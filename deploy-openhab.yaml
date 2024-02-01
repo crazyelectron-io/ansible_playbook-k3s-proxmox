@@ -1,0 +1,24 @@
+# file: ./deploy-openhab.yaml
+# synopsis: Deploy the OpenHAB configuration
+---
+# Deploy the OppenHAB configuration files
+- hosts: openhab
+  gather_facts: true
+  any_errors_fatal: true
+  handlers:
+    - import_tasks: roles/local/openhab/karaf-restart/handlers.yaml
+  roles:
+    - local/openhab/openhab-config
+
+# Setup the Karaf console access
+- hosts: localhost
+  gather_facts: true
+  # any_errors_fatal: true
+  roles:
+    - local/openhab/karaf-setup
+
+# Install automation rules
+- hosts: openhab
+  gather_facts: true
+  roles:
+    - local/openhab/openhab-automation

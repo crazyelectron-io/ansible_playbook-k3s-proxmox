@@ -10,6 +10,7 @@
 #   vars:
 #     install_in_vm: true
 #     install_lh_prereq: true
+#     set_hostname: true
 #   roles:
 #     - debian-base
 #     - debian-upgrade
@@ -30,8 +31,8 @@
 #   hosts: worker
 #   become: true
 #   any_errors_fatal: true
-#   vars:
-#     install_in_vm: true
+#   # vars:
+#   #   install_in_vm: true
 #   roles:
 #     - local/k3s/k3s-worker
 #     - local/k3s/lvm-attach
@@ -40,35 +41,28 @@
 # - name: Configure k3s cluster
 #   hosts: master
 #   become: true
-#   vars:
-#     install_in_vm: true
+#   # vars:
+#   #   install_in_vm: true
 #   roles:
 #     - local/k3s/k3s-post
 
-# Setup K3s cluster basics
-- hosts: localhost
-  connection: local
-  gather_facts: false
-  roles:
-    # - local/k3s/context
-    # - local/k3s/labels
-    # - local/k3s/replicator
-    # - local/k3s/traefik
-    # - local/k3s/cert-manager
-    # - local/k3s/traefik-dashboard
-    # - local/k3s/longhorn
-    # - local/k3s/nfs-provisioner
-    - local/apps/sabnzbd
-    # - local/apps/prowlarr
-    # - local/apps/sonarr
-    # - local/apps/radarr
-    # - local/apps/bazarr
-    # - local/apps/qbittorrent
-
-# - name: Configure Flux GitOps
-#   hosts: master
-#   become: true
-#   vars:
-#     install_in_vm: true
+# # Setup K3s cluster basics
+# - hosts: localhost
+#   connection: local
+#   gather_facts: false
 #   roles:
-#     - local/k3s/fluxcd
+#     - local/k3s/context
+#     - local/k3s/labels
+#     - local/k3s/nfs-provisioner
+#     - local/k3s/traefik
+#     - local/k3s/cert-manager
+#     - local/k3s/replicator
+#     - local/k3s/traefik-dashboard
+#     - local/k3s/longhorn
+    # - local/k3s/registry
+
+# - name: Configure container image registry on each node
+#   hosts: kube
+#   become: true
+#   roles:
+#     - local/k3s/set-registry

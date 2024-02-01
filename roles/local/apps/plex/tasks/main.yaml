@@ -1,0 +1,24 @@
+---
+- name: Create Lets Encrypt Certificate for Plex
+  ansible.builtin.include_tasks:
+    file: plex-certificate.yaml
+
+- name: Create Traefik Ingress Route for Plex
+  ansible.builtin.include_tasks:
+    file: plex-ingressroute.yaml
+
+- name: Create Plex Services
+  ansible.builtin.include_tasks:
+    file: plex-services.yaml
+
+- name: Create Plex Persistent Volumes
+  ansible.builtin.include_tasks:
+    file: plex-pv.yaml
+
+- name: Create Plex Persistent Volume Claims
+  ansible.builtin.include_tasks:
+    file: plex-pvc.yaml
+
+- name: Create Plex Deployment
+  ansible.builtin.include_tasks:
+    file: plex-deployment.yaml

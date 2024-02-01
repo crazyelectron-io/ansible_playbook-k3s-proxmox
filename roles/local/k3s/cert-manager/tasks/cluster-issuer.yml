@@ -10,7 +10,7 @@
       spec:
         acme:
           email: "{{ item.email }}"
-          server: "https://{{ item.server }}.api.letsencrypt.org/directory"
+          server: "https://{{ item.server }}.api.letsencrypt.org./directory"
           privateKeySecretRef:
             name: "{{ item.private_key_secret_ref_name }}"
           solvers:
@@ -25,14 +25,14 @@
   loop: "{{ cert_manager_le_clusterissuer_options }}"
   when: cert_manager_le_clusterissuer_options is defined
 
-- name: Create Certificate ClusterIssuer for self-signed certificates
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: cert-manager.io/v1
-      kind: ClusterIssuer
-      metadata:
-        name: "{{ cert_manager_self_signed }}"
-        namespace: cert-manager
-      spec:
-        selfSigned: {}
+# - name: Create Certificate ClusterIssuer for self-signed certificates
+#   kubernetes.core.k8s:
+#     state: present
+#     definition:
+#       apiVersion: cert-manager.io/v1
+#       kind: ClusterIssuer
+#       metadata:
+#         name: "{{ cert_manager_self_signed }}"
+#         namespace: cert-manager
+#       spec:
+#         selfSigned: {}

@@ -1,0 +1,7 @@
+Strategies {
+    default = everyUpdate
+}
+Items {
+    // persist all items added to group gPersist on every change and restore them from the database at startup
+    gPersist* : strategy = everyChange,restoreOnStartup
+}

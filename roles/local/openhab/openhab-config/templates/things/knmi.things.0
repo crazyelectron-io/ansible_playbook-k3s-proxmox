@@ -1,0 +1,63 @@
+// file: conf/things/knmi.things
+// synopis: defines the HTTPS API connection to KNMI Weather (weerlive.nl)
+
+// The weer API response in JSON format is like this:
+// {
+//   "liveweer": [
+//     {
+//        "plaats": "Lutjebroek",
+//        "temp": "12.3",
+//        "gtemp": "8.4",
+//        "samenv": "Geheel bewolkt",
+//        "lv": "88",
+//        "windr": "ZZW",
+//        "windms": "10",
+//        "winds": "5",
+//        "windk": "19.4",
+//        "windkmh": "36",
+//        "luchtd": "1004.7",
+//        "ldmmhg": "754",
+//        "dauwp": "10",
+//        "zicht": "27",
+//        "verw": "Wisselend bewolkt met geregeld buien, soms ook met onweer",
+//        "sup": "07:56",
+//        "sunder": "19:04",
+//        "image": "bewolkt",
+//        "d0weer": "bewolkt",
+//        "d0tmax": "15", "d0tmin": "11",
+//        "d0windk": "4", "d0windknp": "16", "d0windms": "8", "d0windkmh": "30", "d0windr": "ZW",
+//        "d0neerslag": "17",
+//        "d0zon": "11",
+//        "d1weer": "halfbewolkt",
+//        "d1tmax": "15", "d1tmin": "9",
+//        "d1windk": "3", "d1windknp": "8", "d1windms": "4", "d1windkmh": "15", "d1windr": "ZW",
+//        "d1neerslag": "60",
+//        "d1zon": "30",
+//        "d2weer": "regen",
+//        "d2tmax": "16",
+//        "d2tmin": "12",
+//        "d2windk": "3", "d2windknp": "10", "d2windms": "5", "d2windkmh": "19", "d2windr": "ZW",
+//        "d2neerslag": "90", "d2zon": "20",
+//        "alarm": "0"
+//     }
+//   ]
+// }
+// See https://weerlive.nl/delen.php for a parameter description
+
+Thing http:url:weather "KNMI Weather" [ baseURL="https://weerlive.nl/api/json-data-10min.php?key={{ knmi_api_token }}&locatie={{ knmi_api_location }}", delay=200, refresh=600, timeout=5000 ] {
+	Channels:
+		Type number : currentTemp       "Huidige temperatuur"   [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].temp", unit="°C"]
+    Type number : feelTemp          "Gevoelstemperatuur"    [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].gtemp", unit="°C"]
+    Type string : weatherCondition  "Weer"                  [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].image"]
+    Type number : humidity          "Luchvochtigheid"       [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].lv", unit="%"]
+    Type string : weatherForecast   "Weersverwachting"      [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].verw"]
+    Type string : windDirection     "Windrichtng"           [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].windr"]
+    Type number : windForce         "Windkracht"            [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].winds"]
+    Type number : alarm             "Weeralarm"             [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].alarm"]
+    Type number : pressure          "Luchtdruk"             [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].luchtd", unit="hPa"]
+    Type number : dewPoint          "Dauwpunt"              [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].dauwp", unit="°C"]
+    Type number : sight             "Zicht"                 [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].zicht"]
+    Type number : maxTemp           "Maximum vandaag"       [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].d0tmax", unit="°C"]
+    Type number : minTemp           "Minimum vandaag"       [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].d0tmin", unit="°C"]
+    Type number : rainPred2Day      "Neerslagkans vandaag"  [mode="READONLY", stateTransformation="JSONPATH:$.liveweer[0].d0neerslag"]
+}

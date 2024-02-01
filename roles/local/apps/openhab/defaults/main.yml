@@ -1,0 +1,14 @@
+---
+openhab_namespace: openhab
+# Radarr container info
+openhab_image_registry: "{{ private_registry }}"
+openhab_image_name: openhab
+openhab_image_tag: 3.4.4
+# openhab_image_tag: 4.1.0.M3
+# Location coordinates
+my_latitude: 51.896132
+my_longitude: 4.167752
+# Unique Volume ID for SMB config share
+openhab_share_volid: oh3-config-share
+# Share name
+smb_openhab_share: openhab

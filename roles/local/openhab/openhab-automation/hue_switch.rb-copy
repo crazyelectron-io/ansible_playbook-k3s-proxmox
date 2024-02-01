@@ -1,0 +1,330 @@
+# file: conf/automation/ruby/hue_switch.rb
+# synopsis: Hue Dimmer/Tap Switch Buttons handling rule
+
+# frozen_string_literal: true
+
+# Stores the current "hold" state of the channel
+@current_state = {}
+
+
+module Hue
+  ON_PRESSED = "1000"
+  ON_HOLD = "1001"
+  ON_SHORT_RELEASED = "1002"
+  ON_LONG_RELEASED = "1003"
+  BR_PRESSED = "2000"
+  BR_HOLD = "2001"
+  BR_SHORT_RELEASED = "2002"
+  BR_LONG_RELEASED = "2003"
+  DIM_PRESSED = "3000"
+  DIM_HOLD = "3001"
+  DIM_SHORT_RELEASED = "3002"
+  DIM_LONG_RELEASED = "3003"
+  HUE_PRESSED = "4000"
+  HUE_HOLD = "4001"
+  HUE_SHORT_RELEASED = "4002"
+  HUE_LONG_RELEASED = "4003"
+  TAP_LEFT_UP = "16.0"
+  TAP_LEFT_DOWN = "17.0"
+  TAP_RIGHT_UP = "34.0"
+  TAP_RIGHT_DOWN = "18.0"
+  TAP_UP = "100.0"    # =keys pressed, 101.0=keys released
+  TAP_DOWN = "98.0"   # =keys pressed, 99.0=keys released
+  MOTION_ON = "ON"
+  MOTION_OFF = "OFF"
+end
+
+
+module Scene
+  NAMES = %w[OFF EVENING READ WORK BRIGHT MOVIE COSY].freeze
+  NAMES.each { |scene| const_set(scene, scene) }
+
+  # Mapping of Hue switches/dimmers and keys to lighting zones
+  SWITCH_ZONES = {
+    'hallway' => {
+      Hue::ON_SHORT_RELEASED => ['hallway'],
+      Hue::ON_HOLD => ['hallway', 'kitchen'],
+      Hue::BR_PRESSED => ['none'],
+      Hue::BR_SHORT_RELEASED => ['hallwayCeiling'],
+      Hue::BR_HOLD => ['kitchenCeiling'],
+      Hue::DIM_SHORT_RELEASED => ['hallwayCeiling'],
+      Hue::HUE_SHORT_RELEASED => ['hallway'],
+      Hue::HUE_HOLD => ['hallway', 'kitchen', 'dining', 'living'],
+    },
+    'front' => {
+      Hue::BR_SHORT_RELEASED => ['hallway']
+    },
+    'corridor' => {
+      Hue::ON_SHORT_RELEASED => ['corridor'],
+      Hue::BR_PRESSED => ['none'],
+      Hue::HUE_SHORT_RELEASED => ['corridor'],
+    },
+    'kitchen' => {
+      Hue::TAP_LEFT_UP => ['kitchen'],
+      Hue::TAP_RIGHT_UP => ['kitchenCeiling'],
+      Hue::TAP_LEFT_DOWN => ['kitchen'],
+      Hue::TAP_RIGHT_DOWN => ['kitchenCeil']
+    },
+    'dining' => {
+      Hue::TAP_LEFT_UP => ['living'],
+      Hue::TAP_RIGHT_UP => ['dining'],
+      Hue::TAP_LEFT_DOWN => ['living'],
+      Hue::TAP_RIGHT_DOWN => ['dining'],
+      Hue::TAP_UP => ['dining', 'living'],
+      Hue::TAP_DOWN => ['dining', 'living']
+    },
+    'toilet' => {
+      Hue::ON_SHORT_RELEASED => ['toilet'],
+      Hue::HUE_SHORT_RELEASED => ['toilet'],
+      Hue::HUE_HOLD => ['toilet'],
+      Hue::MOTION_ON => ['toilet']
+    },
+    'bath' => {
+      Hue::TAP_LEFT_UP => ['bathroom'],
+      Hue::TAP_RIGHT_UP => ['bathroom'],
+      Hue::TAP_LEFT_DOWN => ['bathroom'],
+      Hue::TAP_RIGHT_DOWN => ['bathroom']
+    },
+    'office' => {
+      Hue::ON_SHORT_RELEASED => ['office'],
+      Hue::HUE_SHORT_RELEASED => ['office'],
+      Hue::HUE_HOLD => ['office']
+    },
+    'fitness' => {
+      Hue::ON_SHORT_RELEASED => ['fitness'],
+      Hue::HUE_SHORT_RELEASED => ['fitness']
+    },
+    'menno' => {
+      Hue::ON_SHORT_RELEASED => ['menno'],
+      Hue::HUE_SHORT_RELEASED => ['menno']
+    },
+    'bedroom' => {
+      Hue::ON_SHORT_RELEASED => ['bedroom'],
+      Hue::HUE_SHORT_RELEASED => ['bedroom']
+    }
+  }.freeze
+
+  # Mapping of zones to scenes
+  SCENES = {
+    'hallway'     => %w[EVENING READ BRIGHT],
+    'hallwayCeil' => %w[EVENING READ BRIGHT],
+    'kitchen'     => %w[EVENING WORK BRIGHT],
+    'kitchenCeil' => %w[EVENING WORK BRIGHT],
+    'dining'      => %w[EVENING READ BRIGHT],
+    'living'      => %w[EVENING MOVIE READ],
+    'toilet'      => %w[EVENING],
+    'office'      => %w[EVENING READ BRIGHT],
+    'menno'       => %w[EVENING READ BRIGHT],
+    'laundry'     => %w[EVENING WORK BRIGHT],
+    'fitness'     => %w[EVENING WORK BRIGHT],
+    'bathroom'    => %w[EVENING READ BRIGHT],
+    'bedroom'     => %w[EVENING READ COSY BRIGHT],
+    'corridor'    => %w[EVENING WORK BRIGHT]
+  }.freeze
+
+  SETTINGS = %w[Brightness ColorTemp].freeze
+end
+
+
+def apply_scene_to_zone(scene, zone)
+  logger.info "Applying scene [#{scene}] to zone [#{zone}]"
+  Scene::SETTINGS.each do |setting|
+    scene_value = items["#{zone}_#{setting}_#{scene}"]&.state
+    item_to_set = items["g#{setting}_#{zone}"]
+    next unless item_to_set && scene_value
+    logger.info " Ensure item [#{item_to_set.name}] gets state [#{scene_value}] [#{setting}]"
+    item_to_set.ensure.command(scene_value) unless scene == 'OFF' && setting == 'ColorTemp'
+  end
+end
+
+
+def next_scene(current, scenes)
+  logger.info "Determine next scene from [#{scenes}], current=#{current}"
+  scenes = scenes + [scenes.first]
+  scenes[scenes.find_index(current) + 1]
+end
+
+
+rule "SetHueScene" do
+  description "Change lighting to the specified scene"
+  changed gScenes.members
+  run do |event|
+    logger.info "Item [#{event.item.name}] changed, new state [#{event.state}], previous state [#{event.was}]"
+    unless light_zone = event.item.name.split("_").last
+      logger.warn "Item [#{event.item.name}] has no zone name, exiting"
+      next
+    end
+    new_scene = event.state.to_s
+    unless Scene::NAMES.include?(new_scene)
+      logger.warn "Unknown Scene command [#{new_scene}] received, restore previous state [#{event.was}]"
+      event.item.update(event.was)
+      next
+    end
+    # Save last scene & update in metadata
+    event.item.metadata["last_scene"] = new_scene unless new_scene == Scene::OFF
+    event.item.metadata["last_update"] = event.item.metadata["last_update"] = Time.now.strftime("%Y-%m-%d %H:%M:%S %z")
+    apply_scene_to_zone(new_scene, light_zone)
+    # Handle the FireBin and XmasTree in the livingroom
+    ShellyFireBin_Switch  << (new_scene == 'OFF' ? OFF : ON) if light_zone == 'living'
+    ShellyXmasTree_Switch << (new_scene == 'OFF' ? OFF : ON) if light_zone == 'living'
+    # ShellyXmasOutdoor_Switch  << (new_scene == 'OFF' ? OFF : ON) if light_zone == 'living'
+    ShellyXmasChurch_Switch  << (new_scene == 'OFF' ? OFF : ON) if light_zone == 'living'
+  end
+end
+
+
+# rule "Live update Scene presets" do
+#   description "Update scene presets from Hue App"
+#   changed gBrightness.all_members
+#   run do |event|
+#     light_zone = event.item.name.split("_").first
+#     logger.info "Update scene presets from Scene change. item: #{event.item.name}; light_zone: #{light_zone}"
+#     scene = event.item.name.split("_").last
+#     logger.info "Update scene presets from Scene change. scene: #{scene}"
+#     apply_scene_to_area(scene, light_zone) if items['Scene_'+light_zone] == scene
+#   end
+# end
+
+
+rule "Initialize the OFF scene state" do
+  on_start
+  run do
+    items.select { |item| item.name.end_with?("_Brightness_OFF") }.ensure.off
+    items.select { |item| item.name.end_with?("_ColorTemp_OFF") }.ensure.off
+  end
+end
+
+
+rule "Hue Tap Switch - Key pressed" do
+  channel [
+    'tap_kitchen:tap_switch_event',
+    'tap_dining:tap_switch_event',
+    'tap_bath:tap_switch_event'
+  ],
+    thing: ['hue:device:br1', 'hue:0830:br2'],
+    triggered: [Hue::TAP_LEFT_UP, Hue::TAP_LEFT_DOWN, Hue::TAP_RIGHT_UP, Hue::TAP_RIGHT_DOWN, Hue::TAP_UP, Hue::TAP_DOWN]
+  run do |event|
+    # Collect the event details
+    switch_zone = event.channel.to_s.split(":")[3].split("_")[1]
+    key_pressed = event.get_event
+    logger.info "Event [#{event.channel.to_s}, key pressed #{key_pressed}]; switch zone [#{switch_zone}]"
+
+    # Determine the zone list based on the switch and the pressed key
+    scene_zones = Scene::SWITCH_ZONES[switch_zone][key_pressed]
+    logger.info "Scene zones = #{scene_zones}"
+
+    case key_pressed
+    when Hue::TAP_LEFT_UP, Hue::TAP_RIGHT_UP
+      scene_zones.each do |zone|
+        scene_item = items['Scene_'+zone]
+        last_scene = scene_item.metadata["last_scene"]&.value || Scene::EVENING
+        scene_item.update(scene_item == 'OFF' ? last_scene : 'OFF')
+      end
+    when Hue::TAP_LEFT_DOWN, Hue::TAP_RIGHT_DOWN
+      scene_zones.each { |zone| items['Scene_'+zone] << next_scene(items['Scene_'+zone].state, Scene::SCENES[zone]) || Scene::EVENING }
+    end
+  end
+end
+
+
+rule "HueDimmerKey" do
+  channel [
+    'hue:device:br1:dim_hallway:button-last-event',
+    'hue:device:br2:dim_office:button-last-event',
+    'hue:device:br2:dim_fitness:button-last-event',
+    'hue:device:br1:diml_bedroom:button-last-event',
+    'hue:device:br1:dimr_bedroom:button-last-event',
+    'hue:device:br2:dim_menno:button-last-event',
+    'hue:device:br1:dim_corridor:button-last-event',
+    'hue:device:br2:dimu_corridor:button-last-event',
+    'hue:device:br1:dimf_hall:button-last-event'
+  ]
+  run do |event|
+    # Extract the relevant data from the event
+    switch_zone = event.channel.to_s.split(":")[3].split("_")[1]
+    key_pressed = event.event.to_s
+    scene_zones = Scene::SWITCH_ZONES[switch_zone][key_pressed]
+    logger.info "Event [#{event.channel.to_s}, key pressed #{key_pressed}]; switch zone [#{switch_zone}]; scene zones [#{scene_zones}]"
+    unless scene_zones.nil?
+      # Ignore Scene changes if all lights in the zone(s) are off
+      next if scene_zones.all? { |zone| items['Scene+'+zone] == Scene::OFF } && (key_pressed == Hue::HUE_SHORT_RELEASED || key_pressed == Hue::DIM_SHORT_RELEASED)
+    end
+
+    case key_pressed
+      # Check for ON/OFF type keys
+      when Hue::ON_SHORT_RELEASED, Hue::ON_HOLD, Hue::HUE_HOLD, Hue::BR_SHORT_RELEASED, Hue::BR_HOLD, Hue::BR_PRESSED
+        # Override the OFF state if some but not all of the lights in multiple zones are ON -> all lights in the zones should be turned ON in that case
+        if scene_zones.length() > 1
+          override_scenes = scene_zones.any? { |zone| items['Scene+'+zone] != Scene::OFF } && scene_zones.all? { |zone| items['Scene_'+zone] != Scene::OFF } != true
+        else
+          override_scenes = false
+        end
+        # Apply the scene for each zone
+        scene_zones.each do |zone|
+          scene_item = items['Scene_'+zone] unless zone == 'none'
+          logger.info "DBG20: #{scene_item.name}"
+          last_scene = scene_item.metadata["last_scene"]&.value || Scene::EVENING
+          logger.info "Last scene of #{scene_item.name} is #{last_scene}; current state is #{scene_item.state}; last event was #{@current_state[event.channel]}; override is #{override_scenes}"
+          # Ignore consecutive HOLD key triggers
+          next if @current_state[event.channel] == event.event && (key_pressed == Hue::ON_HOLD || key_pressed == Hue::HUE_HOLD || key_pressed == Hue::BR_HOLD || key_pressed == Hue::DIM_HOLD)
+          logger.info "DBG30: #{scene_item.state}"
+          scene_item.update(scene_item.state == 'OFF' || override_scenes ? last_scene : 'OFF')
+        end
+      # Check for Scene change keys
+      when Hue::HUE_SHORT_RELEASED, Hue::DIM_SHORT_RELEASED
+        scene_zones.each { |zone| items['Scene_'+zone] << next_scene(items['Scene_'+zone].state, Scene::SCENES[zone]) || Scene::EVENING }
+    end
+    @current_state[event.channel] = event.event
+    after 5.seconds, id: event.event do
+      logger.info("Timer Fired")
+      @current_state[event.channel] = ""
+    end
+  end
+end
+
+
+# rule "HueAppBrightnessChange" do
+#   description "Update a scene item if brightness/colortemp is changed through the Hue App"
+#   changed gBrightness.members, gColorTemp.members
+#   run do |event|
+#     zone = event.item.name.split("_")[1]
+#     scene_item = items['Scene_'+zone]
+#     last_update = DateTime.strptime(scene_item.metadata['last_update']&.value, "%Y-%m-%d %H:%M:%S %z").to_time
+#     if last_update < Time.now.utc - 6
+#       logger.info "Scene changed more than 6 seconds ago, update from Hue bridge"
+#       scene_item << (event.state == 'OFF' ? 'OFF' : scene_item.metadata["last_scene"]&.value || Scene::EVENING)
+#     end
+#   end
+# end
+
+
+rule "HueSceneSwitch" do
+  description "Switch lights on at sunset and off at sunrise (depending on cloudiness)"
+  changed DayMode
+  run do |event|
+    logger.info "#{event.item.name} changed, new state #{event.state}, previous state #{event.was}"
+    unless event.was.nil?
+      command = event.state == "DAY" ? "OFF" : event.state == "EVENING" ? "EVENING" : "NONE"
+      unless command == "NONE"
+        logger.info "Send command [#{command}] to Light Scenes"
+        gScenesEvening << command
+      end
+    end
+  end
+end
+
+rule "MotionDetected" do
+  description "Change light in toilet based on motion"
+  changed MotionDetected_toilet, to: ON
+  run { Toilet_Lamp.on for: 5.minutes }
+end
+
+rule "Light on in Toilet" do
+  changed Toilet_Lamp, to: ON
+  run { Scene_toilet << "EVENING" }
+end
+
+rule "Light off in Toilet" do
+  changed Toilet_Lamp, to: OFF
+  run { Scene_toilet << "OFF" }
+end

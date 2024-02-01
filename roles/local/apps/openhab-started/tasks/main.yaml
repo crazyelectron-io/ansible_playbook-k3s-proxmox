@@ -1,0 +1,12 @@
+# file: roles/local/openhab/openhab-started/tasks/main.yaml
+# synopsis: This role waits until OpenHAB is stated by checking for an entry in openhab.log
+---
+- name: Wait until OpenHAB is started (if it was just redeployed)
+  wait_for:
+    path: "{{openhab_logfile}}"
+    search_regex: "{{openhab_started_log_entry | default('Rule engine started')}}"
+    delay: 5
+    timeout: 180
+    msg: "Not able to find entry '{{openhab_started_log_entry | default('Rule engine started')}}' in openhab.log"
+  register: openhab_started
+  when: hostvars['localhost'].openhab_started.changed

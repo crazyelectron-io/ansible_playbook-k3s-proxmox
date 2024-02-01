@@ -1,0 +1,63 @@
+// file: conf/items/openhab.items
+// synopsis: Define groups to divide everything in areas and automation driven groups.
+// note:  This items file defines the area groups, dividing the openHAB ecosphere in different areas
+//        like kitchen, garden, livingroom.
+//        Generic groups are defined to support automated actions on group members.
+
+Group                         gHome               "Thuis"
+
+// ------ Indoor
+Group                         gIndoor             "Huis"                                     (gHome)         ["Indoor"]
+Group                         gGroundFloor        "Beganegrond"            <groundfloor>     (gIndoor)       ["GroundFloor"]  {widgetOrder="11"}
+Group                         gHallway            "Hal"                    <wardrobe>        (gGroundFloor)  ["Hallway"]      {uiSemantics="uiSemantics"[preposition=" in de", equipment="Gang", location="Ground Floor"],widgetOrder="12"}
+Group                         gKitchen            "Keuken"                 <kitchen>         (gGroundFloor)  ["Kitchen"]      {uiSemantics="uiSemantics"[preposition=" in de", equipment="Keuken", location="Ground Floor"],widgetOrder="13"}
+Group                         gDining             "Eetkamer"                                 (gGroundFloor)  ["DiningRoom"]   {uiSemantics="uiSemantics"[preposition=" in de", equipment="Dininroom", location="Ground Floor"],widgetOrder="14"}
+Group                         gLiving             "Woonkamer"              <sofa>            (gGroundFloor)  ["LivingRoom"]   {uiSemantics="uiSemantics"[preposition=" in de", equipment="Livingroom", location="Ground Floor"],widgetOrder="15"}
+Group                         gLaundry            "Bijkeuken"              <washingmachine>  (gGroundFloor)  ["LaundryRoom"]  {uiSemantics="uiSemantics"[preposition=" in de", equipment="Laundryroom", location="Ground Floor"],widgetOrder="16"}
+Group                         gGarage             "Garage"                 <garage>          (gGroundFloor)  ["Garage"]       {uiSemantics="uiSemantics"[preposition=" in de", equipment="Garage", location="Ground Floor"],widgetOrder="52"}
+Group                         gToilet             "Toilet"                 <toilet>          (gGroundFloor)  ["Bathroom"]     {uiSemantics="uiSemantics"[preposition=" in het", equipment="Toilet", location="Ground Floor"],widgetOrder="17"}
+Group                         gFusebox            "Meterkast"                                (gGroundFloor)  ["Room"]         {uiSemantics="uiSemantics"[preposition=" in de", equipment="Meterkast", location="Ground Floor"],widgetOrder="18"}
+Group                         gFirstFloor         "Boven"                  <firstfloor>      (gIndoor)       ["FirstFloor"]   {widgetOrder="21"}
+Group                         gCorridor           "Overloop"               <corridor>        (gFirstFloor)   ["Corridor"]     {uiSemantics="uiSemantics"[preposition=" op de", equipment="Corridor", location="First Floor"],widgetOrder="22"}
+Group                         gBedroom            "Slaapkamer"             <bedroom>         (gFirstFloor)   ["Bedroom"]      {uiSemantics="uiSemantics"[preposition=" in de", equipment="Bedroom", location="First Floor"],widgetOrder="23"}
+Group                         gBathroom           "Badkamer"               <bath>            (gFirstFloor)   ["Bathroom"]     {uiSemantics="uiSemantics"[preposition=" in de", equipment="Bathroom", location="First Floor"],widgetOrder="24"}
+Group                         gOffice             "Kantoor"                <office>          (gFirstFloor)   ["Office"]       {uiSemantics="uiSemantics"[preposition=" in het", equipment="Kantoor", location="First Floor"],widgetOrder="25"}
+Group                         gFitnessroom        "Fitnesskamer"           <girl_1>          (gFirstFloor)   ["FitnessRoom"]  {uiSemantics="uiSemantics"[preposition=" in de", equipment="Fitnesskamer", location="First Floor"],widgetOrder="26"}
+Group                         gChildroom          "Menno's kamer"          <boy_3>           (gFirstFloor)   ["GuestRoom"]    {uiSemantics="uiSemantics"[preposition=" in", equipment="Menno's kamer", location="First Floor"],widgetOrder="27"}
+
+// ------ Outdoor
+Group                         gOutdoor            "Buiten"                 <garden>          (gHome)         ["Outdoor"]
+Group                         gGarden             "Tuin"                   <garden>          (gOutdoor)      ["Garden"]       {widgetOrder="31"}
+Group                         gFrontYard          "Voortuin"               <garden>          (gGarden)       ["Garden"]       {uiSemantics="uiSemantics"[preposition=" in de", equipment="Frontyard", location="Garden"],widgetOrder="34"}
+Group                         gBackYard           "Achtertuin"             <garden>          (gGarden)       ["Garden"]       {uiSemantics="uiSemantics"[preposition=" in de", equipment="Backyard", location="Garden"],widgetOrder="33"}
+Group                         gDriveway           "Oprit"                  <car>             (gOutdoor)      ["Driveway"]     {uiSemantics="uiSemantics"[preposition=" op de", equipment="Oprit", location="Garden"],widgetOrder="32"}
+Group                         gLodge              "Lodge"                  <patio>           (gOutdoor)      ["Lodge"]        {uiSemantics="uiSemantics"[preposition=" in de", equipment="Lodge", location="Garden"],widgetOrder="35"}
+Group                         gShed               "Schuur"                 <garage>          (gOutdoor)      ["Location"]     {uiSemantics="uiSemantics"[preposition=" in de", equipment="Schuur", location="Garden"],widgetOrder="36"}
+Group                         gOutdoorKitchen     "Buitenkeuken"           <kitchen>         (gOutdoor)      ["Patio"]        {uiSemantics="uiSemantics"[preposition=" in de", equipment="Buitenkeuken", location="Garden"],widgetOrder="37"}
+Group                         gTerrace            "Terras"                 <garden>          (gGarden)       ["Room"]         {uiSemantics="uiSemantics"[preposition=" op het", equipment="Terras", location="Garden"],widgetOrder="38"}
+
+// ------ Alert satus groups
+Group:Number:COUNT(ON)        gSmokeAlarm         "Brandalarm"             <smoke>
+Group:Number:COUNT(ON)        gBatteryLow         "Lege batterijen"        <lowbattery>
+Group:Number:COUNT(OPEN)      gWindowsOpen        "Open ramen"             <window>
+Group:Number:COUNT(OPEN)      gDoorsOpen          "Open deuren"            <door>
+Group:Number:COUNT(ON)        gMotionDetected     "Beweging gedetecteerd"
+
+// ------ Weather groups
+Group                         gWeather            "Weerdata"               <climate>         (gOutdoor)
+Group:Number:Temperature:AVG  OutsideTemperature  "Buitentemperatuur"      <temperature>     (gWeather)
+
+// ------ Sensors
+// Group	gSensorStatus "Sensor status" ["Sensor"]
+// // Temperature sensors
+// Group	gTempSensors "Temperature" <temperature> (gSensorStatus) ["Sensor"]
+// // Enegry sensors/values
+// Group	gEnergy "Energie" <energy> (gSensorStatus) ["Sensor"]
+// // Groups for openHAB automation rules
+// Group:Switch gWatchdog "Watchdog trigger switches"
+// Group:Switch gOffline "Offline status switches"
+// Group	gStatus
+// // Group for all expire timer items
+// Group:Switch gResetExpire	"Reset Expire Timers" ["Switch"]
+// // Group for Battery Low status summary
+// Group:Contact:OR(OPEN,CLOSED)	gBatt

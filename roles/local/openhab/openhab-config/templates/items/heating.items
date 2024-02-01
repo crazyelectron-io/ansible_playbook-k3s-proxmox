@@ -1,0 +1,15 @@
+// file: conf/items/bosch.items
+// synopsis:
+
+Group:Number:Temperature:AVG  LivingTemperature    "Kamertemperatuur"                 <heating>           (gLiving,gHist0)     ["HVAC","Measurement","Temperature"]  {stateDescription=" "[pattern="%.1f %unit%"]}
+Number:Temperature            HeatTemp_living      "CV thermostaat temperatuur"       <heating>           (LivingTemperature)                                        {channel="http:url:zn1:ChTemperature", unit="°C", stateDescription=" "[pattern="%.1f %unit%",readOnly="true"]}
+Number:Dimensionless          HeatHumidity_living  "Luchtvochtigheid woonkamer"       <humidity>          (gLiving,gHist0)     ["Measurement","Humidity"]            {channel="http:url:zn1:ChHumidity", stateDescription=" "[pattern="%d %unit%",readOnly="true"], unit="%"}
+Number:Temperature            HeatSetPoint         "Doeltemperatuur woonkamer"        <heating>           (gLiving,gHist0)     ["SetPoint","Temperature"]            {channel="http:url:zn1:ChSetPoint", unit="°C", stateDescription=" "[pattern="%.1f %unit%",min="15",max="25",step="0.5"], widget="oh-stepper-card"[min="15.0",max="25.0",step="0.5"], listWidget="oh-stepper-item"[min="15.0",max="25.0",step="0.5"]}
+Number:Time                   HeatNextPoint        "CV volgend programma over"        <heating>           (gLiving,gHist0)                                           {channel="http:url:zn1:ChNextPoint", stateDescription=" "[pattern="%d %unit%",readOnly="true"]}
+String                        Heatmode             "CV thermostaat mode"              <heating>           (gLiving)            ["Control"]                           {channel="http:url:zn1:ChMode"}
+Number:Pressure               HeatPressure         "CV waterdruk"                                         (gHourly,gLaundry)   ["Measurement","Pressure"]            {channel="http:url:appliance:ChPressure", unit="bar", stateDescription=" "[pattern="%.1f %unit%"]}
+String                        Heatmaintenance      "CV onderhoud [MAP(bool.map):%s]"  <heating>           (gPersist,gLaundry)                                        {channel="http:url:appliance:ChMaintenance"}
+Number:Temperature            HeatWaterTemp        "CV watertemperatuur"              <heating>           (gHist0,gLaundry)    ["Measurement","Temperature"]         {channel="http:url:heat:ChWaterTemp", unit="°C", stateDescription=" "[pattern="%.1f %unit%"]}
+Number                        HeatStarts           "CV aantal starts"                 <qualityofservice>  (gHist0,gLaundry)                                          {channel="http:url:heat:ChStarts"}
+String                        Heatfill             "CV bijvullen [%s]"                <heating>           (gPersist,gLaundry)                                        {channel="http:url:heat:ChFill", stateDescription=" "[options="MAP(bool.map):%s"]}
+Number:Time                   HeatBurnTime         "CV banduren"                      <heating>           (gHist0,gLaundry)                                          {channel="http:url:heat:ChBurnTime", unit="min", stateDescription=" "[pattern="%d %unit%"]}
